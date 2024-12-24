@@ -153,6 +153,7 @@ error?: string;
 export interface CreateTaskRequestParams {
   name: string;
   description?: string;
+  markdown_content?: string;
   tags?: string[];
 }
 
