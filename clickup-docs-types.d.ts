@@ -1,0 +1,103 @@
+//===============================================
+// CLICKUP DOCS INTERFACES
+//===============================================
+
+// Document
+interface Doc {
+  id: string;
+  name: string;
+  date_created: number;  // changed from dateCreated
+  date_updated: number;  // changed from dateUpdated
+  parent: {
+    id: string;
+    type: number;
+  };
+  public?: boolean;     // made optional since some responses don't include it
+  workspace_id: number; // changed from workspaceId
+  creator: number;      // changed from creatorId
+  deleted: boolean;
+  type: number;
+}
+
+// Array of Documents Response
+interface DocsResponse {
+  docs: Doc[];
+  next_cursor: string;  // changed from nextCursor
+}
+
+// Document Response
+interface DocResponse extends Doc {}
+
+// Document Page
+interface DocPage {
+  id: string;
+  doc_id: string;
+  parent_page_id?: string;
+  workspace_id: number;
+  name: string;
+}
+
+// Document Page Listing
+interface DocPageListing {
+  id: string;
+  doc_id: string;
+  workspace_id: number;
+  name: string;
+  pages?: DocPage[];
+}
+
+// Array of Document Page Listing
+type DocPageListingResponse = DocPageListing[];
+
+
+//===============================================
+// CLICKUP DOCS INTERFACES
+//=============================================== 
+
+// Page Presentation Details
+interface PagePresentationDetails {
+  font: string;
+  line_height: number;
+  page_width: number;
+  show_author_header: boolean;
+  show_contributor_header: boolean;
+  show_cover_header: boolean;
+  show_date_header: boolean;
+  show_page_outline: boolean;
+  show_sub_pages: boolean;
+  sub_page_size: string;
+  show_sub_title_header: boolean;
+  show_title_icon_header: boolean;
+  font_size: number;
+}
+
+// Document Page
+interface Page {
+  id: string;
+  doc_id: string;
+  workspace_id: number;
+  name: string;
+  sub_title?: string;
+  date_created: number;
+  date_updated: number;
+  content: string;
+  avatar?: {
+    value: string;
+  };
+  creator_id: number;
+  deleted: boolean;
+  archived: boolean;
+  cover?: {
+    image_url: string;
+  };
+  protected: boolean;
+  presentation_details: PagePresentationDetails;
+  pages?: Page[]; // Recursive - pages can contain sub-pages
+  parent_page_id?: string;
+}
+
+// Array of Document Pages
+type DocPagesResponse = Page[]; 
+
+// Page Response
+interface PageResponse extends Page {}
