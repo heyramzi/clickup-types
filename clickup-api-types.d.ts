@@ -2,6 +2,16 @@
 // CORE API TYPES
 //===============================================
 
+// Define allowed API versions
+export type ClickUpApiVersion = 'v2' | 'v3';
+
+// Define API base URLs
+export enum ClickUpApiUrl {
+  V2 = 'https://api.clickup.com/api/v2',
+  V3 = 'https://api.clickup.com/api/v3',
+  AUTH = 'https://app.clickup.com/api'
+}
+
 // Define allowed HTTP methods for making requests to ClickUp API
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH';
 
@@ -84,3 +94,4 @@ export const CLICKUP_AUTH_ERROR_CODES = {
 
 // Type to ensure only valid auth error codes are used
 export type AuthErrorCode = typeof CLICKUP_AUTH_ERROR_CODES[keyof typeof CLICKUP_AUTH_ERROR_CODES];
+
