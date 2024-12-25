@@ -19,23 +19,14 @@ interface Doc {
   type: number;
 }
 
-// Array of Documents Response
+// Array of Documents Response, when searching for Docs
 interface DocsResponse {
   docs: Doc[];
   next_cursor: string;  // changed from nextCursor
 }
 
-// Document Response
+// Document Response, when searching for a specific Doc
 interface DocResponse extends Doc {}
-
-// Document Page
-interface DocPage {
-  id: string;
-  doc_id: string;
-  parent_page_id?: string;
-  workspace_id: number;
-  name: string;
-}
 
 // Document Page Listing
 interface DocPageListing {
@@ -43,7 +34,7 @@ interface DocPageListing {
   doc_id: string;
   workspace_id: number;
   name: string;
-  pages?: DocPage[];
+  pages?: Partial<Page>[];  // Using Partial<Page> since listing responses contain fewer fields
 }
 
 // Array of Document Page Listing
