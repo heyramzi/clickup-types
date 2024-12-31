@@ -72,26 +72,9 @@ export const CLICKUP_ERROR_TYPE_MAP: Record<string, string> = {
   'RATE_': 'RATE_LIMIT',
   'CORS_': 'INVALID_REQUEST',
   'SHARD_': 'NOT_FOUND',
-  'GBUSED_': 'STORAGE_LIMIT',  // Storage limit error category
+  'GBUSED_': 'STORAGE_LIMIT',
   'CRTSK_': 'TASK_ERROR',
-  'INPUT_': 'VALIDATION', // Input validation errors
+  'INPUT_': 'VALIDATION',
   'NO_': 'NO_DATA',
-  'ATTCH_': 'ATTACHMENT',  // Add this line for attachment errors
+  'ATTCH_': 'ATTACHMENT',
 };
-
-// Specific error codes for common authentication failures
-export const CLICKUP_AUTH_ERROR_CODES = {
-  INVALID_TOKEN: 'OAUTH_01_001',
-  TOKEN_EXPIRED: 'OAUTH_01_002',
-  INVALID_GRANT: 'OAUTH_02_001',
-  INSUFFICIENT_SCOPE: 'OAUTH_03_001',
-  STORAGE_LIMIT_EXCEEDED: 'GBUSED_005',
-  INVALID_STATUS: 'CRTSK_001',  // Task status error code
-  INVALID_FOLDER_ID: 'INPUT_011', // Invalid folder ID error code
-  INVALID_ATTACHMENT_FORMAT: 'ATTCH_045',  // Add this line
-  NO_DATA_FOUND: 'NO_DATA',  // Fictive error code, used to indicate if we get empty arrays
-} as const;
-
-// Type to ensure only valid auth error codes are used
-export type AuthErrorCode = typeof CLICKUP_AUTH_ERROR_CODES[keyof typeof CLICKUP_AUTH_ERROR_CODES];
-
