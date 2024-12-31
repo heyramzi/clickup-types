@@ -51,6 +51,7 @@ export interface ClickUpOAuthParams {
   redirect_uri: string;
   state?: string;         // Optional as only needed for initial auth
   code?: string;          // Optional as only needed for token exchange
+  response_type?: 'code';
 }
 
 // Response format when successfully obtaining an access token
