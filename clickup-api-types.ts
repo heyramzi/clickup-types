@@ -17,7 +17,6 @@ export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH';
 
 // Map of all available ClickUp API endpoint paths
 export enum ClickUpEndpoint {
-  OAUTH_TOKEN = '/oauth/token',
   WORKSPACE = '/team',
   SPACE = '/space',
   LIST = '/list',
@@ -27,7 +26,10 @@ export enum ClickUpEndpoint {
   TASK = '/task',
   COMMENT = '/comment',
   ATTACHMENT = '/attachment',
-  SHARED_HIERARCHY = '/shared'
+  SHARED_HIERARCHY = '/shared',
+  DOCS = '/docs', 
+  PAGE_LISTING = '/pagelisting',
+  PAGES = '/pages'
 }
 
 // Update the ApiResponse type to handle both success and error cases
