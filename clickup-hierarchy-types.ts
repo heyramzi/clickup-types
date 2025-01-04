@@ -9,22 +9,6 @@ export enum ClickUpPermissionLevel {
   COMMENT = 'comment',
   READ = 'read',
 }
-
-//===============================================
-// CLICKUP USER INTERFACES
-//===============================================
-
-export interface User {
-  id: number;
-  username: string;
-  email: string;
-  timezone: string;
-}
-
-export interface UserResponse {
-  user: User;
-}
-
 //===============================================
 // CLICKUP WORKSPACES INTERFACES
 //===============================================

@@ -12,11 +12,9 @@ export enum ClickUpApiUrl {
   AUTH = 'https://app.clickup.com/api'
 }
 
-// Define allowed HTTP methods for making requests to ClickUp API
-export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH';
-
 // Map of all available ClickUp API endpoint paths
-export enum ClickUpEndpoint {
+export enum Endpoint {
+  OAUTH = '/oauth/token',
   WORKSPACE = '/team',
   SPACE = '/space',
   LIST = '/list',
@@ -39,27 +37,6 @@ export type ApiResponse<T> = T | ClickUpApiError;
 export interface ClickUpApiError {
   err: string;
   ECODE: string;
-}
-
-
-//===============================================
-// AUTHENTICATION TYPES
-//===============================================
-
-// Parameters required for OAuth authorization and token exchange flows
-export interface ClickUpOAuthParams {
-  client_id: string;
-  client_secret?: string;  // Optional as only needed for token exchange
-  redirect_uri: string;
-  state?: string;         // Optional as only needed for initial auth
-  code?: string;          // Optional as only needed for token exchange
-  response_type?: 'code';
-}
-
-// Response format when successfully obtaining an access token
-export interface AuthTokenResponse {
-  access_token: string;
-  token_type: 'Bearer';
 }
 
 //===============================================
