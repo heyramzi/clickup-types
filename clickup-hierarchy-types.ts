@@ -26,6 +26,12 @@ export interface WorkspacesResponse {
   teams: Workspace[];
 }
 
+export interface StoredWorkspace {
+  id: string;
+  name: string;
+  color: string;
+  avatar?: string | null;
+}
 //===============================================
 // CLICKUP SPACES INTERFACES
 //===============================================
