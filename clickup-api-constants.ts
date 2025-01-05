@@ -12,23 +12,21 @@ export enum ClickUpApiUrl {
   AUTH = 'https://app.clickup.com/api'
 }
 
-// Map of all available ClickUp API endpoint paths
-export enum Endpoint {
-  OAUTH = '/oauth/token',
-  WORKSPACE = '/team',
-  SPACE = '/space',
-  LIST = '/list',
-  FOLDER = '/folder',
-  TASKS = '/tasks',
-  USER = '/user',
-  TASK = '/task',
-  COMMENT = '/comment',
-  ATTACHMENT = '/attachment',
-  SHARED_HIERARCHY = '/shared',
-  DOCS = '/docs', 
-  PAGE_LISTING = '/pagelisting',
-  PAGES = '/pages'
-}
+// Replace the enum with a more flexible CLICKUP_PATH builder
+export const CLICKUP_PATH = {
+  oauth: () => '/oauth/token',   // Auth
+  user: () => '/user',   // User
+  workspace: () => '/team',   // Workspace (Team)
+  // Docs
+  docs: {
+    list: (workspaceId: string) => 
+      `/workspaces/${workspaceId}/docs`,
+    pageListing: (workspaceId: string, docId: string) => 
+      `/workspaces/${workspaceId}/docs/${docId}/pagelisting`,
+    pages: (workspaceId: string, docId: string) => 
+      `/workspaces/${workspaceId}/docs/${docId}/pages`
+  }
+} as const;
 
 // Update the ApiResponse type to handle both success and error cases
 export type ApiResponse<T> = T | ClickUpApiError;
