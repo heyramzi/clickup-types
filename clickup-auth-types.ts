@@ -4,7 +4,6 @@
 // Types for ClickUp OAuth flow
 export interface ClickUpOAuthConfig {
   clientId: string
-  clientSecret: string
   redirectUri: string
   state?: string;         // Optional state parameter for auth flow
   code?: string;          // Optional code for token exchange
@@ -31,4 +30,15 @@ export interface ClickUpUser {
 
 export interface ClickUpUserResponse {
   user: ClickUpUser;
+}
+
+export interface TokenStorageResponse {
+  success: boolean;
+  token: string;
+  error?: string;
+}
+
+export interface TokenStorageRequest {
+  code: string;
+  state: string;
 }
