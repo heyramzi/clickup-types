@@ -2,36 +2,42 @@
 // CORE API TYPES
 //===============================================
 
-// Define allowed API versions
+// Supported ClickUp API versions for different endpoints
 export type ClickUpApiVersion = 'v2' | 'v3';
 
-// Define API base URLs
+// Base URLs for different ClickUp API versions and authentication
 export enum ClickUpApiUrl {
   V2 = 'https://api.clickup.com/api/v2',
   V3 = 'https://api.clickup.com/api/v3',
   AUTH = 'https://app.clickup.com/api'
 }
 
-// Replace the enum with a more flexible CLICKUP_PATH builder
+// Centralized path builder for ClickUp API endpoints
 export const CLICKUP_PATH = {
-  oauth: () => '/oauth/token',   // Auth
-  user: () => '/user',   // User
-  workspace: () => '/team',   // Workspace (Team)
-  // Docs
+  // Authentication endpoint for token exchange
+  oauth: () => '/oauth/token',   
+  // Get current user details
+  user: () => '/user',   
+  // Get workspace (team) information
+  workspace: () => '/team',   
+  // Document-related endpoints grouped together
   docs: {
+    // Get all docs in a workspace
     list: (workspaceId: string) => 
       `/workspaces/${workspaceId}/docs`,
+    // Get hierarchical page structure of a doc
     pageListing: (workspaceId: string, docId: string) => 
       `/workspaces/${workspaceId}/docs/${docId}/pagelisting`,
+    // Get full content of all pages in a doc
     pages: (workspaceId: string, docId: string) => 
       `/workspaces/${workspaceId}/docs/${docId}/pages`
   }
 } as const;
 
-// Update the ApiResponse type to handle both success and error cases
+// Union type to handle both successful responses and API errors
 export type ApiResponse<T> = T | ClickUpApiError;
 
-// Standard error response format from ClickUp API
+// Standard error structure returned by ClickUp API
 export interface ClickUpApiError {
   err: string;
   ECODE: string;
@@ -41,18 +47,18 @@ export interface ClickUpApiError {
 // ERROR HANDLING TYPES
 //===============================================
 
-// Map error code prefixes to high-level error categories for handling
+// Maps error code prefixes to categories for consistent error handling
 export const CLICKUP_ERROR_TYPE_MAP: Record<string, string> = {
-  'OAUTH_01': 'AUTH',     // Authentication errors
-  'OAUTH_02': 'ACCESS',   // Authorization errors
-  'OAUTH_03': 'ACCESS',   // Access control errors
-  'OAUTH_17': 'WEBHOOK',  // Webhook errors
-  'RATE_': 'RATE_LIMIT',
-  'CORS_': 'INVALID_REQUEST',
-  'SHARD_': 'NOT_FOUND',
-  'GBUSED_': 'STORAGE_LIMIT',
-  'CRTSK_': 'TASK_ERROR',
-  'INPUT_': 'VALIDATION',
-  'NO_': 'NO_DATA',
-  'ATTCH_': 'ATTACHMENT',
+  'OAUTH_01': 'AUTH',     // Authentication failures
+  'OAUTH_02': 'ACCESS',   // Authorization failures
+  'OAUTH_03': 'ACCESS',   // Permission denied errors
+  'OAUTH_17': 'WEBHOOK',  // Webhook configuration issues
+  'RATE_': 'RATE_LIMIT', // API rate limiting errors
+  'CORS_': 'INVALID_REQUEST', // Cross-origin request issues
+  'SHARD_': 'NOT_FOUND', // Resource not found errors
+  'GBUSED_': 'STORAGE_LIMIT', // Storage quota exceeded
+  'CRTSK_': 'TASK_ERROR', // Task creation/modification errors
+  'INPUT_': 'VALIDATION', // Input validation failures
+  'NO_': 'NO_DATA', // No data available errors
+  'ATTCH_': 'ATTACHMENT', // Attachment handling errors
 };
