@@ -3,7 +3,7 @@
 //===============================================
 
 // Document
-interface Doc {
+export interface Doc {
   id: string;
   name: string;
   date_created: number;  // changed from dateCreated
@@ -20,16 +20,16 @@ interface Doc {
 }
 
 // Array of Documents Response, when searching for Docs
-interface DocsResponse {
+export interface DocsResponse {
   docs: Doc[];
   next_cursor: string;  // changed from nextCursor
 }
 
 // Document Response, when searching for a specific Doc
-interface DocResponse extends Doc {}
+export interface DocResponse extends Doc {}
 
 // Document Page Listing
-interface DocPageListing {
+export interface DocPageListing {
   id: string;
   doc_id: string;
   workspace_id: number;
@@ -38,7 +38,7 @@ interface DocPageListing {
 }
 
 // Array of Document Page Listing
-type DocPageListingResponse = DocPageListing[];
+export type DocPageListingResponse = DocPageListing[];
 
 
 //===============================================
@@ -46,7 +46,7 @@ type DocPageListingResponse = DocPageListing[];
 //=============================================== 
 
 // Page Presentation Details
-interface PagePresentationDetails {
+export interface PagePresentationDetails {
   font: string;
   line_height: number;
   page_width: number;
@@ -63,7 +63,7 @@ interface PagePresentationDetails {
 }
 
 // Document Page
-interface Page {
+export interface Page {
   id: string;
   doc_id: string;
   workspace_id: number;
@@ -88,7 +88,7 @@ interface Page {
 }
 
 // Array of Document Pages
-type DocPagesResponse = Page[]; 
+export type DocPagesResponse = Page[]; 
 
 // Page Response
-interface PageResponse extends Page {}
+export interface PageResponse extends Page {}
