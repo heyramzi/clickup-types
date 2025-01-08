@@ -19,6 +19,11 @@ export interface Doc {
   type: number;
 }
 
+export interface StoredDoc {
+  id: string;
+  name: string;
+}
+
 // Array of Documents Response, when searching for Docs
 export interface DocsResponse {
   docs: Doc[];
