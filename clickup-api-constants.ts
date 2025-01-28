@@ -12,6 +12,39 @@ export enum ClickUpApiUrl {
   AUTH = 'https://app.clickup.com/api'
 }
 
+// HTTP Methods supported by the ClickUp API
+export enum HttpMethod {
+  GET = 'GET',
+  POST = 'POST',
+  PUT = 'PUT',
+  DELETE = 'DELETE',
+  PATCH = 'PATCH'
+}
+
+// API Endpoints
+export enum Endpoint {
+  // Auth endpoints
+  OAUTH_TOKEN = '/oauth/token',
+  
+  // User endpoints
+  USER = '/user',
+  
+  // Workspace endpoints
+  WORKSPACE = '/team',
+  SPACE = '/space',
+  FOLDER = '/folder',
+  LIST = '/list',
+  
+  // Task endpoints
+  TASK = '/task',
+  TASKS = '/list/{list_id}/task',
+  COMMENT = '/comment',
+  ATTACHMENT = '/attachment',
+  
+  // Shared hierarchy endpoints
+  SHARED_HIERARCHY = '/shared'
+}
+
 // Centralized path builder for ClickUp API endpoints
 export const CLICKUP_PATH = {
   // Authentication endpoint for token exchange
@@ -33,6 +66,18 @@ export const CLICKUP_PATH = {
       `/workspaces/${workspaceId}/docs/${docId}/pages`
   }
 } as const;
+
+// OAuth related types
+export interface ClickUpOAuthParams {
+  client_id: string;
+  redirect_uri: string;
+  state: string;
+}
+
+export interface AuthTokenResponse {
+  access_token: string;
+  token_type: 'Bearer';
+}
 
 // Union type to handle both successful responses and API errors
 export type ApiResponse<T> = T | ClickUpApiError;
@@ -62,3 +107,20 @@ export const CLICKUP_ERROR_TYPE_MAP: Record<string, string> = {
   'NO_': 'NO_DATA', // No data available errors
   'ATTCH_': 'ATTACHMENT', // Attachment handling errors
 };
+
+// Query Parameters Types
+export interface GetTasksQueryParams {
+  page?: number;
+  order_by?: string;
+  reverse?: boolean;
+  subtasks?: boolean;
+  include_closed?: boolean;
+  assignees?: string[];
+  due_date_gt?: number;
+  due_date_lt?: number;
+  date_created_gt?: number;
+  date_created_lt?: number;
+  date_updated_gt?: number;
+  date_updated_lt?: number;
+  [key: string]: any;
+}
