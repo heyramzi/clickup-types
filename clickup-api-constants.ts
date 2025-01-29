@@ -61,8 +61,7 @@ export const CLICKUP_PATH = {
 		pageListing: (workspaceId: string, docId: string) =>
 			`/workspaces/${workspaceId}/docs/${docId}/pagelisting`,
 		// Get full content of all pages in a doc
-		pages: (workspaceId: string, docId: string) =>
-			`/workspaces/${workspaceId}/docs/${docId}/pages`,
+		pages: (workspaceId: string, docId: string) => `/workspaces/${workspaceId}/docs/${docId}/pages`,
 	},
 } as const;
 
