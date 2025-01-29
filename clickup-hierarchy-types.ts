@@ -79,7 +79,9 @@ export interface ListsResponse {
 export interface List {
 	id: string;
 	name: string;
-	color?: string;
+	status?: {
+		color: string;
+	};
 	space: { name: string };
 	folder?: { name: string };
 	permission_level: ClickUpPermissionLevel;
