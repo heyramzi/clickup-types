@@ -43,6 +43,7 @@ export enum Endpoint {
 
 	// Shared hierarchy endpoints
 	SHARED_HIERARCHY = "/shared",
+	TIME_ENTRIES = "/team/{team_id}/time_entries",
 }
 
 // Centralized path builder for ClickUp API endpoints
