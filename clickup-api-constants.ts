@@ -106,6 +106,7 @@ export const CLICKUP_ERROR_TYPE_MAP: Record<string, string> = {
 	INPUT_: "VALIDATION", // Input validation failures
 	NO_: "NO_DATA", // No data available errors
 	ATTCH_: "ATTACHMENT", // Attachment handling errors
+	TIMEENTRY_: "TIME_TRACKING", // Time tracking related errors
 };
 
 // Query Parameters Types
