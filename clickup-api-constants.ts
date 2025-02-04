@@ -123,5 +123,5 @@ export interface GetTasksQueryParams {
 	date_created_lt?: number;
 	date_updated_gt?: number;
 	date_updated_lt?: number;
-	[key: string]: any;
+	[key: string]: string | number | boolean | string[] | undefined;
 }

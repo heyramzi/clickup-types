@@ -43,7 +43,7 @@ export interface Task {
 		creator: number;
 	}>;
 	parent: string | null;
-	priority: null | any; // TODO: Define priority type
+	priority: TaskPriority | null;
 	due_date: string | null;
 	start_date: string | null;
 	points: null | number;
@@ -53,13 +53,13 @@ export interface Task {
 				id: string;
 				name: string;
 				type: string;
-				type_config: any;
+				type_config: CustomFieldTypeConfig;
 				date_created: string;
 				hide_from_guests: boolean;
-				value?: any;
+				value?: unknown;
 				required: boolean;
 		  }>
-		| Record<string, any>;
+		| Record<string, unknown>;
 	url: string;
 	markdown_description?: string;
 	orderindex?: string;
@@ -87,15 +87,31 @@ export interface Task {
 					id?: string;
 					name: string;
 					orderindex: number;
-					assignee: null | any;
-					group_assignee?: null | any;
+					assignee: null | {
+						id: number;
+						username: string;
+						email?: string;
+					};
+					group_assignee?: null | {
+						id: number;
+						group: string;
+					};
 					resolved: boolean;
 					parent: null | string;
 					date_created?: string;
-					children: any[];
+					children: Array<{
+						id?: string;
+						name: string;
+						orderindex: number;
+						resolved: boolean;
+					}>;
 				}>;
 		  }
-		| Array<any>;
+		| Array<{
+				id: string;
+				name: string;
+				items: Array<unknown>;
+		  }>;
 }
 
 // Update existing Tasks interface to extend BaseTask
@@ -108,8 +124,16 @@ export interface Tasks extends Task {
 		email: string;
 		profilePicture: string | null;
 	}>;
-	dependencies: any[];
-	linked_tasks: any[];
+	dependencies: Array<{
+		task_id: string;
+		depends_on: string;
+		type?: number;
+	}>;
+	linked_tasks: Array<{
+		task_id: string;
+		link_id: string;
+		type?: number;
+	}>;
 }
 
 // Interface for task response from API
@@ -214,4 +238,30 @@ export interface AttachmentResponse {
 	url: string;
 	url_w_query: string;
 	url_w_host: string;
+}
+
+// Define Priority type
+export interface TaskPriority {
+	color: string;
+	id: string;
+	orderindex: string;
+	priority: "urgent" | "high" | "normal" | "low";
+}
+
+// Define TypeConfig interface based on common field types
+export interface CustomFieldTypeConfig {
+	default?: number | string | boolean;
+	options?: Array<{
+		id: string;
+		name: string;
+		color?: string;
+		orderindex?: number;
+	}>;
+	currency?: string;
+	precision?: number;
+	tracking?: {
+		subtasks?: boolean;
+		checklists?: boolean;
+		assigned_comments?: boolean;
+	};
 }
