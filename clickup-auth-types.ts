@@ -7,7 +7,7 @@ export interface ClickUpOAuthConfig {
 	redirectUri: string;
 	state?: string; // Optional state parameter for auth flow
 	code?: string; // Optional code for token exchange
-	responseType?: "code"; // OAuth response type
+	responseType: "code"; // Made required since it's always "code"
 }
 
 export interface ClickUpTokenResponse {
@@ -41,4 +41,12 @@ export interface TokenStorageResponse {
 export interface TokenStorageRequest {
 	code: string;
 	state: string;
+}
+
+// Add new interface for token exchange
+export interface TokenExchangeRequest {
+	client_id: string;
+	client_secret: string;
+	code: string;
+	redirect_uri: string;
 }

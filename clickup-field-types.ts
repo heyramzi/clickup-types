@@ -159,7 +159,7 @@ export interface ClickUpCustomFieldOption {
 
 // Add interface for list relationship type config
 export interface ListRelationshipTypeConfig {
-	fields: any[];
+	fields: ListRelationshipField[];
 	subcategory_id: string;
 	linked_subcategory_access: boolean;
 	subcategory_inverted_name: string;
