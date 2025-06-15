@@ -21,7 +21,7 @@ export enum HttpMethod {
 	PATCH = "PATCH",
 }
 
-// API Endpoints
+// API Endpoints - standardized as full path templates
 export enum Endpoint {
 	// Auth endpoints
 	OAUTH_TOKEN = "/oauth/token",
@@ -31,20 +31,35 @@ export enum Endpoint {
 
 	// Workspace endpoints
 	WORKSPACE = "/team",
-	SPACE = "/space",
-	FOLDER = "/folder",
-	LIST = "/list",
+	WORKSPACE_SPACES = "/team/{team_id}/space",
+	WORKSPACE_SHARED = "/team/{team_id}/shared",
+
+	// Space endpoints
+	SPACE_FOLDERS = "/space/{space_id}/folder",
+	SPACE_LISTS = "/space/{space_id}/list",
+
+	// Folder endpoints
+	FOLDER_LISTS = "/folder/{folder_id}/list",
+
+	// List endpoints
+	LIST_TASKS = "/list/{list_id}/task",
 
 	// Task endpoints
-	TASK = "/task",
-	TASKS = "/list/{list_id}/task",
-	COMMENT = "/comment",
-	ATTACHMENT = "/attachment",
+	TASK_COMMENTS = "/task/{task_id}/comment",
+	TASK_ATTACHMENTS = "/task/{task_id}/attachment",
 
-	// Shared hierarchy endpoints
-	SHARED_HIERARCHY = "/shared",
+	// Time tracking endpoints
 	TIME_ENTRIES = "/team/{team_id}/time_entries",
 }
+
+// Simple utility to create endpoints with parameters
+export const createEndpoint = (endpoint: Endpoint, params: Record<string, string> = {}): string => {
+	let url = endpoint as string;
+	for (const [key, value] of Object.entries(params)) {
+		url = url.replace(`{${key}}`, value);
+	}
+	return url;
+};
 
 // Centralized path builder for ClickUp API endpoints
 export const CLICKUP_PATH = {
