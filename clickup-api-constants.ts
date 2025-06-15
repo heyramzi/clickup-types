@@ -53,7 +53,10 @@ export enum Endpoint {
 }
 
 // Simple utility to create endpoints with parameters
-export const createEndpoint = (endpoint: Endpoint, params: Record<string, string> = {}): string => {
+export const createEndpoint = (
+	endpoint: Endpoint,
+	params: Record<string, string> = {},
+): string => {
 	let url = endpoint as string;
 	for (const [key, value] of Object.entries(params)) {
 		url = url.replace(`{${key}}`, value);

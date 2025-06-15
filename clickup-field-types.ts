@@ -30,7 +30,7 @@ export enum ClickUpFieldType {
 }
 
 // Define type configurations for different field types
-export type FieldTypeConfig = 
+export type FieldTypeConfig =
 	| { options: DropdownOption[] } // For dropdown fields
 	| { options: { id: string; label: string; color: string }[] } // For label fields
 	| { precision: number; currency_type: string; color: string } // For currency fields
