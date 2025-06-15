@@ -29,12 +29,23 @@ export enum ClickUpFieldType {
 	LIST_RELATIONSHIP = "list_relationship", // Add this new type
 }
 
+// Define type configurations for different field types
+export type FieldTypeConfig = 
+	| { options: DropdownOption[] } // For dropdown fields
+	| { options: { id: string; label: string; color: string }[] } // For label fields
+	| { precision: number; currency_type: string; color: string } // For currency fields
+	| { single_user: boolean; include_guests: boolean } // For user fields
+	| { code_point: string; hide_voters: boolean } // For vote fields
+	| ListRelationshipTypeConfig // For list relationship fields
+	| Record<string, never> // For fields with empty config like attachments
+	| Record<string, unknown>; // For other field types with unknown config
+
 // Custom Field Types
 export interface CustomField {
 	id: string;
 	name: string;
 	type: ClickUpFieldType;
-	type_config: any; // You could make this more specific with a union type if needed
+	type_config: FieldTypeConfig;
 	value?: unknown;
 }
 
