@@ -1,99 +1,103 @@
 //===============================================
-// CLICKUP SHARED HIERARCHY INTERFACES
+// CLICKUP HIERARCHY API TYPES
 //===============================================
+// Pure ClickUp API response types with ClickUp prefix for clarity
 
-// Add this enum before the shared hierarchy interfaces
 export enum ClickUpPermissionLevel {
-	FULL = "create",
-	EDIT = "edit",
-	COMMENT = "comment",
-	READ = "read",
-}
-//===============================================
-// CLICKUP WORKSPACES INTERFACES
-//===============================================
-
-// Represents a ClickUp workspace (team)
-export interface Workspace {
-	id: string;
-	name: string;
-	color: string;
-	avatar?: string | null;
-}
-
-// API response structure for workspaces
-export interface WorkspacesResponse {
-	teams: Workspace[];
-}
-
-export interface StoredWorkspace {
-	id: string;
-	name: string;
-	color: string;
-	avatar?: string | null;
-}
-//===============================================
-// CLICKUP SPACES INTERFACES
-//===============================================
-
-// Represents a ClickUp space within a workspace
-export interface Space {
-	id: string;
-	name: string;
-	//color: string;
-	// Add other relevant fields
-}
-
-// API response structure for spaces
-export interface SpaceResponse {
-	spaces: Space[];
+  FULL = 'create',
+  EDIT = 'edit',
+  COMMENT = 'comment',
+  READ = 'read',
 }
 
 //===============================================
-// CLICKUP FOLDERS INTERFACES
+// WORKSPACES (TEAMS)
 //===============================================
 
-// Represents a ClickUp folder, including nested lists
-export interface Folder {
-	id: string;
-	name: string;
-	lists: List[];
-	permission_level: ClickUpPermissionLevel;
+export interface ClickUpWorkspace {
+  id: string
+  name: string
+  color: string
+  avatar?: string | null
 }
 
-// API response structure for folders
-export interface FolderResponse {
-	folders: Folder[];
-}
-
-//===============================================
-// CLICKUP LISTS INTERFACES
-//===============================================
-
-// API response structure for lists
-export interface ListsResponse {
-	lists: List[];
-}
-
-// Interface for normalized list data
-export interface List {
-	id: string;
-	name: string;
-	status?: {
-		color: string;
-	};
-	space: { name: string };
-	folder?: { name: string };
-	permission_level: ClickUpPermissionLevel;
+export interface ClickUpWorkspacesResponse {
+  teams: ClickUpWorkspace[]
 }
 
 //===============================================
-// CLICKUP SHARED HIERARCHY INTERFACES
+// SPACES
 //===============================================
 
-export interface SharedHierarchyResponse {
-	shared: {
-		lists: List[];
-		folders: Folder[];
-	};
+export interface ClickUpSpace {
+  id: string
+  name: string
+  color?: string
+  private?: boolean
+}
+
+export interface ClickUpSpacesResponse {
+  spaces: ClickUpSpace[]
+}
+
+//===============================================
+// FOLDERS
+//===============================================
+
+export interface ClickUpFolder {
+  id: string
+  name: string
+  lists: ClickUpList[]
+  permission_level: ClickUpPermissionLevel
+}
+
+export interface ClickUpFoldersResponse {
+  folders: ClickUpFolder[]
+}
+
+//===============================================
+// LISTS
+//===============================================
+
+export interface ClickUpList {
+  id: string
+  name: string
+  status?: {
+    color: string
+  }
+  space: { name: string }
+  folder?: { name: string }
+  permission_level: ClickUpPermissionLevel
+}
+
+export interface ClickUpListsResponse {
+  lists: ClickUpList[]
+}
+
+//===============================================
+// SHARED HIERARCHY
+//===============================================
+
+export interface ClickUpSharedHierarchyResponse {
+  shared: {
+    lists: ClickUpList[]
+    folders: ClickUpFolder[]
+  }
+}
+
+//===============================================
+// USER
+//===============================================
+
+export interface ClickUpUser {
+  id: number
+  username: string
+  email: string
+  timezone?: string
+  color?: string
+  profilePicture?: string
+}
+
+export interface ClickUpUserResponse {
+  user: ClickUpUser
 }
