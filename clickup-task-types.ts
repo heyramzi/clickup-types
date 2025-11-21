@@ -11,10 +11,11 @@ export interface Task {
 	text_content: string;
 	description: string;
 	status: {
+		id: string;
 		status: string;
 		color: string;
 		type: string;
-		orderindex?: number;
+		orderindex: number;
 	};
 	date_created: string;
 	date_updated: string;
