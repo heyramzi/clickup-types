@@ -270,3 +270,157 @@ export interface ChatMessagesResponse {
   next_cursor: string;
   data: ChatMessage[];
 }
+
+//===============================================
+// CREATE MESSAGE TYPES
+//===============================================
+
+/**
+ * Content format for chat messages
+ * Reusing DescriptionFormat for consistency
+ */
+export type ContentFormat = DescriptionFormat;
+
+/**
+ * Reaction on a message (at creation time)
+ * Used when creating messages with initial reactions
+ */
+export interface MessageReaction {
+  // Define specific reaction fields as the API documents them
+  // Currently undocumented in API, using flexible structure
+  [key: string]: unknown;
+}
+
+/**
+ * Reaction data retrieved from the API
+ * Used in GET /api/v3/workspaces/{workspace_id}/chat/messages/{message_id}/reactions
+ */
+export interface MessageReactionData {
+  /** The date & time the reaction was created (Unix epoch milliseconds) */
+  date: number;
+
+  /** The reaction emoji/string */
+  reaction: string;
+
+  /** The ID of the user who created the reaction */
+  user_id: string;
+}
+
+/**
+ * Request body for creating a chat message
+ * POST /api/v3/workspaces/{workspace_id}/chat/channels/{channel_id}/messages
+ */
+export interface CreateChatMessageRequest {
+  /** Type of message - must be "message" */
+  type: MessageType.MESSAGE;
+
+  /** Full content of the message to be created (max 40000 chars) */
+  content: string;
+
+  /** Format of the message content (defaults to text/md) */
+  content_format?: ContentFormat;
+
+  /** User ID of the assignee */
+  assignee?: string;
+
+  /** Group assignee ID */
+  group_assignee?: string;
+
+  /** Triaged action applied to the message (1 or 2) */
+  triaged_action?: TriagedAction;
+
+  /** Message triaged action object ID */
+  triaged_object_id?: string;
+
+  /** Message triaged action object type */
+  triaged_object_type?: number;
+
+  /** Reactions to the message that exist at creation time (max 10) */
+  reactions?: MessageReaction[];
+
+  /** IDs of the followers of the message (max 10) */
+  followers?: string[];
+
+  /** Data of the post message */
+  post_data?: PostData;
+}
+
+/**
+ * Response for creating a message
+ */
+export interface CreateChatMessageResponse {
+  data: ChatMessage;
+}
+
+/**
+ * Request body for creating a reply message
+ * POST /api/v3/workspaces/{workspace_id}/chat/messages/{message_id}/replies
+ *
+ * Uses the same structure as CreateChatMessageRequest
+ */
+export type CreateReplyMessageRequest = CreateChatMessageRequest;
+
+/**
+ * Response for creating a reply message
+ */
+export interface CreateReplyMessageResponse {
+  data: ChatMessage;
+}
+
+/**
+ * Query parameters for retrieving message replies
+ * GET /api/v3/workspaces/{workspace_id}/chat/messages/{message_id}/replies
+ */
+export interface GetMessageRepliesParams {
+  /** Pagination cursor */
+  cursor?: string;
+
+  /** Maximum number of results to fetch (1-100, defaults to 50) */
+  limit?: number;
+
+  /** Format of the message content (defaults to text/md) */
+  content_format?: ContentFormat;
+}
+
+/**
+ * Response for message replies with pagination
+ */
+export interface MessageRepliesResponse {
+  next_cursor: string;
+  data: ChatMessage[];
+}
+
+/**
+ * Delete message operation
+ * DELETE /api/v3/workspaces/{workspace_id}/chat/messages/{message_id}
+ *
+ * Returns 204 No Content on success (no response body)
+ * Path params: workspace_id (number), message_id (string)
+ */
+
+//===============================================
+// MESSAGE REACTIONS
+//===============================================
+
+/**
+ * Query parameters for retrieving message reactions
+ * GET /api/v3/workspaces/{workspace_id}/chat/messages/{message_id}/reactions
+ */
+export interface GetMessageReactionsParams {
+  /** Pagination cursor */
+  cursor?: string;
+
+  /** Maximum number of results to fetch (1-100, defaults to 50) */
+  limit?: number;
+}
+
+/**
+ * Response for message reactions with pagination
+ */
+export interface MessageReactionsResponse {
+  /** Pagination cursor for the next page */
+  next_cursor: string;
+
+  /** Array of reaction data */
+  data: MessageReactionData[];
+}

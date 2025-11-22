@@ -27,4 +27,4 @@ export * from './clickup-time-types';
 export * from './clickup-chat-types';
 
 // Transformers (Flattened Task Types)
-export * from './clickup-transformers';
+export * from './clickup-task-transformers';
