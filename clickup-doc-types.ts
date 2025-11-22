@@ -21,6 +21,18 @@ export interface ClickUpDoc {
   type: number
 }
 
+// Search Docs query parameters
+export interface ClickUpSearchDocsParams {
+  id?: string
+  creator?: number
+  deleted?: boolean
+  archived?: boolean
+  parent_id?: string
+  parent_type?: string
+  limit?: number // 10-100, default 50
+  cursor?: string
+}
+
 // Documents list response
 export interface ClickUpDocsResponse {
   docs: ClickUpDoc[]
@@ -29,6 +41,17 @@ export interface ClickUpDocsResponse {
 
 // Single document response
 export interface ClickUpDocResponse extends ClickUpDoc {}
+
+// Create Doc request
+export interface ClickUpCreateDocRequest {
+  name: string
+  parent?: {
+    id: string
+    type: number
+  }
+  visibility?: 'PUBLIC' | 'PRIVATE' | number
+  create_page?: boolean // defaults to true
+}
 
 // Document Page Listing response
 export interface ClickUpDocPageListing {
