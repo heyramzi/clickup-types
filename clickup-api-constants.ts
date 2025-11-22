@@ -50,6 +50,13 @@ export enum Endpoint {
 
 	// Time tracking endpoints
 	TIME_ENTRIES = "/team/{team_id}/time_entries",
+
+	// v3 Chat API endpoints
+	CHAT_CHANNELS = "/chat/channels",
+	CHAT_CHANNEL = "/chat/channels/{channel_id}",
+	CHAT_CHANNEL_LOCATION = "/chat/channels/location",
+	CHAT_DIRECT_MESSAGE = "/chat/channels/direct_message",
+	CHAT_CHANNEL_MESSAGES = "/chat/channels/{channel_id}/messages",
 }
 
 // Simple utility to create endpoints with parameters
@@ -126,6 +133,23 @@ export const CLICKUP_ERROR_TYPE_MAP: Record<string, string> = {
 	ATTCH_: "ATTACHMENT", // Attachment handling errors
 	TIMEENTRY_: "TIME_TRACKING", // Time tracking related errors
 };
+
+// Specific error codes for common authentication and API failures
+export const CLICKUP_AUTH_ERROR_CODES = {
+	INVALID_TOKEN: "OAUTH_01_001",
+	TOKEN_EXPIRED: "OAUTH_01_002",
+	INVALID_GRANT: "OAUTH_02_001",
+	INSUFFICIENT_SCOPE: "OAUTH_03_001",
+	STORAGE_LIMIT_EXCEEDED: "GBUSED_005",
+	INVALID_STATUS: "CRTSK_001", // Task status error code
+	INVALID_FOLDER_ID: "INPUT_011", // Invalid folder ID error code
+	INVALID_ATTACHMENT_FORMAT: "ATTCH_045",
+	NO_DATA_FOUND: "NO_DATA", // Fictive error code, used to indicate if we get empty arrays
+} as const;
+
+// Type to ensure only valid auth error codes are used
+export type AuthErrorCode =
+	(typeof CLICKUP_AUTH_ERROR_CODES)[keyof typeof CLICKUP_AUTH_ERROR_CODES];
 
 // Query Parameters Types
 export interface GetTasksQueryParams {

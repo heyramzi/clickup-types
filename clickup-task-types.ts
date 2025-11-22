@@ -266,3 +266,164 @@ export interface CustomFieldTypeConfig {
 		assigned_comments?: boolean;
 	};
 }
+
+//===============================================
+// FLATTENED TASK INTERFACES
+//===============================================
+
+// Simplified custom field structure for UI consumption
+export interface FlattenedCustomField {
+	id: string;
+	name: string;
+	value: unknown; // Resolved value (dropdown shows option name, not index)
+}
+
+// Flattened task structure optimized for UI rendering
+// Transforms nested ClickUp API response into simple, flat structure
+export interface FlattenedTask {
+	id: string;
+	name: string;
+	description: string;
+	status: string; // Flattened from status.status
+	status_color: string; // Flattened from status.color
+	is_completed: boolean; // Computed from status === 'done'
+	creator_email: string; // Flattened from creator.email
+	assignee_names: string[]; // Array of assignee usernames
+	watcher_names: string[]; // Array of watcher usernames
+	list_id?: string; // Flattened from list.id
+	folder_id?: string; // Flattened from folder.id
+	space_id?: string; // Flattened from space.id
+	custom_fields: FlattenedCustomField[]; // Simplified custom fields
+	tags: string[]; // Array of tag names
+	due_date: string | null;
+	start_date: string | null;
+	date_created: string;
+	date_updated: string;
+	date_closed: string | null;
+	url: string;
+	priority: TaskPriority | null;
+	time_estimate: number | null;
+	time_spent: number | null;
+}
+
+//===============================================
+// TASK QUERY PARAMETERS
+//===============================================
+
+// Custom field filter operators
+export type CustomFieldOperator =
+	| '='
+	| '!='
+	| '>'
+	| '<'
+	| '>='
+	| '<='
+	| 'IS_EMPTY'
+	| 'IS_NOT_EMPTY'
+	| 'RANGE';
+
+// Custom field filter for advanced queries
+export interface CustomFieldFilter {
+	field_id: string;
+	operator: CustomFieldOperator;
+	value: string | number | boolean | [number, number]; // RANGE uses tuple
+}
+
+// Base parameters for task queries
+export interface BaseTaskParams {
+	archived?: boolean;
+	page?: number | 'all';
+	order_by?: string;
+	reverse?: boolean;
+	subtasks?: boolean;
+	statuses?: string[];
+	include_closed?: boolean;
+	assignees?: number[];
+	tags?: string[];
+	due_date_gt?: number;
+	due_date_lt?: number;
+	date_created_gt?: number;
+	date_created_lt?: number;
+	date_updated_gt?: number;
+	date_updated_lt?: number;
+	custom_fields?: CustomFieldFilter[];
+}
+
+// Parameters for fetching tasks from a specific list
+export interface GetTasksParams extends BaseTaskParams {
+	list_id: string; // Required
+}
+
+// Parameters for workspace-wide filtered task queries
+export interface GetFilteredTasksParams extends BaseTaskParams {
+	team_id: string; // Required
+	space_ids?: string[];
+	project_ids?: string[];
+	list_ids?: string[];
+}
+
+//===============================================
+// TASK MUTATION INTERFACES
+//===============================================
+
+// Data for creating a new task
+export interface CreateTaskData {
+	name: string; // Required
+	description?: string;
+	assignees?: number[];
+	tags?: string[];
+	status?: string;
+	priority?: TaskPriority;
+	due_date?: number;
+	start_date?: number;
+	time_estimate?: number;
+	custom_fields?: Array<{
+		id: string;
+		value: unknown;
+	}>;
+}
+
+// Data for updating an existing task
+export interface UpdateTaskData {
+	name?: string;
+	description?: string;
+	status?: string;
+	priority?: TaskPriority | null;
+	due_date?: number | null;
+	start_date?: number | null;
+	time_estimate?: number | null;
+	assignees?: {
+		add?: number[];
+		rem?: number[];
+	};
+	watchers?: {
+		add?: number[];
+		rem?: number[];
+	};
+}
+
+//===============================================
+// BATCH OPERATION TYPES
+//===============================================
+
+// Progress event types for batch operations
+export type BatchProgressEventType = 'batchStart' | 'batchComplete' | 'waiting' | 'complete';
+
+// Progress event for batch task creation
+export interface BatchProgressEvent {
+	type: BatchProgressEventType;
+	currentBatch?: number;
+	totalBatches?: number;
+	batchSize?: number;
+	completedTasks?: number;
+	totalTasks?: number;
+	waitTime?: number;
+}
+
+// Options for batch task creation
+export interface BatchCreateOptions {
+	batchSize?: number; // Default: 100
+	delayBetweenBatches?: number; // Default: 60000ms
+	verbose?: boolean;
+	onProgress?: (event: BatchProgressEvent) => void;
+}

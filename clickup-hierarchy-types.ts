@@ -85,19 +85,3 @@ export interface ClickUpSharedHierarchyResponse {
   }
 }
 
-//===============================================
-// USER
-//===============================================
-
-export interface ClickUpUser {
-  id: number
-  username: string
-  email: string
-  timezone?: string
-  color?: string
-  profilePicture?: string
-}
-
-export interface ClickUpUserResponse {
-  user: ClickUpUser
-}
