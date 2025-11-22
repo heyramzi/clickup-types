@@ -11,11 +11,11 @@ export interface Task {
 	text_content: string;
 	description: string;
 	status: {
-		id: string;
+		id?: string;
 		status: string;
 		color: string;
 		type: string;
-		orderindex: number;
+		orderindex?: number;
 	};
 	date_created: string;
 	date_updated: string;
@@ -265,45 +265,6 @@ export interface CustomFieldTypeConfig {
 		checklists?: boolean;
 		assigned_comments?: boolean;
 	};
-}
-
-//===============================================
-// FLATTENED TASK INTERFACES
-//===============================================
-
-// Simplified custom field structure for UI consumption
-export interface FlattenedCustomField {
-	id: string;
-	name: string;
-	value: unknown; // Resolved value (dropdown shows option name, not index)
-}
-
-// Flattened task structure optimized for UI rendering
-// Transforms nested ClickUp API response into simple, flat structure
-export interface FlattenedTask {
-	id: string;
-	name: string;
-	description: string;
-	status: string; // Flattened from status.status
-	status_color: string; // Flattened from status.color
-	is_completed: boolean; // Computed from status === 'done'
-	creator_email: string; // Flattened from creator.email
-	assignee_names: string[]; // Array of assignee usernames
-	watcher_names: string[]; // Array of watcher usernames
-	list_id?: string; // Flattened from list.id
-	folder_id?: string; // Flattened from folder.id
-	space_id?: string; // Flattened from space.id
-	custom_fields: FlattenedCustomField[]; // Simplified custom fields
-	tags: string[]; // Array of tag names
-	due_date: string | null;
-	start_date: string | null;
-	date_created: string;
-	date_updated: string;
-	date_closed: string | null;
-	url: string;
-	priority: TaskPriority | null;
-	time_estimate: number | null;
-	time_spent: number | null;
 }
 
 //===============================================
