@@ -26,5 +26,8 @@ export * from './clickup-time-types';
 // Chat & Channels Types
 export * from './clickup-chat-types';
 
+// Comment Types
+export * from './clickup-comment-types';
+
 // Transformers (Flattened Task Types)
 export * from './clickup-task-transformers';
