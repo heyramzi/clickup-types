@@ -3,16 +3,16 @@
 //===============================================
 // Types for ClickUp OAuth flow
 export interface ClickUpOAuthConfig {
-	clientId: string;
-	redirectUri: string;
-	state?: string; // Optional state parameter for auth flow
-	code?: string; // Optional code for token exchange
-	responseType: "code"; // Made required since it's always "code"
+	clientId: string
+	redirectUri: string
+	state?: string // Optional state parameter for auth flow
+	code?: string // Optional code for token exchange
+	responseType: 'code' // Made required since it's always "code"
 }
 
 export interface ClickUpTokenResponse {
-	access_token: string;
-	token_type: "Bearer";
+	access_token: string
+	token_type: 'Bearer'
 }
 
 //===============================================
@@ -20,33 +20,33 @@ export interface ClickUpTokenResponse {
 //===============================================
 
 export interface ClickUpUser {
-	id: number;
-	username: string;
-	email: string;
-	color: string;
-	profilePicture?: string;
-	timezone?: string;
+	id: number
+	username: string
+	email: string
+	color: string
+	profilePicture?: string
+	timezone?: string
 }
 
 export interface ClickUpUserResponse {
-	user: ClickUpUser;
+	user: ClickUpUser
 }
 
 export interface TokenStorageResponse {
-	success: boolean;
-	token: string;
-	error?: string;
+	success: boolean
+	token: string
+	error?: string
 }
 
 export interface TokenStorageRequest {
-	code: string;
-	state: string;
+	code: string
+	state: string
 }
 
 // Add new interface for token exchange
 export interface TokenExchangeRequest {
-	client_id: string;
-	client_secret: string;
-	code: string;
-	redirect_uri: string;
+	client_id: string
+	client_secret: string
+	code: string
+	redirect_uri: string
 }
