@@ -1,16 +1,23 @@
-// Time Entry Types
+/**
+ * Time Entry Types
+ * Philosophy: 簡潔 (Kanketsu - Simplicity)
+ * - Clear, type-safe interfaces for ClickUp time tracking
+ * - Matches ClickUp API v2 time entries endpoint
+ */
+
+// Create time entry parameters
 export interface CreateTimeEntryParams {
 	description: string
 	start: number // Start time in milliseconds
 	duration: number // Duration in milliseconds
-	billable?: boolean // Optional billable flag
-	tid?: string // Optional task ID
-	assignee?: number // Optional assignee user ID
-	tags?: string[] // Optional time tracking tags
+	billable?: boolean
+	tid?: string // Task ID
+	assignee?: number // User ID
+	tags?: string[]
 }
 
-// Response type for time entry creation/retrieval
-export interface TimeEntryResponse {
+// Individual time entry from ClickUp API
+export interface TimeEntry {
 	id: string
 	task?: {
 		id: string
@@ -18,7 +25,9 @@ export interface TimeEntryResponse {
 		status: {
 			status: string
 			color: string
+			type?: string
 		}
+		custom_id?: string
 	}
 	wid: string // Workspace ID
 	user: {
@@ -26,19 +35,28 @@ export interface TimeEntryResponse {
 		username: string
 		email: string
 		color: string
+		profilePicture?: string
 	}
 	billable: boolean
-	start: number
-	end: number
-	duration: number
+	start: string | number // Unix timestamp in milliseconds
+	end: string | number // Unix timestamp in milliseconds
+	duration: string | number // Duration in milliseconds (negative if running)
 	description: string
-	tags?: string[]
+	tags?: Array<{ name: string; tag_fg: string; tag_bg: string }>
 	source: string
-	at: string // Timestamp when the entry was created
+	at: string // ISO timestamp when entry was created
 	task_location?: {
-		list_id: string
-		folder_id: string
-		space_id: string
-		workspace_id: string
+		list_id: number
+		folder_id: number
+		space_id: number
 	}
+	task_url?: string
 }
+
+// API response wrapper for get time entries endpoint
+export interface GetTimeEntriesResponse {
+	data: TimeEntry[]
+}
+
+// Legacy alias for backward compatibility
+export type TimeEntryResponse = TimeEntry

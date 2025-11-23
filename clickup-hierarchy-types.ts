@@ -25,6 +25,47 @@ export interface ClickUpWorkspacesResponse {
 	teams: ClickUpWorkspace[]
 }
 
+// Team member types
+export interface ClickUpTeamMember {
+	user: {
+		id: number
+		username: string
+		email: string
+		color: string
+		profilePicture?: string | null
+		initials: string
+		role: number // 1=owner, 2=admin, 3=member, 4=guest
+		role_subtype: number
+		role_key: 'owner' | 'admin' | 'member' | 'guest'
+		custom_role: string | null
+		date_joined: string | null
+		date_invited: string | null
+	}
+	invited_by?: {
+		id: number
+		username: string
+		color: string
+		email: string
+		initials: string
+		profilePicture: string | null
+	}
+	can_see_time_spent?: boolean
+	can_see_time_estimated?: boolean
+	can_see_points_estimated?: boolean
+	can_edit_tags?: boolean
+	can_create_views?: boolean
+}
+
+export interface ClickUpTeamResponse {
+	team: {
+		id: string
+		name: string
+		color: string
+		avatar: string | null
+		members: ClickUpTeamMember[]
+	}
+}
+
 //===============================================
 // SPACES
 //===============================================
