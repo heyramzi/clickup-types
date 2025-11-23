@@ -1,68 +1,51 @@
 # ClickUp Types
 
-Universal TypeScript types for ClickUp API integration. Shared across multiple projects.
+**Philosophy**: 純粋 (Junsui - Purity) - Pure TypeScript types reflecting ClickUp API responses
 
-## Contents
+## Overview
 
-### Core API Types
+Universal TypeScript types for ClickUp API integration. Shared across multiple projects (client-glance, upsys-app). Pure type definitions with no business logic, kept in sync with ClickUp API.
 
-- **clickup-api-constants.ts** - API endpoints, HTTP methods, error codes, base URLs
-- **clickup-auth-types.ts** - OAuth, authentication, user types
+## Structure
 
-### Hierarchy Types
+**Core API**:
+- `clickup-api-constants.ts` - Endpoints, HTTP methods, error codes
+- `clickup-auth-types.ts` - OAuth, authentication, users
 
-- **clickup-hierarchy-types.ts** - Workspaces, Spaces, Folders, Lists
+**Hierarchy**:
+- `clickup-hierarchy-types.ts` - Workspaces, Spaces, Folders, Lists
 
-### Resource Types
+**Resources**:
+- `clickup-task-types.ts` - Tasks, custom fields, comments, attachments
+- `clickup-field-types.ts` - Custom field definitions
+- `clickup-doc-types.ts` - ClickUp Docs
+- `clickup-time-types.ts` - Time tracking
 
-- **clickup-task-types.ts** - Tasks, custom fields, comments, attachments
-- **clickup-field-types.ts** - Custom field definitions
-- **clickup-doc-types.ts** - ClickUp Docs types
-- **clickup-time-types.ts** - Time tracking types
+**Communication**:
+- `clickup-chat-types.ts` - Chat channels, messages, DMs
 
-### Communication Types
-
-- **clickup-chat-types.ts** - Chat channels, messages, DMs
-
-### Transformation Types
-
-- **clickup-transformers.ts** - Flattened types for UI consumption
+**Transformations**:
+- `clickup-transformers.ts` - Flattened types for UI consumption
 
 ## Usage
 
 ```typescript
-// Import from the barrel export
-import { ClickUpWorkspace, ClickUpList, Task, FlattenedTask, ChatChannel } from './clickup-types'
+// Barrel export
+import { ClickUpWorkspace, ClickUpList, Task, FlattenedTask } from './clickup-types'
 
-// Or import specific files
+// Specific files
 import { FlattenedTask } from './clickup-types/clickup-transformers'
 ```
 
-## Philosophy
-
-These types reflect the actual ClickUp API responses:
-
-- **Pure types** - No business logic, just type definitions
-- **Reusable** - Shared across all ClickUp integration projects
-- **Up-to-date** - Kept in sync with ClickUp API changes
-- **DRY** - Single source of truth for ClickUp types
-
-## Projects Using These Types
-
-- client-glance
-- upsys-app
-- (Add your project here)
-
-## Contributing
-
-When updating types:
+### Contributing
 
 1. Ensure changes reflect actual ClickUp API behavior
-2. Update this README if adding new type files
-3. Test across all consuming projects before committing
+2. Update README if adding new type files
+3. Test across all consuming projects
 4. Keep transformers separate from core API types
 
-## ClickUp API Reference
+## Related
 
 - [ClickUp API v2 Docs](https://clickup.com/api)
 - [ClickUp API v3 Chat](https://clickup.com/api/v3)
+- `/lib/server/clickup/` - ClickUp service integration
