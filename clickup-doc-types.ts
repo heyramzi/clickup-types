@@ -39,9 +39,6 @@ export interface ClickUpDocsResponse {
 	next_cursor: string
 }
 
-// Single document response
-export interface ClickUpDocResponse extends ClickUpDoc {}
-
 // Create Doc request
 export interface ClickUpCreateDocRequest {
 	name: string
@@ -109,9 +106,6 @@ export interface ClickUpPage {
 
 // Document Pages array response
 export type ClickUpDocPagesResponse = ClickUpPage[]
-
-// Single page response
-export interface ClickUpPageResponse extends ClickUpPage {}
 
 // Page creation request
 export interface ClickUpCreatePageRequest {

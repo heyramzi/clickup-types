@@ -70,11 +70,24 @@ export interface ClickUpTeamResponse {
 // SPACES
 //===============================================
 
+export interface ClickUpSpaceFeatures {
+  due_dates: {
+    enabled: boolean
+    start_date: boolean
+    remap_due_dates: boolean
+    remap_closed_due_date: boolean
+  }
+  sprints: {
+    enabled: boolean
+  }
+}
+
 export interface ClickUpSpace {
 	id: string
 	name: string
 	color?: string
 	private?: boolean
+	features?: ClickUpSpaceFeatures
 }
 
 export interface ClickUpSpacesResponse {
@@ -88,8 +101,13 @@ export interface ClickUpSpacesResponse {
 export interface ClickUpFolder {
 	id: string
 	name: string
-	lists: ClickUpList[]
-	permission_level: ClickUpPermissionLevel
+	hidden?: boolean
+	lists?: ClickUpList[]
+	space?: {
+		id: string
+		name: string
+	}
+	permission_level?: ClickUpPermissionLevel
 }
 
 export interface ClickUpFoldersResponse {
