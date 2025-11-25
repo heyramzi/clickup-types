@@ -133,6 +133,11 @@ export type ApiResponse<T> = T | ClickUpApiError
 export interface ClickUpApiError {
 	err: string
 	ECODE: string
+	message?: string
+	meta?: {
+		failures?: Array<{ message: string; index: number }>
+		authorization_failures?: Array<{ message: string; index: number }>
+	}
 }
 
 //===============================================
