@@ -4,7 +4,7 @@
 // These types transform ClickUp API responses into simplified
 // UI-friendly structures. Reusable across all ClickUp projects.
 
-import type { ClickUpTask, ClickUpTasks, ClickUpTaskPriority } from './clickup-task-types'
+import type { ClickUpTaskPriority } from './clickup-task-types'
 
 //===============================================
 // FLATTENED TASK INTERFACES
