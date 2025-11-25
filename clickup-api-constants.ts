@@ -136,7 +136,15 @@ export interface ClickUpApiError {
 	message?: string
 	meta?: {
 		failures?: Array<{ message: string; index: number }>
-		authorization_failures?: Array<{ message: string; index: number }>
+		authorization_failures?: Array<{
+			message: string
+			index: number
+			object_type?: string
+			object_id?: string
+			workspace_id?: string
+			code?: string
+			invalid_permissions?: string[]
+		}>
 	}
 }
 
