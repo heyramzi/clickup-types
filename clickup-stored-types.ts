@@ -11,9 +11,9 @@ export interface ReducedWorkspace {
 	hasMembers: boolean
 }
 
-// Stored workspaces response
+// Stored workspaces response (teams to match ClickUp API structure)
 export interface StoredWorkspaces {
-	workspaces: ReducedWorkspace[]
+	teams: ReducedWorkspace[]
 }
 
 // Reduced space data for storage
