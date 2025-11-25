@@ -176,19 +176,6 @@ export interface ListRelationshipTypeConfig {
 	subcategory_inverted_name: string
 }
 
-// Update ListRelationshipItem interface
-export interface ListRelationshipItem {
-	id: string
-	name: string
-	status: string
-	color: string
-	custom_type: number | null
-	team_id: string
-	deleted: boolean
-	url: string
-	access: boolean
-}
-
 // Add ListRelationshipField interface
 export interface ListRelationshipField extends ClickUpCustomField {
 	type: ClickUpFieldType.LIST_RELATIONSHIP

@@ -1,9 +1,4 @@
-/**
- * Time Entry Types
- * Philosophy: 簡潔 (Kanketsu - Simplicity)
- * - Clear, type-safe interfaces for ClickUp time tracking
- * - Matches ClickUp API v2 time entries endpoint
- */
+// ClickUp time entry types - matches API v2 time entries endpoint
 
 // Create time entry parameters
 export interface CreateTimeEntryParams {
