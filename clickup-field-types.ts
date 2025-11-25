@@ -3,7 +3,7 @@
 //===============================================
 
 // Enum for defining ClickUp field types
-export enum ClickUpFieldType {
+export enum ClickUpCustomFieldType {
 	TEXT = 'text',
 	SHORT_TEXT = 'short_text',
 	URL = 'url',
@@ -26,7 +26,9 @@ export enum ClickUpFieldType {
 	LOCATION = 'location',
 	EMOJI = 'emoji',
 	VOTES = 'votes',
-	LIST_RELATIONSHIP = 'list_relationship' // Add this new type
+	LIST_RELATIONSHIP = 'list_relationship', // Add this new type
+	SIGNATURE = 'signature',
+	FORMULA = 'formula',
 }
 
 // Define type configurations for different field types
@@ -44,7 +46,7 @@ export type FieldTypeConfig =
 export interface ClickUpCustomField {
 	id: string
 	name: string
-	type: ClickUpFieldType
+	type: ClickUpCustomFieldType
 	type_config: FieldTypeConfig
 	value?: unknown
 }
@@ -64,7 +66,7 @@ export interface DropdownOption {
 
 // Use DropdownOption in DropdownField
 export interface DropdownField extends ClickUpCustomField {
-	type: ClickUpFieldType.DROPDOWN
+	type: ClickUpCustomFieldType.DROPDOWN
 	type_config: {
 		options: DropdownOption[]
 	}
@@ -72,7 +74,7 @@ export interface DropdownField extends ClickUpCustomField {
 }
 
 export interface LabelField extends ClickUpCustomField {
-	type: ClickUpFieldType.LABELS
+	type: ClickUpCustomFieldType.LABELS
 	type_config: {
 		options: {
 			id: string
@@ -84,7 +86,7 @@ export interface LabelField extends ClickUpCustomField {
 }
 
 export interface CurrencyField extends ClickUpCustomField {
-	type: ClickUpFieldType.CURRENCY
+	type: ClickUpCustomFieldType.CURRENCY
 	type_config: {
 		precision: number
 		currency_type: string
@@ -94,7 +96,7 @@ export interface CurrencyField extends ClickUpCustomField {
 }
 
 export interface UserField extends ClickUpCustomField {
-	type: ClickUpFieldType.USERS
+	type: ClickUpCustomFieldType.USERS
 	type_config: {
 		single_user: boolean
 		include_guests: boolean
@@ -111,7 +113,7 @@ export interface UserField extends ClickUpCustomField {
 
 // Add or update the VoteField type if not already defined
 export interface VoteField extends ClickUpCustomField {
-	type: ClickUpFieldType.VOTES
+	type: ClickUpCustomFieldType.VOTES
 	type_config: {
 		code_point: string
 		hide_voters: boolean
@@ -121,7 +123,7 @@ export interface VoteField extends ClickUpCustomField {
 
 // Add the LocationField type if not already defined
 export interface LocationField extends ClickUpCustomField {
-	type: ClickUpFieldType.LOCATION
+	type: ClickUpCustomFieldType.LOCATION
 	value: {
 		place_id: string
 		formatted_address: string
@@ -134,7 +136,7 @@ export interface LocationField extends ClickUpCustomField {
 
 // Add the TaskField type if not already defined
 export interface TaskField extends ClickUpCustomField {
-	type: ClickUpFieldType.TASKS
+	type: ClickUpCustomFieldType.TASKS
 	value: Array<{
 		id: string
 		name: string
@@ -178,14 +180,14 @@ export interface ListRelationshipTypeConfig {
 
 // Add ListRelationshipField interface
 export interface ListRelationshipField extends ClickUpCustomField {
-	type: ClickUpFieldType.LIST_RELATIONSHIP
+	type: ClickUpCustomFieldType.LIST_RELATIONSHIP
 	type_config: ListRelationshipTypeConfig
 	value?: ListRelationshipItem[]
 }
 
 // Add the AttachmentField interface
 export interface AttachmentField extends ClickUpCustomField {
-	type: ClickUpFieldType.ATTACHMENT
+	type: ClickUpCustomFieldType.ATTACHMENT
 	type_config: Record<string, never> // Empty object type since type_config is {}
 	value?: Array<{
 		title: string
