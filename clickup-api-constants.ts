@@ -37,6 +37,7 @@ export const ENDPOINT = {
 	VIEW: "/view",
 	OAUTH: "/oauth/token",
 	SHARED: "/shared",
+	WEBHOOK: "/webhook",
 } as const;
 
 // Type for valid endpoint paths
