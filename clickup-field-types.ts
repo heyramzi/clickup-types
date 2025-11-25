@@ -41,7 +41,7 @@ export type FieldTypeConfig =
 	| Record<string, unknown> // For other field types with unknown config
 
 // Custom Field Types
-export interface CustomField {
+export interface ClickUpCustomField {
 	id: string
 	name: string
 	type: ClickUpFieldType
@@ -50,8 +50,8 @@ export interface CustomField {
 }
 
 // Custom Field Response
-export interface CustomFieldResponse {
-	fields: CustomField[]
+export interface ClickUpCustomFieldResponse {
+	fields: ClickUpCustomField[]
 }
 
 // Define the option type first
@@ -63,7 +63,7 @@ export interface DropdownOption {
 }
 
 // Use DropdownOption in DropdownField
-export interface DropdownField extends CustomField {
+export interface DropdownField extends ClickUpCustomField {
 	type: ClickUpFieldType.DROPDOWN
 	type_config: {
 		options: DropdownOption[]
@@ -71,7 +71,7 @@ export interface DropdownField extends CustomField {
 	value?: number
 }
 
-export interface LabelField extends CustomField {
+export interface LabelField extends ClickUpCustomField {
 	type: ClickUpFieldType.LABELS
 	type_config: {
 		options: {
@@ -83,7 +83,7 @@ export interface LabelField extends CustomField {
 	value?: string[]
 }
 
-export interface CurrencyField extends CustomField {
+export interface CurrencyField extends ClickUpCustomField {
 	type: ClickUpFieldType.CURRENCY
 	type_config: {
 		precision: number
@@ -93,7 +93,7 @@ export interface CurrencyField extends CustomField {
 	value?: number
 }
 
-export interface UserField extends CustomField {
+export interface UserField extends ClickUpCustomField {
 	type: ClickUpFieldType.USERS
 	type_config: {
 		single_user: boolean
@@ -110,7 +110,7 @@ export interface UserField extends CustomField {
 }
 
 // Add or update the VoteField type if not already defined
-export interface VoteField extends CustomField {
+export interface VoteField extends ClickUpCustomField {
 	type: ClickUpFieldType.VOTES
 	type_config: {
 		code_point: string
@@ -120,7 +120,7 @@ export interface VoteField extends CustomField {
 }
 
 // Add the LocationField type if not already defined
-export interface LocationField extends CustomField {
+export interface LocationField extends ClickUpCustomField {
 	type: ClickUpFieldType.LOCATION
 	value: {
 		place_id: string
@@ -133,7 +133,7 @@ export interface LocationField extends CustomField {
 }
 
 // Add the TaskField type if not already defined
-export interface TaskField extends CustomField {
+export interface TaskField extends ClickUpCustomField {
 	type: ClickUpFieldType.TASKS
 	value: Array<{
 		id: string
@@ -190,14 +190,14 @@ export interface ListRelationshipItem {
 }
 
 // Add ListRelationshipField interface
-export interface ListRelationshipField extends CustomField {
+export interface ListRelationshipField extends ClickUpCustomField {
 	type: ClickUpFieldType.LIST_RELATIONSHIP
 	type_config: ListRelationshipTypeConfig
 	value?: ListRelationshipItem[]
 }
 
 // Add the AttachmentField interface
-export interface AttachmentField extends CustomField {
+export interface AttachmentField extends ClickUpCustomField {
 	type: ClickUpFieldType.ATTACHMENT
 	type_config: Record<string, never> // Empty object type since type_config is {}
 	value?: Array<{

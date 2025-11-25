@@ -4,7 +4,7 @@
 // These types transform ClickUp API responses into simplified
 // UI-friendly structures. Reusable across all ClickUp projects.
 
-import type { Task, Tasks, TaskPriority } from './clickup-task-types'
+import type { ClickUpTask, ClickUpTasks, ClickUpTaskPriority } from './clickup-task-types'
 
 //===============================================
 // FLATTENED TASK INTERFACES
@@ -48,7 +48,7 @@ export interface FlattenedTask {
 	date_updated: string
 	date_closed: string | null
 	url: string
-	priority: TaskPriority | null
+	priority: ClickUpTaskPriority | null
 	time_estimate: number | null
 	time_spent: number | null
 }

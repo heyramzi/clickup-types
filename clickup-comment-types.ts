@@ -6,7 +6,7 @@
  * ClickUp Task Comment
  * Represents a comment on a task
  */
-export interface TaskComment {
+export interface ClickUpTaskComment {
 	id: string
 	comment: Array<{
 		text: string
@@ -42,6 +42,6 @@ export interface TaskComment {
 /**
  * Get Task Comments Response
  */
-export interface GetTaskCommentsResponse {
-	comments: TaskComment[]
+export interface ClickUpTaskCommentsResponse {
+	comments: ClickUpTaskComment[]
 }

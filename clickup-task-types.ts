@@ -2,8 +2,28 @@
 // CLICKUP TASKS BASE INTERFACES
 //===============================================
 
+// Custom field as embedded in task.custom_fields (different from ClickUpCustomField API type)
+export interface ClickUpTaskCustomField {
+	id: string
+	name: string
+	type: string
+	type_config?: {
+		options?: Array<{
+			id?: string
+			name?: string
+			label?: string
+			orderindex?: number
+			color?: string
+		}>
+	}
+	date_created?: string
+	hide_from_guests?: boolean
+	value?: unknown
+	required?: boolean
+}
+
 // Base interface for common task properties
-export interface Task {
+export interface ClickUpTask {
 	id: string
 	custom_id: string | null
 	custom_item_id: number | null
@@ -44,23 +64,12 @@ export interface Task {
 		creator: number
 	}>
 	parent: string | null
-	priority: TaskPriority | null
+	priority: ClickUpTaskPriority | null
 	due_date: string | null
 	start_date: string | null
 	points: null | number
 	time_estimate: number | null
-	custom_fields:
-		| Array<{
-				id: string
-				name: string
-				type: string
-				type_config: CustomFieldTypeConfig
-				date_created: string
-				hide_from_guests: boolean
-				value?: unknown
-				required: boolean
-		  }>
-		| Record<string, unknown>
+	custom_fields: ClickUpTaskCustomField[] | Record<string, unknown>
 	url: string
 	markdown_description?: string
 	orderindex?: string
@@ -124,8 +133,8 @@ export interface Task {
 		  }>
 }
 
-// Update existing Tasks interface to extend BaseTask
-export interface Tasks extends Task {
+// Extended task interface with additional fields
+export interface ClickUpTasks extends ClickUpTask {
 	watchers: Array<{
 		id: number
 		username: string | null
@@ -147,8 +156,8 @@ export interface Tasks extends Task {
 }
 
 // Interface for task response from API
-export interface TasksResponse {
-	tasks: Tasks[]
+export interface ClickUpTasksResponse {
+	tasks: ClickUpTasks[]
 	last_page: boolean
 }
 
@@ -163,12 +172,12 @@ interface LastPageCheckResult {
 	// Result of last page check
 	exceededLimit: boolean
 	shouldContinueSync: boolean
-	tasks?: TasksResponse['tasks']
+	tasks?: ClickUpTasksResponse['tasks']
 }
 
 interface TaskBatchResult {
 	// Result of tasks batch fetch
-	tasks: Tasks[]
+	tasks: ClickUpTasks[]
 	hasMore: boolean
 }
 
@@ -251,7 +260,7 @@ export interface AttachmentResponse {
 }
 
 // Define Priority type
-export interface TaskPriority {
+export interface ClickUpTaskPriority {
 	color: string
 	id: string
 	orderindex: string
@@ -343,7 +352,7 @@ export interface CreateTaskData {
 	assignees?: number[]
 	tags?: string[]
 	status?: string
-	priority?: TaskPriority
+	priority?: ClickUpTaskPriority
 	due_date?: number
 	start_date?: number
 	time_estimate?: number
@@ -358,7 +367,7 @@ export interface UpdateTaskData {
 	name?: string
 	description?: string
 	status?: string
-	priority?: TaskPriority | null
+	priority?: ClickUpTaskPriority | null
 	due_date?: number | null
 	start_date?: number | null
 	time_estimate?: number | null
