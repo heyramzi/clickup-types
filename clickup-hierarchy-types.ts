@@ -14,11 +14,28 @@ export enum ClickUpPermissionLevel {
 // WORKSPACES (TEAMS)
 //===============================================
 
+export interface ClickUpWorkspaceMember {
+  user: {
+    id: number
+    username: string
+    email: string
+    color: string
+    profilePicture?: string | null
+    initials?: string
+    role?: number
+    custom_role?: number | null
+    last_active?: string
+    date_joined?: string
+    date_invited?: string
+  }
+}
+
 export interface ClickUpWorkspace {
 	id: string
 	name: string
 	color: string
 	avatar?: string | null
+	members?: ClickUpWorkspaceMember[]
 }
 
 export interface ClickUpWorkspacesResponse {

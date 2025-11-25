@@ -29,5 +29,11 @@ export * from './clickup-chat-types'
 // Comment Types
 export * from './clickup-comment-types'
 
+// View Types
+export * from './clickup-view-types';
+
+// Stored/Reduced Types (for caching)
+export * from './clickup-stored-types';
+
 // Transformers (Flattened Task Types)
 export * from './clickup-task-transformers'

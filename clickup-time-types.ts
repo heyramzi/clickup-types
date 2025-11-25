@@ -48,10 +48,24 @@ export interface TimeEntry {
 	task_url?: string
 }
 
-// API response wrapper for get time entries endpoint
-export interface GetTimeEntriesResponse {
-	data: TimeEntry[]
+//===============================================
+// TIME ENTRIES API TYPES
+//===============================================
+
+// Query parameters for fetching time entries
+export interface TimeEntriesQueryParams {
+	workspace_id: string
+	start_date?: number
+	end_date?: number
+	assignee?: string
+	include_location_names?: boolean
+	is_billable?: boolean
+	space_id?: string
+	folder_id?: string
+	list_id?: string
 }
 
-// Legacy alias for backward compatibility
-export type TimeEntryResponse = TimeEntry
+// Response containing multiple time entries
+export interface TimeEntriesResponse {
+	data: TimeEntry[]
+}

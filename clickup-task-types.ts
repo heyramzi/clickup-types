@@ -406,3 +406,45 @@ export interface BatchCreateOptions {
 	verbose?: boolean
 	onProgress?: (event: BatchProgressEvent) => void
 }
+
+//===============================================
+// BACKWARD COMPATIBLE ALIASES
+//===============================================
+
+// Single task response alias (for API responses returning one task)
+export type TaskResponse = Tasks
+
+// Priority mapping for task updates
+export const PRIORITY_MAP: Record<string, number | null> = {
+	urgent: 1,
+	high: 2,
+	normal: 3,
+	low: 4,
+	none: null,
+}
+
+//===============================================
+// TASK UPDATE TYPES (for two-way sync)
+//===============================================
+
+// Data structure for syncing task updates to ClickUp
+export interface SyncTaskData {
+	taskId?: string
+	listId?: string
+	name?: string
+	description?: string
+	status?: string
+	priority?: number | null
+	due_date?: number | null
+	start_date?: number | null
+	time_estimate?: number | null
+	assignees?: { add?: number[]; rem?: number[] }
+	custom_fields?: Array<{ id: string; value: unknown }>
+}
+
+// Payload for batch custom field updates
+export interface CustomFieldBatchUpdatePayload {
+	taskId: string
+	fieldId: string
+	value: unknown
+}

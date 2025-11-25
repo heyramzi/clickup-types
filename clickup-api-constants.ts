@@ -12,6 +12,10 @@ export enum ClickUpApiUrl {
 	AUTH = 'https://app.clickup.com/api'
 }
 
+// Convenience constants for common URL access
+export const CLICKUP_API_URL = ClickUpApiUrl.V2;
+export const CLICKUP_AUTH_URL = ClickUpApiUrl.AUTH;
+
 // HTTP Methods supported by the ClickUp API
 export enum HttpMethod {
 	GET = 'GET',
@@ -20,6 +24,26 @@ export enum HttpMethod {
 	DELETE = 'DELETE',
 	PATCH = 'PATCH'
 }
+
+// Simple endpoint fragments for building API URLs (legacy pattern)
+export const ENDPOINT = {
+	WORKSPACE: "/team",
+	SPACE: "/space",
+	FOLDER: "/folder",
+	LIST: "/list",
+	TASK: "/task",
+	USER: "/user",
+	TIME: "/time_entries",
+	VIEW: "/view",
+	OAUTH: "/oauth/token",
+	SHARED: "/shared",
+} as const;
+
+// Type for valid endpoint paths
+export type ClickUpEndpoint = `/${string}`;
+
+// Generic endpoint builder type alias
+export type BuildEndpoint<T extends string = string> = `/${T}`;
 
 // API Endpoints - standardized as full path templates
 export enum Endpoint {
@@ -162,4 +186,17 @@ export interface GetTasksQueryParams {
 	date_updated_gt?: number
 	date_updated_lt?: number
 	[key: string]: string | number | boolean | string[] | undefined
+}
+
+// Alias for backward compatibility
+export const ERROR_TYPE_MAP = CLICKUP_ERROR_TYPE_MAP;
+
+// Type guard to check if a response is a ClickUp API error
+export function isClickUpError(response: unknown): response is ClickUpApiError {
+	return (
+		typeof response === "object" &&
+		response !== null &&
+		"err" in response &&
+		"ECODE" in response
+	);
 }
