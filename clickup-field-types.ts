@@ -192,10 +192,3 @@ export interface AttachmentField extends ClickUpCustomField {
 		url_w_query: string
 	}>
 }
-
-//===============================================
-// BACKWARD COMPATIBLE ALIASES
-//===============================================
-
-// Legacy alias for ClickUpFieldType
-export const ClickUpCustomFieldType = ClickUpFieldType;
