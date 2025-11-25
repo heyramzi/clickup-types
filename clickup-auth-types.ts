@@ -4,10 +4,11 @@
 // Types for ClickUp OAuth flow
 export interface ClickUpOAuthConfig {
 	clientId: string
+	clientSecret?: string // Required for token exchange (server-side only)
 	redirectUri: string
 	state?: string // Optional state parameter for auth flow
 	code?: string // Optional code for token exchange
-	responseType: 'code' // Made required since it's always "code"
+	responseType?: 'code' // Always "code" for authorization URL
 }
 
 export interface ClickUpTokenResponse {

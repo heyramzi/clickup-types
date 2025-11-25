@@ -74,6 +74,15 @@ export interface Task {
 	space?: {
 		id: string
 	}
+	team_id?: string
+	watchers?: Array<{
+		id: number
+		username: string | null
+		color: string | null
+		initials?: string
+		email?: string
+		profilePicture?: string | null
+	}>
 	checklists:
 		| {
 				id: string
