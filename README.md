@@ -149,5 +149,4 @@ import {
 
 ## Related
 
-- [ClickUp API v2 Documentation](https://clickup.com/api)
-- [ClickUp API v3 Chat Documentation](https://clickup.com/api/v3)
+- [ClickUp API Documentation](https://developer.clickup.com/reference)
