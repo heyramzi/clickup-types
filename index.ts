@@ -1,12 +1,12 @@
 /**
- * ClickUp Utils - Universal ClickUp Integration
+ * ClickUp Utils
  *
- * Types + Services for ClickUp API integration across projects.
- * Import only what you need - types, core, or framework-specific services.
+ * Universal types and services for ClickUp API integration.
+ * Import directly from subfolders for framework-specific code.
  */
 
 //===============================================
-// TYPES - Re-export all type definitions
+// TYPES
 //===============================================
 
 export * from './types/clickup-api-constants'
@@ -22,7 +22,7 @@ export * from './types/clickup-view-types'
 export * from './types/clickup-task-transformers'
 
 //===============================================
-// CORE - Framework-agnostic OAuth protocol
+// CORE - Framework-agnostic
 //===============================================
 
 export {
@@ -33,23 +33,9 @@ export {
 } from './core/oauth-protocol'
 
 //===============================================
-// SVELTEKIT - SvelteKit-specific services
+// Framework-specific services
+// Import directly from:
+//   - sveltekit/oauth.service
+//   - sveltekit/token.service
+//   - nextjs/oauth.service
 //===============================================
-
-export {
-	handleClickUpCallback as handleClickUpCallbackSvelteKit,
-	getClickUpAuthUrl as getClickUpAuthUrlSvelteKit,
-	type ClickUpOAuthConfig as ClickUpOAuthConfigSvelteKit,
-} from './sveltekit/oauth.service'
-
-export { ClickUpTokenStorage as ClickUpTokenStorageSvelteKit } from './sveltekit/token.service'
-
-//===============================================
-// NEXT.JS - Next.js-specific services
-//===============================================
-
-export {
-	handleClickUpCallback as handleClickUpCallbackNextJS,
-	getClickUpAuthUrl as getClickUpAuthUrlNextJS,
-	type ClickUpOAuthConfig as ClickUpOAuthConfigNextJS,
-} from './nextjs/oauth.service'
