@@ -115,3 +115,8 @@ export interface ClickUpCreatePageRequest {
 	content_format?: 'text/md' | 'text/plain'
 	parent_page_id?: string
 }
+
+// Page edit request (PUT endpoint)
+export interface ClickUpEditPageRequest extends ClickUpCreatePageRequest {
+	content_edit_mode?: 'replace' | 'append' | 'prepend'
+}
