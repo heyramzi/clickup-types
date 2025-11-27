@@ -202,9 +202,6 @@ export interface GetTasksQueryParams {
 	[key: string]: string | number | boolean | string[] | undefined
 }
 
-// Alias for backward compatibility
-export const ERROR_TYPE_MAP = CLICKUP_ERROR_TYPE_MAP;
-
 // Type guard to check if a response is a ClickUp API error
 export function isClickUpError(response: unknown): response is ClickUpApiError {
 	return (
