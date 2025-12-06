@@ -3,13 +3,13 @@
  * 簡潔 (Kanketsu - Simplicity)
  */
 
-import { exchangeCodeForToken, buildAuthUrl } from '../core/oauth-protocol'
-import type { NextRequest } from 'next/server'
+import type { NextRequest } from "next/server";
+import { buildAuthUrl, exchangeCodeForToken } from "../core/oauth-protocol";
 
 export interface ClickUpOAuthConfig {
-	clientId: string
-	clientSecret: string
-	onSuccess: (token: string) => Promise<void>
+	clientId: string;
+	clientSecret: string;
+	onSuccess: (token: string) => Promise<void>;
 }
 
 /**
@@ -29,24 +29,24 @@ export interface ClickUpOAuthConfig {
  */
 export async function handleClickUpCallback(
 	request: NextRequest,
-	config: ClickUpOAuthConfig
+	config: ClickUpOAuthConfig,
 ): Promise<string> {
-	const url = new URL(request.url)
-	const code = url.searchParams.get('code')
+	const url = new URL(request.url);
+	const code = url.searchParams.get("code");
 
 	if (!code) {
-		throw new Error('Missing authorization code')
+		throw new Error("Missing authorization code");
 	}
 
 	const token = await exchangeCodeForToken({
 		clientId: config.clientId,
 		clientSecret: config.clientSecret,
 		code,
-	})
+	});
 
-	await config.onSuccess(token)
+	await config.onSuccess(token);
 
-	return token
+	return token;
 }
 
 /**
@@ -64,11 +64,11 @@ export async function handleClickUpCallback(
 export function getClickUpAuthUrl(
 	clientId: string,
 	baseUrl: string,
-	state?: string
+	state?: string,
 ): string {
 	return buildAuthUrl({
 		clientId,
 		redirectUri: `${baseUrl}/api/clickup/callback`,
 		state,
-	})
+	});
 }

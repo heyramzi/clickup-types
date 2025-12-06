@@ -7,41 +7,41 @@
  * Represents a comment on a task
  */
 export interface ClickUpTaskComment {
-	id: string
+	id: string;
 	comment: Array<{
-		text: string
-	}>
-	comment_text: string
+		text: string;
+	}>;
+	comment_text: string;
 	user: {
-		id: number
-		username: string
-		email?: string
-		color: string
-		profilePicture: string
-	}
-	resolved: boolean
+		id: number;
+		username: string;
+		email?: string;
+		color: string;
+		profilePicture: string;
+	};
+	resolved: boolean;
 	assignee: {
-		id: number
-		username: string
-		email?: string
-		color: string
-		profilePicture: string
-	} | null
+		id: number;
+		username: string;
+		email?: string;
+		color: string;
+		profilePicture: string;
+	} | null;
 	assigned_by: {
-		id: number
-		username: string
-		email?: string
-		color: string
-		profilePicture: string
-	} | null
-	reactions: string[]
-	date: string
-	reply_count: string
+		id: number;
+		username: string;
+		email?: string;
+		color: string;
+		profilePicture: string;
+	} | null;
+	reactions: string[];
+	date: string;
+	reply_count: string;
 }
 
 /**
  * Get Task Comments Response
  */
 export interface ClickUpTaskCommentsResponse {
-	comments: ClickUpTaskComment[]
+	comments: ClickUpTaskComment[];
 }
