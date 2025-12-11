@@ -50,33 +50,35 @@ export interface ClickUpCreateDocRequest {
 	create_page?: boolean; // defaults to true
 }
 
-// Document Page Listing response
+// Document Page Listing item (lightweight - from page_listing endpoint)
+// Recursive structure: pages can contain nested pages
 export interface ClickUpDocPageListing {
 	id: string;
 	doc_id: string;
 	workspace_id: number;
 	name: string;
-	pages?: Partial<ClickUpPage>[];
+	parent_page_id?: string; // Present for nested pages
+	pages?: ClickUpDocPageListing[]; // Recursive nested pages
 }
 
-// Document Page Listing array response
+// Document Page Listing array response (top-level response from page_listing endpoint)
 export type ClickUpDocPageListingResponse = ClickUpDocPageListing[];
 
-// Page Presentation Details
+// Page Presentation Details (all fields optional - API returns only what's set)
 export interface ClickUpPagePresentationDetails {
-	font: string;
-	line_height: number;
-	page_width: number;
-	show_author_header: boolean;
-	show_contributor_header: boolean;
-	show_cover_header: boolean;
-	show_date_header: boolean;
-	show_page_outline: boolean;
-	show_sub_pages: boolean;
-	sub_page_size: string;
-	show_sub_title_header: boolean;
-	show_title_icon_header: boolean;
-	font_size: number;
+	font?: string;
+	line_height?: number;
+	page_width?: number;
+	show_author_header?: boolean;
+	show_contributor_header?: boolean;
+	show_cover_header?: boolean;
+	show_date_header?: boolean;
+	show_page_outline?: boolean;
+	show_sub_pages?: boolean;
+	sub_page_size?: string;
+	show_sub_title_header?: boolean;
+	show_title_icon_header?: boolean;
+	font_size?: number;
 }
 
 // Document Page (ClickUp Docs v3 API response)
@@ -88,6 +90,8 @@ export interface ClickUpPage {
 	sub_title?: string;
 	date_created: number;
 	date_updated: number;
+	date_edited?: number; // When content was last edited
+	edited_by?: number; // User ID who last edited
 	content: string;
 	avatar?: {
 		value: string;
@@ -95,11 +99,13 @@ export interface ClickUpPage {
 	creator_id: number;
 	deleted: boolean;
 	archived: boolean;
+	date_archived?: number; // When page was archived (if archived)
+	archived_by?: number; // User ID who archived (if archived)
 	cover?: {
 		image_url: string;
 	};
 	protected: boolean;
-	presentation_details: ClickUpPagePresentationDetails;
+	presentation_details?: ClickUpPagePresentationDetails;
 	pages?: ClickUpPage[]; // Recursive - pages can contain sub-pages
 	parent_page_id?: string;
 }
