@@ -33,6 +33,59 @@ export {
 } from "./core/oauth-protocol";
 
 //===============================================
+// TRANSFORMERS - Pure transformation functions
+//===============================================
+
+export {
+	// Single entity transformers
+	transformWorkspace,
+	transformSpace,
+	transformFolder,
+	transformList,
+	transformView,
+	transformUser,
+	// Batch transformers
+	transformWorkspaces,
+	transformSpaces,
+	transformFolders,
+	transformLists,
+	transformViews,
+	// Stored types
+	type StoredWorkspace,
+	type StoredSpace,
+	type StoredFolder,
+	type StoredList,
+	type StoredView,
+	type StoredUser,
+} from "./transformers/hierarchy-transformers";
+
+//===============================================
+// API - Pure fetch functions
+//===============================================
+
+export {
+	// User
+	getUser,
+	// Workspaces
+	getWorkspaces,
+	getTeam,
+	getTeamMembers,
+	// Spaces
+	getSpaces,
+	// Folders
+	getFolders,
+	// Lists
+	getFolderlessLists,
+	getLists,
+	getList,
+	// Shared
+	getSharedHierarchy,
+	// Convenience
+	getAllListsInSpace,
+	getFullHierarchy,
+} from "./api/hierarchy-api";
+
+//===============================================
 // Framework-specific services
 // Import directly from:
 //   - sveltekit/oauth.service
