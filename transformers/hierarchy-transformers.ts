@@ -100,7 +100,7 @@ export function transformFolder(
 	};
 
 	if (options?.includeLists && folder.lists) {
-		stored.lists = folder.lists.map(transformList);
+		stored.lists = folder.lists.map((list) => transformList(list));
 	}
 
 	return stored;
