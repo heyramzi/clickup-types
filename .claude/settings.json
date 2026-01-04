@@ -7,5 +7,44 @@
     "pr-review-toolkit@claude-code-plugins": true,
     "security-guidance@claude-code-plugins": true,
     "superpowers@superpowers-marketplace": true
+  },
+  "hooks": {
+    "Notification": [
+      {
+        "matcher": ".",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "osascript -e 'display notification \"Claude Code has finished\" with title \"Claude Code\" sound name \"Glass\"'"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "WebSearch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "YEAR=$(date +%Y); if [[ \"$CLAUDE_TOOL_INPUT\" != *\"$YEAR\"* && \"$CLAUDE_TOOL_INPUT\" != *\"latest\"* && \"$CLAUDE_TOOL_INPUT\" != *\"current\"* ]]; then echo \"Consider adding $YEAR to search for current results\"; fi"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|MultiEdit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "FILE=\"$CLAUDE_TOOL_FILE_PATH\"; if [[ \"$FILE\" == *.js || \"$FILE\" == *.ts || \"$FILE\" == *.jsx || \"$FILE\" == *.tsx || \"$FILE\" == *.json || \"$FILE\" == *.jsonc ]]; then if command -v biome &>/dev/null || [ -f \"$(dirname \"$FILE\")/biome.json\" ] || [ -f \"$(dirname \"$FILE\")/biome.jsonc\" ]; then npx @biomejs/biome check --write \"$FILE\" 2>/dev/null || true; elif command -v eslint &>/dev/null; then npx eslint \"$FILE\" --fix 2>/dev/null || true; fi; elif [[ \"$FILE\" == *.swift ]]; then if command -v swiftlint &>/dev/null; then swiftlint lint --fix \"$FILE\" 2>/dev/null || true; fi; elif [[ \"$FILE\" == *.py ]]; then if command -v pylint &>/dev/null; then pylint \"$FILE\" 2>/dev/null || true; fi; elif [[ \"$FILE\" == *.rb ]]; then if command -v rubocop &>/dev/null; then rubocop \"$FILE\" --autocorrect 2>/dev/null || true; fi; fi"
+          },
+          {
+            "type": "command",
+            "command": "FILE=\"$CLAUDE_TOOL_FILE_PATH\"; if [[ \"$FILE\" == *.md || \"$FILE\" == *.svelte || \"$FILE\" == *.vue || \"$FILE\" == *.html || \"$FILE\" == *.css || \"$FILE\" == *.scss ]]; then if command -v prettier &>/dev/null; then npx prettier --write \"$FILE\" 2>/dev/null || true; fi; fi"
+          }
+        ]
+      }
+    ]
   }
 }
