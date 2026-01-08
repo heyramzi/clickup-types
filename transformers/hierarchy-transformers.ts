@@ -67,7 +67,9 @@ export interface StoredUser {
 /**
  * Transform a ClickUp workspace to storage format
  */
-export function transformWorkspace(workspace: ClickUpWorkspace): StoredWorkspace {
+export function transformWorkspace(
+	workspace: ClickUpWorkspace,
+): StoredWorkspace {
 	return {
 		id: workspace.id,
 		name: workspace.name,
@@ -92,7 +94,7 @@ export function transformSpace(space: ClickUpSpace): StoredSpace {
  */
 export function transformFolder(
 	folder: ClickUpFolder,
-	options?: { includeLists?: boolean }
+	options?: { includeLists?: boolean },
 ): StoredFolder {
 	const stored: StoredFolder = {
 		id: folder.id,
@@ -112,7 +114,7 @@ export function transformFolder(
  */
 export function transformList(
 	list: ClickUpList,
-	context?: { spaceName?: string; folderName?: string }
+	context?: { spaceName?: string; folderName?: string },
 ): StoredList {
 	const stored: StoredList = {
 		id: list.id,
@@ -167,7 +169,9 @@ export function transformUser(response: ClickUpUserResponse): StoredUser {
 /**
  * Transform an array of workspaces
  */
-export function transformWorkspaces(workspaces: ClickUpWorkspace[]): StoredWorkspace[] {
+export function transformWorkspaces(
+	workspaces: ClickUpWorkspace[],
+): StoredWorkspace[] {
 	return workspaces.map(transformWorkspace);
 }
 
@@ -183,7 +187,7 @@ export function transformSpaces(spaces: ClickUpSpace[]): StoredSpace[] {
  */
 export function transformFolders(
 	folders: ClickUpFolder[],
-	options?: { includeLists?: boolean }
+	options?: { includeLists?: boolean },
 ): StoredFolder[] {
 	return folders.map((folder) => transformFolder(folder, options));
 }
@@ -193,7 +197,7 @@ export function transformFolders(
  */
 export function transformLists(
 	lists: ClickUpList[],
-	context?: { spaceName?: string; folderName?: string }
+	context?: { spaceName?: string; folderName?: string },
 ): StoredList[] {
 	return lists.map((list) => transformList(list, context));
 }
