@@ -33,7 +33,7 @@ const API_BASE = "https://api.clickup.com/api/v2";
 async function request<T>(
 	endpoint: string,
 	token: string,
-	options?: { archived?: boolean }
+	options?: { archived?: boolean },
 ): Promise<T> {
 	const url = new URL(`${API_BASE}${endpoint}`);
 
@@ -75,7 +75,9 @@ export async function getUser(token: string): Promise<ClickUpUserResponse> {
 /**
  * Get all workspaces (teams) the user has access to
  */
-export async function getWorkspaces(token: string): Promise<ClickUpWorkspace[]> {
+export async function getWorkspaces(
+	token: string,
+): Promise<ClickUpWorkspace[]> {
 	const response = await request<ClickUpWorkspacesResponse>("/team", token);
 	return response.teams;
 }
@@ -83,7 +85,10 @@ export async function getWorkspaces(token: string): Promise<ClickUpWorkspace[]> 
 /**
  * Get a specific team with members
  */
-export async function getTeam(token: string, teamId: string): Promise<ClickUpTeamResponse> {
+export async function getTeam(
+	token: string,
+	teamId: string,
+): Promise<ClickUpTeamResponse> {
 	return request<ClickUpTeamResponse>(`/team/${teamId}`, token);
 }
 
@@ -92,7 +97,7 @@ export async function getTeam(token: string, teamId: string): Promise<ClickUpTea
  */
 export async function getTeamMembers(
 	token: string,
-	teamId: string
+	teamId: string,
 ): Promise<ClickUpTeamMember[]> {
 	const response = await getTeam(token, teamId);
 	return response.team.members;
@@ -108,12 +113,12 @@ export async function getTeamMembers(
 export async function getSpaces(
 	token: string,
 	teamId: string,
-	options?: { archived?: boolean }
+	options?: { archived?: boolean },
 ): Promise<ClickUpSpace[]> {
 	const response = await request<ClickUpSpacesResponse>(
 		`/team/${teamId}/space`,
 		token,
-		{ archived: options?.archived ?? false }
+		{ archived: options?.archived ?? false },
 	);
 	return response.spaces;
 }
@@ -128,12 +133,12 @@ export async function getSpaces(
 export async function getFolders(
 	token: string,
 	spaceId: string,
-	options?: { archived?: boolean }
+	options?: { archived?: boolean },
 ): Promise<ClickUpFolder[]> {
 	const response = await request<ClickUpFoldersResponse>(
 		`/space/${spaceId}/folder`,
 		token,
-		{ archived: options?.archived ?? false }
+		{ archived: options?.archived ?? false },
 	);
 	return response.folders;
 }
@@ -148,12 +153,12 @@ export async function getFolders(
 export async function getFolderlessLists(
 	token: string,
 	spaceId: string,
-	options?: { archived?: boolean }
+	options?: { archived?: boolean },
 ): Promise<ClickUpList[]> {
 	const response = await request<ClickUpListsResponse>(
 		`/space/${spaceId}/list`,
 		token,
-		{ archived: options?.archived ?? false }
+		{ archived: options?.archived ?? false },
 	);
 	return response.lists;
 }
@@ -164,12 +169,12 @@ export async function getFolderlessLists(
 export async function getLists(
 	token: string,
 	folderId: string,
-	options?: { archived?: boolean }
+	options?: { archived?: boolean },
 ): Promise<ClickUpList[]> {
 	const response = await request<ClickUpListsResponse>(
 		`/folder/${folderId}/list`,
 		token,
-		{ archived: options?.archived ?? false }
+		{ archived: options?.archived ?? false },
 	);
 	return response.lists;
 }
@@ -177,7 +182,10 @@ export async function getLists(
 /**
  * Get a single list by ID
  */
-export async function getList(token: string, listId: string): Promise<ClickUpList> {
+export async function getList(
+	token: string,
+	listId: string,
+): Promise<ClickUpList> {
 	return request<ClickUpList>(`/list/${listId}`, token);
 }
 
@@ -191,9 +199,12 @@ export async function getList(token: string, listId: string): Promise<ClickUpLis
  */
 export async function getSharedHierarchy(
 	token: string,
-	teamId: string
+	teamId: string,
 ): Promise<ClickUpSharedHierarchyResponse> {
-	return request<ClickUpSharedHierarchyResponse>(`/team/${teamId}/shared`, token);
+	return request<ClickUpSharedHierarchyResponse>(
+		`/team/${teamId}/shared`,
+		token,
+	);
 }
 
 //===============================================
@@ -206,7 +217,7 @@ export async function getSharedHierarchy(
 export async function getAllListsInSpace(
 	token: string,
 	spaceId: string,
-	options?: { archived?: boolean }
+	options?: { archived?: boolean },
 ): Promise<ClickUpList[]> {
 	const [folders, folderlessLists] = await Promise.all([
 		getFolders(token, spaceId, options),
@@ -226,7 +237,7 @@ export async function getAllListsInSpace(
 export async function getFullHierarchy(
 	token: string,
 	teamId: string,
-	options?: { archived?: boolean }
+	options?: { archived?: boolean },
 ): Promise<{
 	spaces: Array<
 		ClickUpSpace & {
@@ -255,7 +266,7 @@ export async function getFullHierarchy(
 				folders: foldersWithLists,
 				folderlessLists,
 			};
-		})
+		}),
 	);
 
 	return { spaces: spacesWithHierarchy };
