@@ -8,14 +8,14 @@
  * Zero dependencies, zero side effects, framework-agnostic.
  */
 
+import type { ClickUpUserResponse } from "../types/clickup-auth-types";
 import type {
-	ClickUpWorkspace,
-	ClickUpSpace,
 	ClickUpFolder,
 	ClickUpList,
+	ClickUpSpace,
+	ClickUpWorkspace,
 } from "../types/clickup-hierarchy-types";
 import type { ClickUpView } from "../types/clickup-view-types";
-import type { ClickUpUserResponse } from "../types/clickup-auth-types";
 
 //===============================================
 // STORED TYPES

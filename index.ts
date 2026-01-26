@@ -37,26 +37,26 @@ export {
 //===============================================
 
 export {
-	// Single entity transformers
-	transformWorkspace,
-	transformSpace,
-	transformFolder,
-	transformList,
-	transformView,
-	transformUser,
-	// Batch transformers
-	transformWorkspaces,
-	transformSpaces,
-	transformFolders,
-	transformLists,
-	transformViews,
-	// Stored types
-	type StoredWorkspace,
-	type StoredSpace,
 	type StoredFolder,
 	type StoredList,
-	type StoredView,
+	type StoredSpace,
 	type StoredUser,
+	type StoredView,
+	// Stored types
+	type StoredWorkspace,
+	transformFolder,
+	transformFolders,
+	transformList,
+	transformLists,
+	transformSpace,
+	transformSpaces,
+	transformUser,
+	transformView,
+	transformViews,
+	// Single entity transformers
+	transformWorkspace,
+	// Batch transformers
+	transformWorkspaces,
 } from "./transformers/hierarchy-transformers";
 
 //===============================================
@@ -64,25 +64,25 @@ export {
 //===============================================
 
 export {
+	// Convenience
+	getAllListsInSpace,
+	// Lists
+	getFolderlessLists,
+	// Folders
+	getFolders,
+	getFullHierarchy,
+	getList,
+	getLists,
+	// Shared
+	getSharedHierarchy,
+	// Spaces
+	getSpaces,
+	getTeam,
+	getTeamMembers,
 	// User
 	getUser,
 	// Workspaces
 	getWorkspaces,
-	getTeam,
-	getTeamMembers,
-	// Spaces
-	getSpaces,
-	// Folders
-	getFolders,
-	// Lists
-	getFolderlessLists,
-	getLists,
-	getList,
-	// Shared
-	getSharedHierarchy,
-	// Convenience
-	getAllListsInSpace,
-	getFullHierarchy,
 } from "./api/hierarchy-api";
 
 //===============================================

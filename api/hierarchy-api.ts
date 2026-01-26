@@ -9,20 +9,20 @@
  * Error handling is left to the caller for maximum flexibility.
  */
 
+import type { ClickUpUserResponse } from "../types/clickup-auth-types";
 import type {
-	ClickUpWorkspace,
-	ClickUpSpace,
 	ClickUpFolder,
-	ClickUpList,
-	ClickUpWorkspacesResponse,
-	ClickUpSpacesResponse,
 	ClickUpFoldersResponse,
+	ClickUpList,
 	ClickUpListsResponse,
 	ClickUpSharedHierarchyResponse,
-	ClickUpTeamResponse,
+	ClickUpSpace,
+	ClickUpSpacesResponse,
 	ClickUpTeamMember,
+	ClickUpTeamResponse,
+	ClickUpWorkspace,
+	ClickUpWorkspacesResponse,
 } from "../types/clickup-hierarchy-types";
-import type { ClickUpUserResponse } from "../types/clickup-auth-types";
 
 const API_BASE = "https://api.clickup.com/api/v2";
 
