@@ -84,6 +84,18 @@ function schemaToType(schema, indent = "\t", context = {}) {
 }
 
 /**
+ * Check if ALL property names in an object schema look like runtime/example IDs
+ * rather than descriptive field names. Example IDs are short alphanumeric strings
+ * like "27075wz", "20bbn28" that appear in OpenAPI specs as example data.
+ */
+function looksLikeDynamicMap(props) {
+	const keys = Object.keys(props);
+	if (keys.length === 0) return false;
+	// All property names must be short alphanumeric strings (4-10 chars, lowercase)
+	return keys.every((key) => /^[a-z0-9]{4,10}$/.test(key));
+}
+
+/**
  * Convert an object schema to inline TypeScript type.
  */
 function objectToInlineType(schema, indent = "\t", context = {}) {
@@ -94,6 +106,13 @@ function objectToInlineType(schema, indent = "\t", context = {}) {
 			return `Record<string, ${valType}>`;
 		}
 		return "Record<string, unknown>";
+	}
+
+	// Detect dynamic maps where property names are example IDs (e.g. "27075wz")
+	if (looksLikeDynamicMap(props)) {
+		const firstValue = Object.values(props)[0];
+		const valueType = schemaToType(firstValue, indent, context);
+		return `Record<string, ${valueType}>`;
 	}
 
 	const required = new Set(schema.required || []);
@@ -120,6 +139,20 @@ function objectToInlineType(schema, indent = "\t", context = {}) {
 function safePropName(name) {
 	if (/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(name)) return name;
 	return `"${name}"`;
+}
+
+/**
+ * Emit a TypeScript type declaration for a schema.
+ * Uses `interface` when the schema produces an object literal `{...}`,
+ * and `type` alias otherwise (e.g. for Record<>, Array<>, unions).
+ */
+function emitTypeDecl(name, schema, exported = true) {
+	const typeStr = schemaToType(schema, "\t");
+	const prefix = exported ? "export " : "";
+	if (typeStr.startsWith("{")) {
+		return `${prefix}interface ${name} ${typeStr}`;
+	}
+	return `${prefix}type ${name} = ${typeStr};`;
 }
 
 /**
@@ -160,30 +193,36 @@ function generateGroupTypes(group) {
 			const typeName = `${baseName}Request`;
 			if (!generatedNames.has(typeName)) {
 				generatedNames.add(typeName);
-				const schema = endpoint.requestBody.schema;
-				if (schema.properties) {
-					lines.push(`export interface ${typeName} ${objectToInlineType(schema, "\t")}\n`);
-				} else {
-					const typeStr = schemaToType(schema, "\t");
-					lines.push(`export type ${typeName} = ${typeStr};\n`);
-				}
+				lines.push(`${emitTypeDecl(typeName, endpoint.requestBody.schema)}\n`);
 			}
 		}
 
-		// Response types (2xx)
-		for (const [code, resp] of Object.entries(endpoint.responses)) {
-			if (!resp.schema) continue;
-
-			const suffix = Object.keys(endpoint.responses).length > 1 ? `${code}Response` : "Response";
-			const typeName = `${baseName}${suffix === "Response" ? "Response" : suffix}`;
+		// Response types (2xx) — unified into a single {OperationId}Response
+		const successEntries = Object.entries(endpoint.responses).filter(([, resp]) => resp.schema);
+		if (successEntries.length > 0) {
+			const typeName = `${baseName}Response`;
 			if (!generatedNames.has(typeName)) {
 				generatedNames.add(typeName);
-				const schema = resp.schema;
-				if (schema.properties) {
-					lines.push(`export interface ${typeName} ${objectToInlineType(schema, "\t")}\n`);
+
+				// Check if all success schemas are identical (by JSON comparison)
+				const schemasJson = successEntries.map(([, resp]) => JSON.stringify(resp.schema));
+				const allIdentical = schemasJson.every((s) => s === schemasJson[0]);
+
+				if (allIdentical || successEntries.length === 1) {
+					// Single schema or all identical — emit one type
+					lines.push(`${emitTypeDecl(typeName, successEntries[0][1].schema)}\n`);
 				} else {
-					const typeStr = schemaToType(schema, "\t");
-					lines.push(`export type ${typeName} = ${typeStr};\n`);
+					// Multiple distinct schemas — emit each as a private type, then union them
+					const memberNames = [];
+					for (const [code, resp] of successEntries) {
+						const memberName = `${baseName}${code}`;
+						memberNames.push(memberName);
+						if (!generatedNames.has(memberName)) {
+							generatedNames.add(memberName);
+							lines.push(`${emitTypeDecl(memberName, resp.schema, false)}\n`);
+						}
+					}
+					lines.push(`export type ${typeName} = ${memberNames.join(" | ")};\n`);
 				}
 			}
 		}

@@ -26,8 +26,12 @@ function resolveRef(spec, ref) {
 /**
  * Deep-resolves all $ref within a schema, inlining referenced schemas.
  * Tracks seen refs to avoid infinite recursion.
+ * @param {string} parentKey - The key under which this schema appears in its parent object.
+ *   Used to detect when a $ref to an array's /items is used as a property value
+ *   (not as an array's own items), indicating the spec should have referenced
+ *   the full array instead of just its item schema.
  */
-function deepResolveRefs(spec, schema, seen = new Set()) {
+function deepResolveRefs(spec, schema, seen = new Set(), parentKey = "") {
 	if (schema === null || schema === undefined || typeof schema !== "object") {
 		return schema;
 	}
@@ -40,7 +44,21 @@ function deepResolveRefs(spec, schema, seen = new Set()) {
 		seen.add(schema.$ref);
 		const resolved = resolveRef(spec, schema.$ref);
 		if (resolved) {
-			return deepResolveRefs(spec, structuredClone(resolved), seen);
+			const resolvedSchema = deepResolveRefs(spec, structuredClone(resolved), seen);
+
+			// Fix broken $refs that point to an array's /items instead of the array itself.
+			// Only apply when the $ref is NOT used as the "items" of an array schema
+			// (parentKey !== "items"), meaning the spec author intended to reference the
+			// full array but accidentally pointed to its item sub-schema.
+			if (schema.$ref.endsWith("/items") && parentKey !== "items") {
+				const parentRef = schema.$ref.slice(0, schema.$ref.lastIndexOf("/items"));
+				const parent = resolveRef(spec, parentRef);
+				if (parent && parent.type === "array") {
+					return { type: "array", items: resolvedSchema };
+				}
+			}
+
+			return resolvedSchema;
 		}
 		return { type: "unknown", description: `[Unresolved: ${schema.$ref}]` };
 	}
@@ -48,7 +66,7 @@ function deepResolveRefs(spec, schema, seen = new Set()) {
 	const result = Array.isArray(schema) ? [] : {};
 	for (const [key, value] of Object.entries(schema)) {
 		if (key === "$ref") continue;
-		result[key] = deepResolveRefs(spec, value, new Set(seen));
+		result[key] = deepResolveRefs(spec, value, new Set(seen), key);
 	}
 	return result;
 }
@@ -172,6 +190,23 @@ function parseOperation(spec, method, path, op, apiVersion) {
 }
 
 /**
+ * Map variant/alternate tag names to their canonical form.
+ * Prevents tiny groups from being created for tags that are
+ * essentially the same domain (e.g. "Chat (Experimental)" → "Chat").
+ */
+const TAG_ALIASES = {
+	"Chat (Experimental)": "Chat",
+	Acls: "Privacy and access",
+};
+
+/**
+ * Normalize a raw tag from the OpenAPI spec to its canonical form.
+ */
+function normalizeTag(rawTag) {
+	return TAG_ALIASES[rawTag] ?? rawTag;
+}
+
+/**
  * Parse both v2 and v3 specs into grouped, normalized structure.
  */
 export function parseSpecs({ v2, v3 }) {
@@ -194,7 +229,7 @@ export function parseSpecs({ v2, v3 }) {
 		for (const [method, op] of Object.entries(pathItem)) {
 			if (method === "parameters" || method === "summary" || method === "description") continue;
 
-			const tag = op.tags?.[0] || "Other";
+			const tag = normalizeTag(op.tags?.[0] || "Other");
 			const endpoint = parseOperation(v2, method, pathKey, op, "v2");
 			addToGroup(tag, endpoint);
 		}
@@ -205,7 +240,7 @@ export function parseSpecs({ v2, v3 }) {
 		for (const [method, op] of Object.entries(pathItem)) {
 			if (method === "parameters" || method === "summary" || method === "description") continue;
 
-			const tag = op.tags?.[0] || "Other";
+			const tag = normalizeTag(op.tags?.[0] || "Other");
 			const endpoint = parseOperation(v3, method, pathKey, op, "v3");
 			addToGroup(tag, endpoint);
 		}
