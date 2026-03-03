@@ -301,47 +301,48 @@ Complete endpoint documentation for ClickUp API v2 and v3.
 
 ## API v3 Endpoints
 
-### Access Control
+### Access Control (Privacy & Access)
 
 | Method | Endpoint | Description | Docs |
 |--------|----------|-------------|------|
-| PATCH | `/object/{object_id}/acl` | Update resource access permissions | [Link](https://developer.clickup.com/reference/publicpatchacl) |
+| PATCH | `/workspaces/{workspace_id}/{object_type}/{object_id}/acls` | Update privacy and access settings | [Link](https://developer.clickup.com/reference/publicpatchacl) |
 
 ### Audit Logs
 
 | Method | Endpoint | Description | Docs |
 |--------|----------|-------------|------|
-| POST | `/team/{team_id}/audit-logs` | Get workspace audit logs | [Link](https://developer.clickup.com/reference/queryauditlog) |
+| POST | `/workspaces/{workspace_id}/audit-logs` | Query workspace audit logs | [Link](https://developer.clickup.com/reference/queryauditlog) |
 
 ### Chat Channels
 
+All v3 chat endpoints require `/workspaces/{workspace_id}/chat/` prefix.
+
 | Method | Endpoint | Description | Docs |
 |--------|----------|-------------|------|
-| GET | `/channels` | List chat channels | [Link](https://developer.clickup.com/reference/getchatchannels) |
-| POST | `/channels` | Create chat channel | [Link](https://developer.clickup.com/reference/createchatchannel) |
-| POST | `/locations/{location_id}/channels` | Create channel in location | [Link](https://developer.clickup.com/reference/createlocationchatchannel) |
-| POST | `/direct-messages` | Create direct message channel | [Link](https://developer.clickup.com/reference/createdirectmessagechatchannel) |
-| GET | `/channels/{channel_id}` | Get channel details | [Link](https://developer.clickup.com/reference/getchatchannel) |
-| PATCH | `/channels/{channel_id}` | Update channel | [Link](https://developer.clickup.com/reference/updatechatchannel) |
-| DELETE | `/channels/{channel_id}` | Delete channel | [Link](https://developer.clickup.com/reference/deletechatchannel) |
-| GET | `/channels/{channel_id}/followers` | Get channel followers | [Link](https://developer.clickup.com/reference/getchatchannelfollowers) |
-| GET | `/channels/{channel_id}/members` | Get channel members | [Link](https://developer.clickup.com/reference/getchatchannelmembers) |
+| GET | `/workspaces/{workspace_id}/chat/channels` | List chat channels | [Link](https://developer.clickup.com/reference/getchatchannels) |
+| POST | `/workspaces/{workspace_id}/chat/channels` | Create chat channel | [Link](https://developer.clickup.com/reference/createchatchannel) |
+| POST | `/workspaces/{workspace_id}/chat/channels/location` | Create channel on space/folder/list | [Link](https://developer.clickup.com/reference/createlocationchatchannel) |
+| POST | `/workspaces/{workspace_id}/chat/channels/direct_message` | Create direct message channel | [Link](https://developer.clickup.com/reference/createdirectmessagechatchannel) |
+| GET | `/workspaces/{workspace_id}/chat/channels/{channel_id}` | Get channel details | [Link](https://developer.clickup.com/reference/getchatchannel) |
+| PATCH | `/workspaces/{workspace_id}/chat/channels/{channel_id}` | Update channel | [Link](https://developer.clickup.com/reference/updatechatchannel) |
+| DELETE | `/workspaces/{workspace_id}/chat/channels/{channel_id}` | Delete channel | [Link](https://developer.clickup.com/reference/deletechatchannel) |
+| GET | `/workspaces/{workspace_id}/chat/channels/{channel_id}/followers` | Get channel followers | [Link](https://developer.clickup.com/reference/getchatchannelfollowers) |
+| GET | `/workspaces/{workspace_id}/chat/channels/{channel_id}/members` | Get channel members | [Link](https://developer.clickup.com/reference/getchatchannelmembers) |
 
 ### Chat Messages
 
 | Method | Endpoint | Description | Docs |
 |--------|----------|-------------|------|
-| GET | `/channels/{channel_id}/messages` | Get channel messages | [Link](https://developer.clickup.com/reference/getChatmessages) |
-| POST | `/channels/{channel_id}/messages` | Send message | [Link](https://developer.clickup.com/reference/createchatmessage) |
-| PATCH | `/channels/{channel_id}/messages/{message_id}` | Update message | [Link](https://developer.clickup.com/reference/patchchatmessage) |
-| DELETE | `/channels/{channel_id}/messages/{message_id}` | Delete message | [Link](https://developer.clickup.com/reference/deletechatmessage) |
-| GET | `/channels/{channel_id}/messages/{message_id}/reactions` | Get message reactions | [Link](https://developer.clickup.com/reference/getchatmessagereactions) |
+| GET | `/workspaces/{workspace_id}/chat/channels/{channel_id}/messages` | Get channel messages | [Link](https://developer.clickup.com/reference/getChatmessages) |
+| POST | `/workspaces/{workspace_id}/chat/channels/{channel_id}/messages` | Send message | [Link](https://developer.clickup.com/reference/createchatmessage) |
+| PATCH | `/workspaces/{workspace_id}/chat/messages/{message_id}` | Update message | [Link](https://developer.clickup.com/reference/patchchatmessage) |
+| DELETE | `/workspaces/{workspace_id}/chat/messages/{message_id}` | Delete message | [Link](https://developer.clickup.com/reference/deletechatmessage) |
+| GET | `/workspaces/{workspace_id}/chat/messages/{message_id}/reactions` | Get message reactions | [Link](https://developer.clickup.com/reference/getchatmessagereactions) |
 | POST | `/workspaces/{workspace_id}/chat/messages/{message_id}/reactions` | Add reaction | [Link](https://developer.clickup.com/reference/createchatreaction) |
 | DELETE | `/workspaces/{workspace_id}/chat/messages/{message_id}/reactions/{reaction}` | Remove reaction | [Link](https://developer.clickup.com/reference/deletechatreaction) |
-| GET | `/channels/{channel_id}/messages/{message_id}/replies` | Get message replies | [Link](https://developer.clickup.com/reference/getchatmessagereplies) |
-| POST | `/channels/{channel_id}/messages/{message_id}/replies` | Reply to message | [Link](https://developer.clickup.com/reference/createreplymessage) |
-| GET | `/channels/{channel_id}/messages/{message_id}/tagged-users` | Get mentioned users | [Link](https://developer.clickup.com/reference/getchatmessagetaggedusers) |
-| GET | `/workspaces/{workspace_id}/comments/types/{comment_type}/subtypes` | Get message subtypes | [Link](https://developer.clickup.com/reference/getsubtypes) |
+| GET | `/workspaces/{workspace_id}/chat/messages/{message_id}/replies` | Get message replies | [Link](https://developer.clickup.com/reference/getchatmessagereplies) |
+| POST | `/workspaces/{workspace_id}/chat/messages/{message_id}/replies` | Reply to message | [Link](https://developer.clickup.com/reference/createreplymessage) |
+| GET | `/workspaces/{workspace_id}/chat/messages/{message_id}/tagged_users` | Get mentioned users | [Link](https://developer.clickup.com/reference/getchatmessagetaggedusers) |
 
 ### Docs
 
