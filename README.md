@@ -1,29 +1,30 @@
 # ClickUp Utils
 
 Universal TypeScript types and services for ClickUp API integration.
-Shared across multiple projects with framework-specific implementations.
+Shared across multiple projects as a git submodule with framework-specific implementations.
 
-## Overview
+## What's Inside
 
-**Included:**
-- Pure TypeScript types for ClickUp API v2 & v3
-- Framework-agnostic OAuth protocol functions
-- SvelteKit + Supabase integration
-- Next.js App Router integration (placeholder)
-
-**Not included:**
-- Business logic
-- Framework dependencies (peer dependencies only)
-- Opinionated abstractions
+- **Pure TypeScript types** for ClickUp API v2 & v3 (hand-written, battle-tested)
+- **Auto-generated SDK** from OpenAPI specs (types + API client for every endpoint)
+- **Framework-agnostic core** — OAuth protocol, hierarchy API, transformers
+- **Framework integrations** — SvelteKit + Supabase, Next.js (placeholder)
 
 ## Structure
 
 ```
 clickup-utils/
-├── types/          # Pure TypeScript types
-├── core/           # Framework-agnostic OAuth protocol
-├── sveltekit/      # SvelteKit + Supabase services
-└── nextjs/         # Next.js services (placeholder)
+├── index.ts              # Barrel export (types, core, transformers, API)
+├── types/                # Hand-written ClickUp API types (v2 & v3)
+├── core/                 # Framework-agnostic OAuth protocol
+├── api/                  # Pure fetch functions (hierarchy endpoints)
+├── transformers/         # API response → simplified storage format
+├── sveltekit/            # SvelteKit + Supabase OAuth & token storage
+├── nextjs/               # Next.js OAuth (placeholder)
+├── generated/            # Auto-generated SDK from OpenAPI specs (gitignored)
+│   ├── types/            # Generated types per API resource
+│   └── api/              # Generated fetch functions per API resource
+└── scripts/generate-sdk/ # OpenAPI → TypeScript generator
 ```
 
 ## Installation
@@ -39,7 +40,7 @@ git submodule add https://github.com/heyramzi/clickup-utils src/lib/types/clicku
 ### Types Only
 
 ```typescript
-import type { Task, ClickUpWorkspace, ClickUpList } from '$lib/types/clickup-utils'
+import type { Task, ClickUpWorkspace, ClickUpList } from 'clickup-utils'
 ```
 
 ### Core OAuth (Framework-Agnostic)
@@ -50,14 +51,30 @@ import { exchangeCodeForToken, buildAuthUrl } from 'clickup-utils/core/oauth-pro
 const token = await exchangeCodeForToken({
   clientId: 'your-client-id',
   clientSecret: 'your-secret',
-  code: 'auth-code'
+  code: 'auth-code',
 })
 
 const authUrl = buildAuthUrl({
   clientId: 'your-client-id',
   redirectUri: 'https://yourapp.com/api/clickup/callback',
-  state: 'csrf-token'
 })
+```
+
+### Hierarchy API
+
+```typescript
+import { getWorkspaces, getFullHierarchy } from 'clickup-utils/api/hierarchy-api'
+
+const workspaces = await getWorkspaces(token)
+const hierarchy = await getFullHierarchy(token, teamId)
+```
+
+### Transformers
+
+```typescript
+import { transformWorkspaces, transformLists } from 'clickup-utils/transformers/hierarchy-transformers'
+
+const stored = transformWorkspaces(apiWorkspaces) // → StoredWorkspace[]
 ```
 
 ### SvelteKit Integration
@@ -65,87 +82,42 @@ const authUrl = buildAuthUrl({
 ```typescript
 import { handleClickUpCallback } from 'clickup-utils/sveltekit/oauth.service'
 import { ClickUpTokenStorage } from 'clickup-utils/sveltekit/token.service'
-
-export const GET: RequestHandler = async (event) => {
-  await handleClickUpCallback(event, {
-    clientId: PUBLIC_CLICKUP_CLIENT_ID,
-    clientSecret: CLICKUP_CLIENT_SECRET,
-    onSuccess: async (token) => {
-      await ClickUpTokenStorage.save(
-        supabase,
-        organizationId,
-        token,
-        TokenEncryptionService
-      )
-    }
-  })
-
-  throw redirect(303, '/dashboard')
-}
 ```
 
 See [sveltekit/README.md](./sveltekit/README.md) for full examples.
 
-### Next.js Integration
+### Generated SDK (Full API Coverage)
 
 ```typescript
-import { handleClickUpCallback } from 'clickup-utils/nextjs/oauth.service'
-
-export async function GET(request: NextRequest) {
-  await handleClickUpCallback(request, {
-    clientId: process.env.CLICKUP_CLIENT_ID!,
-    clientSecret: process.env.CLICKUP_CLIENT_SECRET!,
-    onSuccess: async (token) => {
-      // Store token in your database
-    }
-  })
-
-  return NextResponse.redirect('/dashboard')
-}
+import { getTasks, createTask } from 'clickup-utils/generated/api/tasks.api'
+import type { GetTasksResponse } from 'clickup-utils/generated/types/tasks'
 ```
 
-See [nextjs/README.md](./nextjs/README.md) for full examples.
+Re-generate with: `node scripts/generate-sdk/index.mjs`
 
 ## Import Patterns
 
-### Direct imports (recommended)
+**Direct imports (recommended):**
 
 ```typescript
-// Types
 import type { Task } from 'clickup-utils/types/clickup-task-types'
-
-// Core
 import { exchangeCodeForToken } from 'clickup-utils/core/oauth-protocol'
-
-// SvelteKit
 import { handleClickUpCallback } from 'clickup-utils/sveltekit/oauth.service'
 ```
 
-### Barrel exports
+**Barrel exports:**
 
 ```typescript
-// All types available at root
 import type { Task, ClickUpWorkspace } from 'clickup-utils'
-
-// Framework services with suffix
-import {
-  handleClickUpCallbackSvelteKit,
-  ClickUpTokenStorageSvelteKit
-} from 'clickup-utils'
+import { getWorkspaces, transformLists } from 'clickup-utils'
 ```
 
 ## Contributing
 
-**Types:**
-- Reflect actual ClickUp API behavior
-- Test across all consuming projects
-- Keep transformers separate from core API types
-
-**Services:**
+- Types should reflect actual ClickUp API behavior
+- Test changes across all consuming projects
 - Keep framework-specific code in framework folders
-- Extract truly shared logic to `core/`
-- No abstractions for abstractions' sake
-- Provide clear usage examples
+- Extract shared logic to `core/`
 
 ## Related
 
