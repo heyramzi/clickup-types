@@ -62,12 +62,10 @@ export interface ChatView {
 }
 
 /**
- * Counts relevant to the user for a chat room
+ * Counts relevant to the user for a chat room.
+ * Rarely populated in API responses — exact fields undocumented.
  */
-export interface ChannelCounts {
-	// Define specific count fields as needed
-	[key: string]: number;
-}
+export type ChannelCounts = Record<string, number>;
 
 /**
  * Links to related channel resources
@@ -205,19 +203,18 @@ export enum MessageType {
 export type TriagedAction = 1 | 2;
 
 /**
- * Post message data
+ * Post message data. Used when message type is "post".
+ * Exact fields undocumented by ClickUp API.
  */
-export interface PostData {
-	// Define specific post data fields as needed
-	[key: string]: unknown;
-}
+export type PostData = Record<string, unknown>;
 
 /**
- * Links to message-related resources
+ * Links to message-related resources (API endpoint paths)
  */
 export interface MessageLinks {
-	// Define specific link fields as API provides them
-	[key: string]: string;
+	reactions: string;
+	replies: string;
+	tagged_users: string;
 }
 
 /**
@@ -277,14 +274,10 @@ export interface ChatMessagesResponse {
 export type ContentFormat = DescriptionFormat;
 
 /**
- * Reaction on a message (at creation time)
- * Used when creating messages with initial reactions
+ * Reaction on a message (at creation time).
+ * Exact create-time shape undocumented by ClickUp API.
  */
-export interface MessageReaction {
-	// Define specific reaction fields as the API documents them
-	// Currently undocumented in API, using flexible structure
-	[key: string]: unknown;
-}
+export type MessageReaction = Record<string, unknown>;
 
 /**
  * Reaction data retrieved from the API

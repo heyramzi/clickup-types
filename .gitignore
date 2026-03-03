@@ -3,3 +3,6 @@ generated/
 
 # Cached OpenAPI specs
 .claude/specs/
+
+# Environment variables
+.env
