@@ -1,6 +1,6 @@
-// ClickUp time entry types - matches API v2 time entries endpoint
-
-// Create time entry parameters
+//===============================================
+// CLICKUP TIME TRACKING TYPES
+//===============================================
 export interface CreateTimeEntryParams {
 	description: string;
 	start: number; // Start time in milliseconds

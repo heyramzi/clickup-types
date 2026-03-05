@@ -39,15 +39,3 @@ export interface TokenStorageResponse {
 	error?: string;
 }
 
-export interface TokenStorageRequest {
-	code: string;
-	state: string;
-}
-
-// Add new interface for token exchange
-export interface TokenExchangeRequest {
-	client_id: string;
-	client_secret: string;
-	code: string;
-	redirect_uri: string;
-}

@@ -26,7 +26,7 @@ export enum ClickUpCustomFieldType {
 	LOCATION = "location",
 	EMOJI = "emoji",
 	VOTES = "votes",
-	LIST_RELATIONSHIP = "list_relationship", // Add this new type
+	LIST_RELATIONSHIP = "list_relationship",
 	SIGNATURE = "signature",
 	FORMULA = "formula",
 }
@@ -111,7 +111,6 @@ export interface UserField extends ClickUpCustomField {
 	}>;
 }
 
-// Add or update the VoteField type if not already defined
 export interface VoteField extends ClickUpCustomField {
 	type: ClickUpCustomFieldType.VOTES;
 	type_config: {
@@ -121,7 +120,6 @@ export interface VoteField extends ClickUpCustomField {
 	value: number[];
 }
 
-// Add the LocationField type if not already defined
 export interface LocationField extends ClickUpCustomField {
 	type: ClickUpCustomFieldType.LOCATION;
 	value: {
@@ -134,7 +132,6 @@ export interface LocationField extends ClickUpCustomField {
 	};
 }
 
-// Add the TaskField type if not already defined
 export interface TaskField extends ClickUpCustomField {
 	type: ClickUpCustomFieldType.TASKS;
 	value: Array<{
@@ -150,7 +147,6 @@ export interface TaskField extends ClickUpCustomField {
 	}>;
 }
 
-// Add interface for list relationship value type (for better type safety)
 export interface ListRelationshipItem {
 	id: string;
 	name: string;
@@ -170,7 +166,6 @@ export interface ClickUpCustomFieldOption {
 	orderindex: number;
 }
 
-// Add interface for list relationship type config
 export interface ListRelationshipTypeConfig {
 	fields: ListRelationshipField[];
 	subcategory_id: string;
@@ -178,14 +173,12 @@ export interface ListRelationshipTypeConfig {
 	subcategory_inverted_name: string;
 }
 
-// Add ListRelationshipField interface
 export interface ListRelationshipField extends ClickUpCustomField {
 	type: ClickUpCustomFieldType.LIST_RELATIONSHIP;
 	type_config: ListRelationshipTypeConfig;
 	value?: ListRelationshipItem[];
 }
 
-// Add the AttachmentField interface
 export interface AttachmentField extends ClickUpCustomField {
 	type: ClickUpCustomFieldType.ATTACHMENT;
 	type_config: Record<string, never>; // Empty object type since type_config is {}

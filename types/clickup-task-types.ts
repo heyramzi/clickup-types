@@ -2,7 +2,10 @@
 // CLICKUP TASKS BASE INTERFACES
 //===============================================
 
-// Custom field as embedded in task.custom_fields (different from ClickUpCustomField API type)
+/**
+ * Custom field as embedded in task.custom_fields[].
+ * Different shape from the standalone ClickUpCustomField (used in field definitions).
+ */
 export interface ClickUpTaskCustomField {
 	id: string;
 	name: string;
@@ -22,7 +25,10 @@ export interface ClickUpTaskCustomField {
 	required?: boolean;
 }
 
-// Base interface for common task properties
+/**
+ * Base task from GET /list/{id}/task responses.
+ * Contains common fields present on all task objects.
+ */
 export interface ClickUpTask {
 	id: string;
 	custom_id: string | null;
@@ -133,7 +139,13 @@ export interface ClickUpTask {
 		  }>;
 }
 
-// Extended task interface with additional fields
+/**
+ * Extended task with relationship data (dependencies, linked tasks, watchers).
+ * Returned when fetching tasks with include_subtasks or from GET /task/{id}.
+ *
+ * NOTE: Named ClickUpTasks for historical reasons — represents a single task
+ * with extended fields, not a collection. Used in ClickUpTasksResponse.tasks[].
+ */
 export interface ClickUpTasks extends ClickUpTask {
 	watchers: Array<{
 		id: number;
@@ -155,7 +167,7 @@ export interface ClickUpTasks extends ClickUpTask {
 	}>;
 }
 
-// Interface for task response from API
+/** Paginated response from GET /list/{id}/task */
 export interface ClickUpTasksResponse {
 	tasks: ClickUpTasks[];
 	last_page: boolean;
@@ -234,7 +246,10 @@ export interface ClickUpTaskPriority {
 	priority: "urgent" | "high" | "normal" | "low";
 }
 
-// Define TypeConfig interface based on common field types
+/**
+ * Generic type_config shape covering common custom field types.
+ * For type-specific configs, use the narrower types in clickup-field-types.ts.
+ */
 export interface CustomFieldTypeConfig {
 	default?: number | string | boolean;
 	options?: Array<{
@@ -256,7 +271,7 @@ export interface CustomFieldTypeConfig {
 // TASK QUERY PARAMETERS
 //===============================================
 
-// Custom field filter operators
+/** Operators for custom_fields[] query filter */
 export type CustomFieldOperator =
 	| "="
 	| "!="
@@ -275,7 +290,7 @@ export interface CustomFieldFilter {
 	value: string | number | boolean | [number, number]; // RANGE uses tuple
 }
 
-// Base parameters for task queries
+/** Shared query parameters for task list and filtered task endpoints */
 export interface BaseTaskParams {
 	archived?: boolean;
 	page?: number | "all";

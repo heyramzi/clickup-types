@@ -43,6 +43,10 @@ export interface ClickUpWorkspacesResponse {
 }
 
 // Team member types
+/**
+ * Full team member with permissions and invite info.
+ * From GET /team/{id} (single workspace with members).
+ */
 export interface ClickUpTeamMember {
 	user: {
 		id: number;
@@ -135,6 +139,7 @@ export interface ClickUpFoldersResponse {
 // LISTS
 //===============================================
 
+/** Status definition within a list's statuses[] array */
 export interface ClickUpListStatus {
 	id: string;
 	status: string;
@@ -196,6 +201,10 @@ export interface ClickUpListsResponse {
 // CUSTOM ITEM TYPES (TASK TYPES)
 //===============================================
 
+/**
+ * Custom item type (task type) configured in a workspace.
+ * From GET /team/{id}/custom_item. Items with id=0 are default "Task" type.
+ */
 export interface ClickUpCustomItemType {
 	id: number;
 	name: string;

@@ -6,7 +6,7 @@
 import type { NextRequest } from "next/server";
 import { buildAuthUrl, exchangeCodeForToken } from "../core/oauth-protocol";
 
-export interface ClickUpOAuthConfig {
+export interface ClickUpOAuthCallbackConfig {
 	clientId: string;
 	clientSecret: string;
 	onSuccess: (token: string) => Promise<void>;
@@ -29,7 +29,7 @@ export interface ClickUpOAuthConfig {
  */
 export async function handleClickUpCallback(
 	request: NextRequest,
-	config: ClickUpOAuthConfig,
+	config: ClickUpOAuthCallbackConfig,
 ): Promise<string> {
 	const url = new URL(request.url);
 	const code = url.searchParams.get("code");

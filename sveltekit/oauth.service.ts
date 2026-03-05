@@ -6,7 +6,7 @@
 import type { RequestEvent } from "@sveltejs/kit";
 import { buildAuthUrl, exchangeCodeForToken } from "../core/oauth-protocol";
 
-export interface ClickUpOAuthConfig {
+export interface ClickUpOAuthCallbackConfig {
 	clientId: string;
 	clientSecret: string;
 	onSuccess: (token: string) => Promise<void>;
@@ -29,7 +29,7 @@ export interface ClickUpOAuthConfig {
  */
 export async function handleClickUpCallback(
 	event: RequestEvent,
-	config: ClickUpOAuthConfig,
+	config: ClickUpOAuthCallbackConfig,
 ): Promise<string> {
 	const code = event.url.searchParams.get("code");
 

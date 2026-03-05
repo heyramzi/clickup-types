@@ -25,27 +25,6 @@ export enum HttpMethod {
 	PATCH = "PATCH",
 }
 
-// Simple endpoint fragments for building API URLs (legacy pattern)
-export const ENDPOINT = {
-	WORKSPACE: "/team",
-	SPACE: "/space",
-	FOLDER: "/folder",
-	LIST: "/list",
-	TASK: "/task",
-	USER: "/user",
-	TIME: "/time_entries",
-	VIEW: "/view",
-	OAUTH: "/oauth/token",
-	SHARED: "/shared",
-	WEBHOOK: "/webhook",
-} as const;
-
-// Type for valid endpoint paths
-export type ClickUpEndpoint = `/${string}`;
-
-// Generic endpoint builder type alias
-export type BuildEndpoint<T extends string = string> = `/${T}`;
-
 // API Endpoints - standardized as full path templates
 export enum Endpoint {
 	// Auth endpoints
@@ -124,11 +103,6 @@ export interface ClickUpOAuthParams {
 	state: string;
 }
 
-export interface AuthTokenResponse {
-	access_token: string;
-	token_type: "Bearer";
-}
-
 // Union type to handle both successful responses and API errors
 export type ApiResponse<T> = T | ClickUpApiError;
 
@@ -188,23 +162,6 @@ export const CLICKUP_AUTH_ERROR_CODES = {
 // Type to ensure only valid auth error codes are used
 export type AuthErrorCode =
 	(typeof CLICKUP_AUTH_ERROR_CODES)[keyof typeof CLICKUP_AUTH_ERROR_CODES];
-
-// Query Parameters Types
-export interface GetTasksQueryParams {
-	page?: number;
-	order_by?: string;
-	reverse?: boolean;
-	subtasks?: boolean;
-	include_closed?: boolean;
-	assignees?: string[];
-	due_date_gt?: number;
-	due_date_lt?: number;
-	date_created_gt?: number;
-	date_created_lt?: number;
-	date_updated_gt?: number;
-	date_updated_lt?: number;
-	[key: string]: string | number | boolean | string[] | undefined;
-}
 
 // Type guard to check if a response is a ClickUp API error
 export function isClickUpError(response: unknown): response is ClickUpApiError {
