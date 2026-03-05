@@ -1,0 +1,29 @@
+{
+  "name": "@clickup-utils/cli",
+  "version": "0.1.0",
+  "description": "ClickUp CLI — manage workspaces, tasks, and more from the terminal",
+  "bin": {
+    "clickup": "./dist/bin/clickup.js",
+    "cu": "./dist/bin/clickup.js"
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "start": "node dist/bin/clickup.js"
+  },
+  "dependencies": {
+    "commander": "^14.0.0"
+  },
+  "devDependencies": {
+    "tsup": "^8.4.0",
+    "typescript": "^5.7.0",
+    "@types/node": "^22.0.0"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "files": [
+    "dist"
+  ]
+}

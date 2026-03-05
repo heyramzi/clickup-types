@@ -3,3 +3,7 @@ generated/
 
 # Cached OpenAPI specs
 .claude/specs/
+
+# CLI build artifacts and dependencies
+cli/node_modules/
+cli/dist/
