@@ -4,186 +4,186 @@
 
 // Enum for defining ClickUp field types
 export enum ClickUpCustomFieldType {
-	TEXT = "text",
-	SHORT_TEXT = "short_text",
-	URL = "url",
-	EMAIL = "email",
-	PHONE = "phone",
-	DROPDOWN = "drop_down",
-	DATE = "date",
-	TIMESTAMP = "timestamp",
-	NUMERIC = "numeric",
-	NUMBER = "number",
-	CURRENCY = "currency",
-	CHECKBOX = "checkbox",
-	LABELS = "labels",
-	USERS = "users",
-	TASKS = "tasks",
-	STATUS = "status",
-	ATTACHMENT = "attachment",
-	MANUAL_PROGRESS = "manual_progress",
-	AUTOMATIC_PROGRESS = "automatic_progress",
-	LOCATION = "location",
-	EMOJI = "emoji",
-	VOTES = "votes",
-	LIST_RELATIONSHIP = "list_relationship",
-	SIGNATURE = "signature",
-	FORMULA = "formula",
+  TEXT = "text",
+  SHORT_TEXT = "short_text",
+  URL = "url",
+  EMAIL = "email",
+  PHONE = "phone",
+  DROPDOWN = "drop_down",
+  DATE = "date",
+  TIMESTAMP = "timestamp",
+  NUMERIC = "numeric",
+  NUMBER = "number",
+  CURRENCY = "currency",
+  CHECKBOX = "checkbox",
+  LABELS = "labels",
+  USERS = "users",
+  TASKS = "tasks",
+  STATUS = "status",
+  ATTACHMENT = "attachment",
+  MANUAL_PROGRESS = "manual_progress",
+  AUTOMATIC_PROGRESS = "automatic_progress",
+  LOCATION = "location",
+  EMOJI = "emoji",
+  VOTES = "votes",
+  LIST_RELATIONSHIP = "list_relationship",
+  SIGNATURE = "signature",
+  FORMULA = "formula",
 }
 
 // Define type configurations for different field types
 export type FieldTypeConfig =
-	| { options: DropdownOption[] } // For dropdown fields
-	| { options: { id: string; label: string; color: string }[] } // For label fields
-	| { precision: number; currency_type: string; color: string } // For currency fields
-	| { single_user: boolean; include_guests: boolean } // For user fields
-	| { code_point: string; hide_voters: boolean } // For vote fields
-	| ListRelationshipTypeConfig // For list relationship fields
-	| Record<string, never> // For fields with empty config like attachments
-	| Record<string, unknown>; // For other field types with unknown config
+  | { options: DropdownOption[] } // For dropdown fields
+  | { options: { id: string; label: string; color: string }[] } // For label fields
+  | { precision: number; currency_type: string; color: string } // For currency fields
+  | { single_user: boolean; include_guests: boolean } // For user fields
+  | { code_point: string; hide_voters: boolean } // For vote fields
+  | ListRelationshipTypeConfig // For list relationship fields
+  | Record<string, never> // For fields with empty config like attachments
+  | Record<string, unknown>; // For other field types with unknown config
 
 // Custom Field Types
 export interface ClickUpCustomField {
-	id: string;
-	name: string;
-	type: ClickUpCustomFieldType;
-	type_config: FieldTypeConfig;
-	value?: unknown;
+  id: string;
+  name: string;
+  type: ClickUpCustomFieldType;
+  type_config: FieldTypeConfig;
+  value?: unknown;
 }
 
 // Custom Field Response
 export interface ClickUpCustomFieldResponse {
-	fields: ClickUpCustomField[];
+  fields: ClickUpCustomField[];
 }
 
 // Define the option type first
 export interface DropdownOption {
-	id: string;
-	name: string;
-	color: string | null;
-	orderindex: number;
+  id: string;
+  name: string;
+  color: string | null;
+  orderindex: number;
 }
 
 // Use DropdownOption in DropdownField
 export interface DropdownField extends ClickUpCustomField {
-	type: ClickUpCustomFieldType.DROPDOWN;
-	type_config: {
-		options: DropdownOption[];
-	};
-	value?: number;
+  type: ClickUpCustomFieldType.DROPDOWN;
+  type_config: {
+    options: DropdownOption[];
+  };
+  value?: number;
 }
 
 export interface LabelField extends ClickUpCustomField {
-	type: ClickUpCustomFieldType.LABELS;
-	type_config: {
-		options: {
-			id: string;
-			label: string;
-			color: string; //Hex Color Code
-		}[];
-	};
-	value?: string[];
+  type: ClickUpCustomFieldType.LABELS;
+  type_config: {
+    options: {
+      id: string;
+      label: string;
+      color: string; //Hex Color Code
+    }[];
+  };
+  value?: string[];
 }
 
 export interface CurrencyField extends ClickUpCustomField {
-	type: ClickUpCustomFieldType.CURRENCY;
-	type_config: {
-		precision: number;
-		currency_type: string;
-		color: string; //Hex Color Code
-	};
-	value?: number;
+  type: ClickUpCustomFieldType.CURRENCY;
+  type_config: {
+    precision: number;
+    currency_type: string;
+    color: string; //Hex Color Code
+  };
+  value?: number;
 }
 
 export interface UserField extends ClickUpCustomField {
-	type: ClickUpCustomFieldType.USERS;
-	type_config: {
-		single_user: boolean;
-		include_guests: boolean;
-	};
-	value?: Array<{
-		id: number;
-		username: string | null;
-		email: string;
-		color: string | null;
-		initials: string;
-		profilePicture: string | null;
-	}>;
+  type: ClickUpCustomFieldType.USERS;
+  type_config: {
+    single_user: boolean;
+    include_guests: boolean;
+  };
+  value?: Array<{
+    id: number;
+    username: string | null;
+    email: string;
+    color: string | null;
+    initials: string;
+    profilePicture: string | null;
+  }>;
 }
 
 export interface VoteField extends ClickUpCustomField {
-	type: ClickUpCustomFieldType.VOTES;
-	type_config: {
-		code_point: string;
-		hide_voters: boolean;
-	};
-	value: number[];
+  type: ClickUpCustomFieldType.VOTES;
+  type_config: {
+    code_point: string;
+    hide_voters: boolean;
+  };
+  value: number[];
 }
 
 export interface LocationField extends ClickUpCustomField {
-	type: ClickUpCustomFieldType.LOCATION;
-	value: {
-		place_id: string;
-		formatted_address: string;
-		location: {
-			lat: number;
-			lng: number;
-		};
-	};
+  type: ClickUpCustomFieldType.LOCATION;
+  value: {
+    place_id: string;
+    formatted_address: string;
+    location: {
+      lat: number;
+      lng: number;
+    };
+  };
 }
 
 export interface TaskField extends ClickUpCustomField {
-	type: ClickUpCustomFieldType.TASKS;
-	value: Array<{
-		id: string;
-		name: string;
-		status?: string;
-		url?: string;
-		custom_type?: number;
-		deleted?: boolean;
-		access?: boolean;
-		color?: string;
-		team_id?: string;
-	}>;
+  type: ClickUpCustomFieldType.TASKS;
+  value: Array<{
+    id: string;
+    name: string;
+    status?: string;
+    url?: string;
+    custom_type?: number;
+    deleted?: boolean;
+    access?: boolean;
+    color?: string;
+    team_id?: string;
+  }>;
 }
 
 export interface ListRelationshipItem {
-	id: string;
-	name: string;
-	status: string;
-	color: string;
-	custom_type: number | null;
-	team_id: string;
-	deleted: boolean;
-	url: string;
-	access: boolean;
+  id: string;
+  name: string;
+  status: string;
+  color: string;
+  custom_type: number | null;
+  team_id: string;
+  deleted: boolean;
+  url: string;
+  access: boolean;
 }
 
 export interface ClickUpCustomFieldOption {
-	id: string;
-	name: string;
-	color: string | null; // can be null
-	orderindex: number;
+  id: string;
+  name: string;
+  color: string | null; // can be null
+  orderindex: number;
 }
 
 export interface ListRelationshipTypeConfig {
-	fields: ListRelationshipField[];
-	subcategory_id: string;
-	linked_subcategory_access: boolean;
-	subcategory_inverted_name: string;
+  fields: ListRelationshipField[];
+  subcategory_id: string;
+  linked_subcategory_access: boolean;
+  subcategory_inverted_name: string;
 }
 
 export interface ListRelationshipField extends ClickUpCustomField {
-	type: ClickUpCustomFieldType.LIST_RELATIONSHIP;
-	type_config: ListRelationshipTypeConfig;
-	value?: ListRelationshipItem[];
+  type: ClickUpCustomFieldType.LIST_RELATIONSHIP;
+  type_config: ListRelationshipTypeConfig;
+  value?: ListRelationshipItem[];
 }
 
 export interface AttachmentField extends ClickUpCustomField {
-	type: ClickUpCustomFieldType.ATTACHMENT;
-	type_config: Record<string, never>; // Empty object type since type_config is {}
-	value?: Array<{
-		title: string;
-		url_w_query: string;
-	}>;
+  type: ClickUpCustomFieldType.ATTACHMENT;
+  type_config: Record<string, never>; // Empty object type since type_config is {}
+  value?: Array<{
+    title: string;
+    url_w_query: string;
+  }>;
 }

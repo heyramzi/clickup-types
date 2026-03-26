@@ -40,48 +40,51 @@ git submodule add https://github.com/heyramzi/clickup-utils src/lib/types/clicku
 ### Types Only
 
 ```typescript
-import type { Task, ClickUpWorkspace, ClickUpList } from 'clickup-utils'
+import type { Task, ClickUpWorkspace, ClickUpList } from "clickup-utils";
 ```
 
 ### Core OAuth (Framework-Agnostic)
 
 ```typescript
-import { exchangeCodeForToken, buildAuthUrl } from 'clickup-utils/core/oauth-protocol'
+import { exchangeCodeForToken, buildAuthUrl } from "clickup-utils/core/oauth-protocol";
 
 const token = await exchangeCodeForToken({
-  clientId: 'your-client-id',
-  clientSecret: 'your-secret',
-  code: 'auth-code',
-})
+  clientId: "your-client-id",
+  clientSecret: "your-secret",
+  code: "auth-code",
+});
 
 const authUrl = buildAuthUrl({
-  clientId: 'your-client-id',
-  redirectUri: 'https://yourapp.com/api/clickup/callback',
-})
+  clientId: "your-client-id",
+  redirectUri: "https://yourapp.com/api/clickup/callback",
+});
 ```
 
 ### Hierarchy API
 
 ```typescript
-import { getWorkspaces, getFullHierarchy } from 'clickup-utils/api/hierarchy-api'
+import { getWorkspaces, getFullHierarchy } from "clickup-utils/api/hierarchy-api";
 
-const workspaces = await getWorkspaces(token)
-const hierarchy = await getFullHierarchy(token, teamId)
+const workspaces = await getWorkspaces(token);
+const hierarchy = await getFullHierarchy(token, teamId);
 ```
 
 ### Transformers
 
 ```typescript
-import { transformWorkspaces, transformLists } from 'clickup-utils/transformers/hierarchy-transformers'
+import {
+  transformWorkspaces,
+  transformLists,
+} from "clickup-utils/transformers/hierarchy-transformers";
 
-const stored = transformWorkspaces(apiWorkspaces) // → StoredWorkspace[]
+const stored = transformWorkspaces(apiWorkspaces); // → StoredWorkspace[]
 ```
 
 ### SvelteKit Integration
 
 ```typescript
-import { handleClickUpCallback } from 'clickup-utils/sveltekit/oauth.service'
-import { ClickUpTokenStorage } from 'clickup-utils/sveltekit/token.service'
+import { handleClickUpCallback } from "clickup-utils/sveltekit/oauth.service";
+import { ClickUpTokenStorage } from "clickup-utils/sveltekit/token.service";
 ```
 
 See [sveltekit/README.md](./sveltekit/README.md) for full examples.
@@ -89,8 +92,8 @@ See [sveltekit/README.md](./sveltekit/README.md) for full examples.
 ### Generated SDK (Full API Coverage)
 
 ```typescript
-import { getTasks, createTask } from 'clickup-utils/generated/api/tasks.api'
-import type { GetTasksResponse } from 'clickup-utils/generated/types/tasks'
+import { getTasks, createTask } from "clickup-utils/generated/api/tasks.api";
+import type { GetTasksResponse } from "clickup-utils/generated/types/tasks";
 ```
 
 Re-generate with: `node scripts/generate-sdk/index.mjs`
@@ -100,16 +103,16 @@ Re-generate with: `node scripts/generate-sdk/index.mjs`
 **Direct imports (recommended):**
 
 ```typescript
-import type { Task } from 'clickup-utils/types/clickup-task-types'
-import { exchangeCodeForToken } from 'clickup-utils/core/oauth-protocol'
-import { handleClickUpCallback } from 'clickup-utils/sveltekit/oauth.service'
+import type { Task } from "clickup-utils/types/clickup-task-types";
+import { exchangeCodeForToken } from "clickup-utils/core/oauth-protocol";
+import { handleClickUpCallback } from "clickup-utils/sveltekit/oauth.service";
 ```
 
 **Barrel exports:**
 
 ```typescript
-import type { Task, ClickUpWorkspace } from 'clickup-utils'
-import { getWorkspaces, transformLists } from 'clickup-utils'
+import type { Task, ClickUpWorkspace } from "clickup-utils";
+import { getWorkspaces, transformLists } from "clickup-utils";
 ```
 
 ## Contributing

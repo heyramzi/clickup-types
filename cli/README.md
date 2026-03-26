@@ -45,49 +45,49 @@ Config is stored at `~/.config/clickup/config.json` with restrictive file permis
 
 ### Setup
 
-| Command | Description |
-|---|---|
-| `clickup init` | Interactive setup wizard |
+| Command          | Description                  |
+| ---------------- | ---------------------------- |
+| `clickup init`   | Interactive setup wizard     |
 | `clickup status` | Show auth and workspace info |
 
 ### Hierarchy Navigation
 
-| Command | Description |
-|---|---|
-| `clickup workspaces` | List all workspaces |
-| `clickup spaces` | List spaces in current workspace |
-| `clickup folders --space <id>` | List folders in a space |
-| `clickup lists --space <id>` | List all lists in a space |
-| `clickup lists --folder <id>` | List lists in a folder |
-| `clickup hierarchy` | Full tree view (spaces > folders > lists) |
+| Command                        | Description                               |
+| ------------------------------ | ----------------------------------------- |
+| `clickup workspaces`           | List all workspaces                       |
+| `clickup spaces`               | List spaces in current workspace          |
+| `clickup folders --space <id>` | List folders in a space                   |
+| `clickup lists --space <id>`   | List all lists in a space                 |
+| `clickup lists --folder <id>`  | List lists in a folder                    |
+| `clickup hierarchy`            | Full tree view (spaces > folders > lists) |
 
 ### Tasks
 
-| Command | Description |
-|---|---|
-| `clickup tasks --list <id>` | List tasks in a list |
-| `clickup tasks` | Workspace-wide task search |
-| `clickup task get <id>` | Full task details |
-| `clickup task create --list <id> --name "..."` | Create a task |
-| `clickup task update <id> --status "done"` | Update a task |
+| Command                                        | Description                |
+| ---------------------------------------------- | -------------------------- |
+| `clickup tasks --list <id>`                    | List tasks in a list       |
+| `clickup tasks`                                | Workspace-wide task search |
+| `clickup task get <id>`                        | Full task details          |
+| `clickup task create --list <id> --name "..."` | Create a task              |
+| `clickup task update <id> --status "done"`     | Update a task              |
 
 Task filters: `--assignee`, `--status`, `--closed`, `--subtasks`, `--page`
 
 ### Collaboration
 
-| Command | Description |
-|---|---|
-| `clickup members` | List team members |
-| `clickup comments list <taskId>` | List task comments |
-| `clickup comments add <taskId> --text "..."` | Add a comment |
+| Command                                      | Description        |
+| -------------------------------------------- | ------------------ |
+| `clickup members`                            | List team members  |
+| `clickup comments list <taskId>`             | List task comments |
+| `clickup comments add <taskId> --text "..."` | Add a comment      |
 
 ### Other
 
-| Command | Description |
-|---|---|
-| `clickup time` | List time entries |
-| `clickup tags --space <id>` | List space tags |
-| `clickup open <taskId>` | Open task in browser |
+| Command                     | Description          |
+| --------------------------- | -------------------- |
+| `clickup time`              | List time entries    |
+| `clickup tags --space <id>` | List space tags      |
+| `clickup open <taskId>`     | Open task in browser |
 
 ## Output Modes
 
@@ -109,11 +109,11 @@ clickup tasks --list 123 | jq '.tasks[].id'  # auto-JSON when piped
 
 ## Environment Variables
 
-| Variable | Description |
-|---|---|
-| `CU_API_TOKEN` | API token (overrides config file) |
-| `CU_TEAM_ID` | Workspace/team ID (overrides config file) |
-| `NO_COLOR` | Disable colors |
+| Variable       | Description                               |
+| -------------- | ----------------------------------------- |
+| `CU_API_TOKEN` | API token (overrides config file)         |
+| `CU_TEAM_ID`   | Workspace/team ID (overrides config file) |
+| `NO_COLOR`     | Disable colors                            |
 
 ## AI Agent Usage
 

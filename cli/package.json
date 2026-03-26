@@ -6,6 +6,9 @@
     "clickup": "./dist/bin/clickup.js",
     "cu": "./dist/bin/clickup.js"
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
@@ -16,14 +19,11 @@
     "commander": "^14.0.0"
   },
   "devDependencies": {
+    "@types/node": "^22.0.0",
     "tsup": "^8.4.0",
-    "typescript": "^5.7.0",
-    "@types/node": "^22.0.0"
+    "typescript": "^5.7.0"
   },
   "engines": {
     "node": ">=20"
-  },
-  "files": [
-    "dist"
-  ]
+  }
 }

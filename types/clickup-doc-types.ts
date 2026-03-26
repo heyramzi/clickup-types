@@ -25,39 +25,39 @@ export type ClickUpDocType = 1 | 2;
 
 /** Parent entity reference */
 export interface DocParent {
-	id: string;
-	type: DocParentType;
+  id: string;
+  type: DocParentType;
 }
 
 /** Page presentation/formatting details */
 export interface ClickUpPagePresentationDetails {
-	font?: string;
-	font_size?: number;
-	line_height?: number;
-	page_width?: number;
-	paragraph_spacing?: number;
-	show_author_header?: boolean;
-	show_contributor_header?: boolean;
-	show_cover_header?: boolean;
-	show_date_header?: boolean;
-	show_page_outline?: boolean;
-	show_sub_pages?: boolean;
-	sub_page_size?: string;
-	show_sub_title_header?: boolean;
-	show_title_icon_header?: boolean;
-	show_relationships?: boolean;
-	show_relationships_compact?: boolean;
-	show_sub_pages_author?: boolean;
-	show_sub_pages_thumbnail?: boolean;
-	show_sub_pages_compact?: boolean;
-	sub_pages_style?: string;
+  font?: string;
+  font_size?: number;
+  line_height?: number;
+  page_width?: number;
+  paragraph_spacing?: number;
+  show_author_header?: boolean;
+  show_contributor_header?: boolean;
+  show_cover_header?: boolean;
+  show_date_header?: boolean;
+  show_page_outline?: boolean;
+  show_sub_pages?: boolean;
+  sub_page_size?: string;
+  show_sub_title_header?: boolean;
+  show_title_icon_header?: boolean;
+  show_relationships?: boolean;
+  show_relationships_compact?: boolean;
+  show_sub_pages_author?: boolean;
+  show_sub_pages_thumbnail?: boolean;
+  show_sub_pages_compact?: boolean;
+  sub_pages_style?: string;
 }
 
 /** Page cover image */
 export interface ClickUpPageCover {
-	color?: string;
-	image_url?: string;
-	position?: { x: number; y: number };
+  color?: string;
+  image_url?: string;
+  position?: { x: number; y: number };
 }
 
 //===============================================
@@ -66,28 +66,28 @@ export interface ClickUpPageCover {
 
 /** Document (ClickUp Docs v3 API response) */
 export interface ClickUpDoc {
-	id: string;
-	name: string;
-	type: ClickUpDocType;
-	date_created: number;
-	date_updated?: number;
-	parent: DocParent;
-	public: boolean;
-	workspace_id: number;
-	creator: number;
-	deleted: boolean;
-	deleted_by?: number;
-	date_deleted?: number;
-	archived?: boolean;
-	archived_by?: number;
-	date_archived?: number;
-	page_defaults?: ClickUpPagePresentationDetails;
+  id: string;
+  name: string;
+  type: ClickUpDocType;
+  date_created: number;
+  date_updated?: number;
+  parent: DocParent;
+  public: boolean;
+  workspace_id: number;
+  creator: number;
+  deleted: boolean;
+  deleted_by?: number;
+  date_deleted?: number;
+  archived?: boolean;
+  archived_by?: number;
+  date_archived?: number;
+  page_defaults?: ClickUpPagePresentationDetails;
 }
 
 /** Documents list response */
 export interface ClickUpDocsResponse {
-	docs: ClickUpDoc[];
-	next_cursor?: string;
+  docs: ClickUpDoc[];
+  next_cursor?: string;
 }
 
 //===============================================
@@ -96,14 +96,14 @@ export interface ClickUpDocsResponse {
 
 /** Search Docs query parameters */
 export interface ClickUpSearchDocsParams {
-	id?: string;
-	creator?: number;
-	deleted?: boolean;
-	archived?: boolean;
-	parent_id?: string;
-	parent_type?: `${DocParentType}` | DocParentTypeString;
-	limit?: number;
-	cursor?: string;
+  id?: string;
+  creator?: number;
+  deleted?: boolean;
+  archived?: boolean;
+  parent_id?: string;
+  parent_type?: `${DocParentType}` | DocParentTypeString;
+  limit?: number;
+  cursor?: string;
 }
 
 //===============================================
@@ -112,10 +112,10 @@ export interface ClickUpSearchDocsParams {
 
 /** Create Doc request */
 export interface ClickUpCreateDocRequest {
-	name: string;
-	parent?: DocParent;
-	visibility?: DocVisibility | DocParentType;
-	create_page?: boolean;
+  name: string;
+  parent?: DocParent;
+  visibility?: DocVisibility | DocParentType;
+  create_page?: boolean;
 }
 
 //===============================================
@@ -124,43 +124,43 @@ export interface ClickUpCreateDocRequest {
 
 /** Document Page (full content from pages endpoint) */
 export interface ClickUpPage {
-	id: string;
-	doc_id: string;
-	workspace_id: number;
-	name: string;
-	sub_title?: string;
-	date_created: number;
-	date_updated?: number;
-	date_edited?: number;
-	edited_by?: number;
-	content: string;
-	avatar?: { value: string };
-	creator_id: number;
-	deleted: boolean;
-	deleted_by?: number;
-	date_deleted?: number;
-	archived: boolean;
-	archived_by?: number;
-	date_archived?: number;
-	authors?: number[];
-	contributors?: number[];
-	cover?: ClickUpPageCover;
-	protected: boolean;
-	protected_by?: number;
-	protected_note?: string;
-	presentation_details?: ClickUpPagePresentationDetails;
-	pages?: ClickUpPage[];
-	parent_page_id?: string;
+  id: string;
+  doc_id: string;
+  workspace_id: number;
+  name: string;
+  sub_title?: string;
+  date_created: number;
+  date_updated?: number;
+  date_edited?: number;
+  edited_by?: number;
+  content: string;
+  avatar?: { value: string };
+  creator_id: number;
+  deleted: boolean;
+  deleted_by?: number;
+  date_deleted?: number;
+  archived: boolean;
+  archived_by?: number;
+  date_archived?: number;
+  authors?: number[];
+  contributors?: number[];
+  cover?: ClickUpPageCover;
+  protected: boolean;
+  protected_by?: number;
+  protected_note?: string;
+  presentation_details?: ClickUpPagePresentationDetails;
+  pages?: ClickUpPage[];
+  parent_page_id?: string;
 }
 
 /** Lightweight page listing item (from page_listing endpoint) */
 export interface ClickUpDocPageListing {
-	id: string;
-	doc_id: string;
-	workspace_id: number;
-	name: string;
-	parent_page_id?: string;
-	pages?: ClickUpDocPageListing[];
+  id: string;
+  doc_id: string;
+  workspace_id: number;
+  name: string;
+  parent_page_id?: string;
+  pages?: ClickUpDocPageListing[];
 }
 
 //===============================================
@@ -169,18 +169,18 @@ export interface ClickUpDocPageListing {
 
 /** Query params for page listing endpoint */
 export interface ClickUpDocPageListingParams {
-	max_page_depth?: number;
+  max_page_depth?: number;
 }
 
 /** Query params for doc pages endpoint */
 export interface ClickUpDocPagesParams {
-	max_page_depth?: number;
-	content_format?: DocContentFormat;
+  max_page_depth?: number;
+  content_format?: DocContentFormat;
 }
 
 /** Query params for single page endpoint */
 export interface ClickUpGetPageParams {
-	content_format?: DocContentFormat;
+  content_format?: DocContentFormat;
 }
 
 //===============================================
@@ -189,16 +189,16 @@ export interface ClickUpGetPageParams {
 
 /** Page creation request */
 export interface ClickUpCreatePageRequest {
-	name?: string;
-	sub_title?: string;
-	content?: string;
-	content_format?: DocContentFormat;
-	parent_page_id?: string;
+  name?: string;
+  sub_title?: string;
+  content?: string;
+  content_format?: DocContentFormat;
+  parent_page_id?: string;
 }
 
 /** Page edit request (PUT endpoint) */
 export interface ClickUpEditPageRequest extends ClickUpCreatePageRequest {
-	content_edit_mode?: "replace" | "append" | "prepend";
+  content_edit_mode?: "replace" | "append" | "prepend";
 }
 
 //===============================================

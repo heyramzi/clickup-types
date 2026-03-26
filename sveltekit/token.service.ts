@@ -8,8 +8,8 @@
  */
 
 export interface TokenEncryption {
-	encrypt: (token: string) => string;
-	decrypt: (token: string) => string;
+  encrypt: (token: string) => string;
+  decrypt: (token: string) => string;
 }
 
 // Active implementation — change this line to swap backends

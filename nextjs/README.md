@@ -11,7 +11,7 @@ This folder contains Next.js-specific implementations for ClickUp OAuth integrat
 ## Usage
 
 ```typescript
-import { handleClickUpCallback, getClickUpAuthUrl } from 'clickup-utils/nextjs/oauth.service'
+import { handleClickUpCallback, getClickUpAuthUrl } from "clickup-utils/nextjs/oauth.service";
 
 // In app/api/clickup/callback/route.ts
 export async function GET(request: NextRequest) {
@@ -20,10 +20,10 @@ export async function GET(request: NextRequest) {
     clientSecret: process.env.CLICKUP_CLIENT_SECRET!,
     onSuccess: async (token) => {
       // Store token in your database
-    }
-  })
+    },
+  });
 
-  return NextResponse.redirect('/dashboard')
+  return NextResponse.redirect("/dashboard");
 }
 ```
 

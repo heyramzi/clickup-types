@@ -7,9 +7,9 @@ import type { RequestEvent } from "@sveltejs/kit";
 import { buildAuthUrl, exchangeCodeForToken } from "../core/oauth-protocol";
 
 export interface ClickUpOAuthCallbackConfig {
-	clientId: string;
-	clientSecret: string;
-	onSuccess: (token: string) => Promise<void>;
+  clientId: string;
+  clientSecret: string;
+  onSuccess: (token: string) => Promise<void>;
 }
 
 /**
@@ -28,24 +28,24 @@ export interface ClickUpOAuthCallbackConfig {
  * ```
  */
 export async function handleClickUpCallback(
-	event: RequestEvent,
-	config: ClickUpOAuthCallbackConfig,
+  event: RequestEvent,
+  config: ClickUpOAuthCallbackConfig,
 ): Promise<string> {
-	const code = event.url.searchParams.get("code");
+  const code = event.url.searchParams.get("code");
 
-	if (!code) {
-		throw new Error("Missing authorization code");
-	}
+  if (!code) {
+    throw new Error("Missing authorization code");
+  }
 
-	const token = await exchangeCodeForToken({
-		clientId: config.clientId,
-		clientSecret: config.clientSecret,
-		code,
-	});
+  const token = await exchangeCodeForToken({
+    clientId: config.clientId,
+    clientSecret: config.clientSecret,
+    code,
+  });
 
-	await config.onSuccess(token);
+  await config.onSuccess(token);
 
-	return token;
+  return token;
 }
 
 /**
@@ -60,14 +60,10 @@ export async function handleClickUpCallback(
  * )
  * ```
  */
-export function getClickUpAuthUrl(
-	clientId: string,
-	origin: string,
-	state?: string,
-): string {
-	return buildAuthUrl({
-		clientId,
-		redirectUri: `${origin}/api/clickup/callback`,
-		state,
-	});
+export function getClickUpAuthUrl(clientId: string, origin: string, state?: string): string {
+  return buildAuthUrl({
+    clientId,
+    redirectUri: `${origin}/api/clickup/callback`,
+    state,
+  });
 }

@@ -8,19 +8,19 @@ import { join } from "node:path";
  * - V3 component refs: #/components/schemas/SomeName
  */
 function resolveRef(spec, ref) {
-	if (typeof ref !== "string" || !ref.startsWith("#/")) return undefined;
+  if (typeof ref !== "string" || !ref.startsWith("#/")) return undefined;
 
-	const parts = ref
-		.slice(2)
-		.split("/")
-		.map((p) => p.replace(/~1/g, "/").replace(/~0/g, "~"));
+  const parts = ref
+    .slice(2)
+    .split("/")
+    .map((p) => p.replace(/~1/g, "/").replace(/~0/g, "~"));
 
-	let current = spec;
-	for (const part of parts) {
-		if (current === undefined || current === null) return undefined;
-		current = current[decodeURIComponent(part)] ?? current[part];
-	}
-	return current;
+  let current = spec;
+  for (const part of parts) {
+    if (current === undefined || current === null) return undefined;
+    current = current[decodeURIComponent(part)] ?? current[part];
+  }
+  return current;
 }
 
 /**
@@ -32,43 +32,43 @@ function resolveRef(spec, ref) {
  *   the full array instead of just its item schema.
  */
 function deepResolveRefs(spec, schema, seen = new Set(), parentKey = "") {
-	if (schema === null || schema === undefined || typeof schema !== "object") {
-		return schema;
-	}
+  if (schema === null || schema === undefined || typeof schema !== "object") {
+    return schema;
+  }
 
-	if (schema.$ref) {
-		if (seen.has(schema.$ref)) {
-			// Circular reference - return a marker
-			return { type: "object", description: `[Circular: ${schema.$ref}]` };
-		}
-		seen.add(schema.$ref);
-		const resolved = resolveRef(spec, schema.$ref);
-		if (resolved) {
-			const resolvedSchema = deepResolveRefs(spec, structuredClone(resolved), seen);
+  if (schema.$ref) {
+    if (seen.has(schema.$ref)) {
+      // Circular reference - return a marker
+      return { type: "object", description: `[Circular: ${schema.$ref}]` };
+    }
+    seen.add(schema.$ref);
+    const resolved = resolveRef(spec, schema.$ref);
+    if (resolved) {
+      const resolvedSchema = deepResolveRefs(spec, structuredClone(resolved), seen);
 
-			// Fix broken $refs that point to an array's /items instead of the array itself.
-			// Only apply when the $ref is NOT used as the "items" of an array schema
-			// (parentKey !== "items"), meaning the spec author intended to reference the
-			// full array but accidentally pointed to its item sub-schema.
-			if (schema.$ref.endsWith("/items") && parentKey !== "items") {
-				const parentRef = schema.$ref.slice(0, schema.$ref.lastIndexOf("/items"));
-				const parent = resolveRef(spec, parentRef);
-				if (parent && parent.type === "array") {
-					return { type: "array", items: resolvedSchema };
-				}
-			}
+      // Fix broken $refs that point to an array's /items instead of the array itself.
+      // Only apply when the $ref is NOT used as the "items" of an array schema
+      // (parentKey !== "items"), meaning the spec author intended to reference the
+      // full array but accidentally pointed to its item sub-schema.
+      if (schema.$ref.endsWith("/items") && parentKey !== "items") {
+        const parentRef = schema.$ref.slice(0, schema.$ref.lastIndexOf("/items"));
+        const parent = resolveRef(spec, parentRef);
+        if (parent && parent.type === "array") {
+          return { type: "array", items: resolvedSchema };
+        }
+      }
 
-			return resolvedSchema;
-		}
-		return { type: "unknown", description: `[Unresolved: ${schema.$ref}]` };
-	}
+      return resolvedSchema;
+    }
+    return { type: "unknown", description: `[Unresolved: ${schema.$ref}]` };
+  }
 
-	const result = Array.isArray(schema) ? [] : {};
-	for (const [key, value] of Object.entries(schema)) {
-		if (key === "$ref") continue;
-		result[key] = deepResolveRefs(spec, value, new Set(seen), key);
-	}
-	return result;
+  const result = Array.isArray(schema) ? [] : {};
+  for (const [key, value] of Object.entries(schema)) {
+    if (key === "$ref") continue;
+    result[key] = deepResolveRefs(spec, value, new Set(seen), key);
+  }
+  return result;
 }
 
 /**
@@ -77,13 +77,13 @@ function deepResolveRefs(spec, schema, seen = new Set(), parentKey = "") {
  * "Custom Fields" -> "custom-fields"
  */
 function toKebabCase(str) {
-	return str
-		.replace(/[()]/g, "")
-		.replace(/\s+/g, "-")
-		.replace(/[^a-zA-Z0-9-]/g, "")
-		.toLowerCase()
-		.replace(/-+/g, "-")
-		.replace(/^-|-$/g, "");
+  return str
+    .replace(/[()]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/[^a-zA-Z0-9-]/g, "")
+    .toLowerCase()
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
 }
 
 /**
@@ -93,14 +93,14 @@ function toKebabCase(str) {
  * "GetBulkTasks'TimeinStatus" -> "GetBulkTasksTimeInStatus"
  */
 function sanitizeOperationId(str) {
-	return str
-		.replace(/'/g, "") // Remove apostrophes
-		.replace(/[^a-zA-Z0-9]/g, " ") // Replace special chars with space
-		.replace(/\s+/g, " ") // Normalize spaces
-		.trim()
-		.split(" ")
-		.map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-		.join("");
+  return str
+    .replace(/'/g, "") // Remove apostrophes
+    .replace(/[^a-zA-Z0-9]/g, " ") // Replace special chars with space
+    .replace(/\s+/g, " ") // Normalize spaces
+    .trim()
+    .split(" ")
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join("");
 }
 
 /**
@@ -109,84 +109,86 @@ function sanitizeOperationId(str) {
  * "CreateTaskAttachment" -> "CreateTaskAttachment"
  */
 function toPascalCase(str) {
-	const sanitized = sanitizeOperationId(str);
-	return sanitized.replace(/(^|[_-])(\w)/g, (_, _sep, c) => c.toUpperCase()).replace(/^(\w)/, (c) => c.toUpperCase());
+  const sanitized = sanitizeOperationId(str);
+  return sanitized
+    .replace(/(^|[_-])(\w)/g, (_, _sep, c) => c.toUpperCase())
+    .replace(/^(\w)/, (c) => c.toUpperCase());
 }
 
 /**
  * Extract the base path prefix to determine API version.
  */
 function getApiVersion(path) {
-	if (path.startsWith("/api/v3") || path.startsWith("/v3")) return "v3";
-	return "v2";
+  if (path.startsWith("/api/v3") || path.startsWith("/v3")) return "v3";
+  return "v2";
 }
 
 /**
  * Parse a single OpenAPI operation into our normalized format.
  */
 function parseOperation(spec, method, path, op, apiVersion) {
-	const rawOperationId = op.operationId || `${method}${path.replace(/[^a-zA-Z0-9]/g, "")}`;
-	const operationId = sanitizeOperationId(rawOperationId);
+  const rawOperationId = op.operationId || `${method}${path.replace(/[^a-zA-Z0-9]/g, "")}`;
+  const operationId = sanitizeOperationId(rawOperationId);
 
-	// Parameters
-	const parameters = (op.parameters || []).map((param) => {
-		const resolved = param.$ref ? resolveRef(spec, param.$ref) : param;
-		return {
-			name: resolved.name,
-			in: resolved.in,
-			required: resolved.required || false,
-			description: resolved.description || "",
-			schema: resolved.schema
-				? deepResolveRefs(spec, structuredClone(resolved.schema))
-				: { type: "string" },
-		};
-	});
+  // Parameters
+  const parameters = (op.parameters || []).map((param) => {
+    const resolved = param.$ref ? resolveRef(spec, param.$ref) : param;
+    return {
+      name: resolved.name,
+      in: resolved.in,
+      required: resolved.required || false,
+      description: resolved.description || "",
+      schema: resolved.schema
+        ? deepResolveRefs(spec, structuredClone(resolved.schema))
+        : { type: "string" },
+    };
+  });
 
-	// Request body
-	let requestBody = null;
-	if (op.requestBody) {
-		const contentType = Object.keys(op.requestBody.content || {})[0];
-		if (contentType) {
-			const bodySchema = op.requestBody.content[contentType].schema;
-			requestBody = {
-				contentType,
-				required: op.requestBody.required || false,
-				schema: bodySchema ? deepResolveRefs(spec, structuredClone(bodySchema)) : null,
-			};
-		}
-	}
+  // Request body
+  let requestBody = null;
+  if (op.requestBody) {
+    const contentType = Object.keys(op.requestBody.content || {})[0];
+    if (contentType) {
+      const bodySchema = op.requestBody.content[contentType].schema;
+      requestBody = {
+        contentType,
+        required: op.requestBody.required || false,
+        schema: bodySchema ? deepResolveRefs(spec, structuredClone(bodySchema)) : null,
+      };
+    }
+  }
 
-	// Responses - focus on success responses (2xx)
-	const responses = {};
-	for (const [code, resp] of Object.entries(op.responses || {})) {
-		if (code === "default" || Number(code) >= 400) continue;
-		const contentType = Object.keys(resp.content || {})[0];
-		if (contentType) {
-			const respSchema = resp.content[contentType].schema;
-			responses[code] = {
-				description: resp.description || "",
-				schema: respSchema ? deepResolveRefs(spec, structuredClone(respSchema)) : null,
-			};
-		} else {
-			responses[code] = {
-				description: resp.description || "",
-				schema: null,
-			};
-		}
-	}
+  // Responses - focus on success responses (2xx)
+  const responses = {};
+  for (const [code, resp] of Object.entries(op.responses || {})) {
+    if (code === "default" || Number(code) >= 400) continue;
+    const contentType = Object.keys(resp.content || {})[0];
+    if (contentType) {
+      const respSchema = resp.content[contentType].schema;
+      responses[code] = {
+        description: resp.description || "",
+        schema: respSchema ? deepResolveRefs(spec, structuredClone(respSchema)) : null,
+      };
+    } else {
+      responses[code] = {
+        description: resp.description || "",
+        schema: null,
+      };
+    }
+  }
 
-	return {
-		operationId,
-		operationIdPascal: toPascalCase(operationId),
-		method,
-		path,
-		apiVersion,
-		summary: op.summary || "",
-		description: op.description || "",
-		parameters,
-		requestBody,
-		responses,
-	};
+  return {
+    operationId,
+    operationIdPascal: toPascalCase(operationId),
+    method,
+    path,
+    apiVersion,
+    summary: op.summary || "",
+    description: op.description || "",
+    parameters,
+    requestBody,
+    responses,
+  };
 }
 
 /**
@@ -195,71 +197,75 @@ function parseOperation(spec, method, path, op, apiVersion) {
  * essentially the same domain (e.g. "Chat (Experimental)" → "Chat").
  */
 const TAG_ALIASES = {
-	"Chat (Experimental)": "Chat",
-	Acls: "Privacy and access",
+  "Chat (Experimental)": "Chat",
+  Acls: "Privacy and access",
 };
 
 /**
  * Normalize a raw tag from the OpenAPI spec to its canonical form.
  */
 function normalizeTag(rawTag) {
-	return TAG_ALIASES[rawTag] ?? rawTag;
+  return TAG_ALIASES[rawTag] ?? rawTag;
 }
 
 /**
  * Parse both v2 and v3 specs into grouped, normalized structure.
  */
 export function parseSpecs({ v2, v3 }) {
-	const groups = {};
+  const groups = {};
 
-	function addToGroup(tag, endpoint) {
-		const fileName = toKebabCase(tag);
-		if (!groups[fileName]) {
-			groups[fileName] = {
-				tag,
-				fileName,
-				endpoints: [],
-			};
-		}
-		groups[fileName].endpoints.push(endpoint);
-	}
+  function addToGroup(tag, endpoint) {
+    const fileName = toKebabCase(tag);
+    if (!groups[fileName]) {
+      groups[fileName] = {
+        tag,
+        fileName,
+        endpoints: [],
+      };
+    }
+    groups[fileName].endpoints.push(endpoint);
+  }
 
-	// Parse v2 spec
-	for (const [pathKey, pathItem] of Object.entries(v2.paths)) {
-		for (const [method, op] of Object.entries(pathItem)) {
-			if (method === "parameters" || method === "summary" || method === "description") continue;
+  // Parse v2 spec
+  for (const [pathKey, pathItem] of Object.entries(v2.paths)) {
+    for (const [method, op] of Object.entries(pathItem)) {
+      if (method === "parameters" || method === "summary" || method === "description") continue;
 
-			const tag = normalizeTag(op.tags?.[0] || "Other");
-			const endpoint = parseOperation(v2, method, pathKey, op, "v2");
-			addToGroup(tag, endpoint);
-		}
-	}
+      const tag = normalizeTag(op.tags?.[0] || "Other");
+      const endpoint = parseOperation(v2, method, pathKey, op, "v2");
+      addToGroup(tag, endpoint);
+    }
+  }
 
-	// Parse v3 spec
-	for (const [pathKey, pathItem] of Object.entries(v3.paths)) {
-		for (const [method, op] of Object.entries(pathItem)) {
-			if (method === "parameters" || method === "summary" || method === "description") continue;
+  // Parse v3 spec
+  for (const [pathKey, pathItem] of Object.entries(v3.paths)) {
+    for (const [method, op] of Object.entries(pathItem)) {
+      if (method === "parameters" || method === "summary" || method === "description") continue;
 
-			const tag = normalizeTag(op.tags?.[0] || "Other");
-			const endpoint = parseOperation(v3, method, pathKey, op, "v3");
-			addToGroup(tag, endpoint);
-		}
-	}
+      const tag = normalizeTag(op.tags?.[0] || "Other");
+      const endpoint = parseOperation(v3, method, pathKey, op, "v3");
+      addToGroup(tag, endpoint);
+    }
+  }
 
-	// Sort endpoints within each group
-	for (const group of Object.values(groups)) {
-		group.endpoints.sort((a, b) => a.operationId.localeCompare(b.operationId));
-	}
+  // Sort endpoints within each group
+  for (const group of Object.values(groups)) {
+    group.endpoints.sort((a, b) => a.operationId.localeCompare(b.operationId));
+  }
 
-	const tagCount = Object.keys(groups).length;
-	const endpointCount = Object.values(groups).reduce((sum, g) => sum + g.endpoints.length, 0);
-	console.log(`  Parsed ${endpointCount} endpoints into ${tagCount} groups`);
-	for (const [fileName, group] of Object.entries(groups).sort(([a], [b]) => a.localeCompare(b))) {
-		const v2Count = group.endpoints.filter((e) => e.apiVersion === "v2").length;
-		const v3Count = group.endpoints.filter((e) => e.apiVersion === "v3").length;
-		const versions = [v2Count && `v2:${v2Count}`, v3Count && `v3:${v3Count}`].filter(Boolean).join(", ");
-		console.log(`    ${fileName} (${group.tag}): ${group.endpoints.length} endpoints [${versions}]`);
-	}
+  const tagCount = Object.keys(groups).length;
+  const endpointCount = Object.values(groups).reduce((sum, g) => sum + g.endpoints.length, 0);
+  console.log(`  Parsed ${endpointCount} endpoints into ${tagCount} groups`);
+  for (const [fileName, group] of Object.entries(groups).sort(([a], [b]) => a.localeCompare(b))) {
+    const v2Count = group.endpoints.filter((e) => e.apiVersion === "v2").length;
+    const v3Count = group.endpoints.filter((e) => e.apiVersion === "v3").length;
+    const versions = [v2Count && `v2:${v2Count}`, v3Count && `v3:${v3Count}`]
+      .filter(Boolean)
+      .join(", ");
+    console.log(
+      `    ${fileName} (${group.tag}): ${group.endpoints.length} endpoints [${versions}]`,
+    );
+  }
 
-	return groups;
+  return groups;
 }

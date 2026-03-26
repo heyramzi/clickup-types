@@ -8,9 +8,9 @@ const OUTPUT_DIR = join(import.meta.dirname, "../../generated/types");
  * Convert a string to PascalCase.
  */
 function toPascalCase(str) {
-	return str
-		.replace(/[^a-zA-Z0-9]+(.)/g, (_, c) => c.toUpperCase())
-		.replace(/^(.)/, (c) => c.toUpperCase());
+  return str
+    .replace(/[^a-zA-Z0-9]+(.)/g, (_, c) => c.toUpperCase())
+    .replace(/^(.)/, (c) => c.toUpperCase());
 }
 
 /**
@@ -18,69 +18,67 @@ function toPascalCase(str) {
  * Strips common verbose prefixes from v3 schema names.
  */
 function cleanTypeName(name) {
-	// V3 names like "ChatPublicApiChatChannelsControllerGetChatChannels200Response"
-	// Strip the controller/module prefix pattern
-	return name
-		.replace(/PublicApi\w+Controller/, "")
-		.replace(/^\d+/, ""); // Remove leading numbers
+  // V3 names like "ChatPublicApiChatChannelsControllerGetChatChannels200Response"
+  // Strip the controller/module prefix pattern
+  return name.replace(/PublicApi\w+Controller/, "").replace(/^\d+/, ""); // Remove leading numbers
 }
 
 /**
  * Convert an OpenAPI schema to TypeScript type string.
  */
 function schemaToType(schema, indent = "\t", context = {}) {
-	if (!schema) return "unknown";
+  if (!schema) return "unknown";
 
-	// Handle allOf (intersection)
-	if (schema.allOf) {
-		const parts = schema.allOf.map((s) => schemaToType(s, indent, context));
-		return parts.join(" & ");
-	}
+  // Handle allOf (intersection)
+  if (schema.allOf) {
+    const parts = schema.allOf.map((s) => schemaToType(s, indent, context));
+    return parts.join(" & ");
+  }
 
-	// Handle oneOf / anyOf (union)
-	if (schema.oneOf || schema.anyOf) {
-		const variants = schema.oneOf || schema.anyOf;
-		const parts = variants.map((s) => schemaToType(s, indent, context));
-		return parts.join(" | ");
-	}
+  // Handle oneOf / anyOf (union)
+  if (schema.oneOf || schema.anyOf) {
+    const variants = schema.oneOf || schema.anyOf;
+    const parts = variants.map((s) => schemaToType(s, indent, context));
+    return parts.join(" | ");
+  }
 
-	// Handle enum
-	if (schema.enum) {
-		return schema.enum.map((v) => (typeof v === "string" ? `"${v}"` : String(v))).join(" | ");
-	}
+  // Handle enum
+  if (schema.enum) {
+    return schema.enum.map((v) => (typeof v === "string" ? `"${v}"` : String(v))).join(" | ");
+  }
 
-	// Handle $ref that wasn't resolved (shouldn't happen but safety)
-	if (schema.$ref) {
-		return "unknown";
-	}
+  // Handle $ref that wasn't resolved (shouldn't happen but safety)
+  if (schema.$ref) {
+    return "unknown";
+  }
 
-	const type = schema.type;
+  const type = schema.type;
 
-	// Handle nullable
-	const nullable = schema.nullable ? " | null" : "";
+  // Handle nullable
+  const nullable = schema.nullable ? " | null" : "";
 
-	if (type === "string") {
-		if (schema.format === "date-time") return `string${nullable}`;
-		if (schema.format === "binary") return `Blob${nullable}`;
-		return `string${nullable}`;
-	}
+  if (type === "string") {
+    if (schema.format === "date-time") return `string${nullable}`;
+    if (schema.format === "binary") return `Blob${nullable}`;
+    return `string${nullable}`;
+  }
 
-	if (type === "number" || type === "integer") return `number${nullable}`;
-	if (type === "boolean") return `boolean${nullable}`;
+  if (type === "number" || type === "integer") return `number${nullable}`;
+  if (type === "boolean") return `boolean${nullable}`;
 
-	if (type === "array") {
-		const itemType = schemaToType(schema.items, indent, context);
-		return `Array<${itemType}>${nullable}`;
-	}
+  if (type === "array") {
+    const itemType = schemaToType(schema.items, indent, context);
+    return `Array<${itemType}>${nullable}`;
+  }
 
-	if (type === "object" || schema.properties) {
-		return objectToInlineType(schema, indent, context);
-	}
+  if (type === "object" || schema.properties) {
+    return objectToInlineType(schema, indent, context);
+  }
 
-	// No type specified - fallback
-	if (!type && !schema.properties) return "unknown";
+  // No type specified - fallback
+  if (!type && !schema.properties) return "unknown";
 
-	return `unknown${nullable}`;
+  return `unknown${nullable}`;
 }
 
 /**
@@ -89,56 +87,56 @@ function schemaToType(schema, indent = "\t", context = {}) {
  * like "27075wz", "20bbn28" that appear in OpenAPI specs as example data.
  */
 function looksLikeDynamicMap(props) {
-	const keys = Object.keys(props);
-	if (keys.length === 0) return false;
-	// All property names must be short alphanumeric strings (4-10 chars, lowercase)
-	return keys.every((key) => /^[a-z0-9]{4,10}$/.test(key));
+  const keys = Object.keys(props);
+  if (keys.length === 0) return false;
+  // All property names must be short alphanumeric strings (4-10 chars, lowercase)
+  return keys.every((key) => /^[a-z0-9]{4,10}$/.test(key));
 }
 
 /**
  * Convert an object schema to inline TypeScript type.
  */
 function objectToInlineType(schema, indent = "\t", context = {}) {
-	const props = schema.properties;
-	if (!props || Object.keys(props).length === 0) {
-		if (schema.additionalProperties) {
-			const valType = schemaToType(schema.additionalProperties, indent, context);
-			return `Record<string, ${valType}>`;
-		}
-		return "Record<string, unknown>";
-	}
+  const props = schema.properties;
+  if (!props || Object.keys(props).length === 0) {
+    if (schema.additionalProperties) {
+      const valType = schemaToType(schema.additionalProperties, indent, context);
+      return `Record<string, ${valType}>`;
+    }
+    return "Record<string, unknown>";
+  }
 
-	// Detect dynamic maps where property names are example IDs (e.g. "27075wz")
-	if (looksLikeDynamicMap(props)) {
-		const firstValue = Object.values(props)[0];
-		const valueType = schemaToType(firstValue, indent, context);
-		return `Record<string, ${valueType}>`;
-	}
+  // Detect dynamic maps where property names are example IDs (e.g. "27075wz")
+  if (looksLikeDynamicMap(props)) {
+    const firstValue = Object.values(props)[0];
+    const valueType = schemaToType(firstValue, indent, context);
+    return `Record<string, ${valueType}>`;
+  }
 
-	const required = new Set(schema.required || []);
-	const lines = [];
-	const nextIndent = indent + "\t";
+  const required = new Set(schema.required || []);
+  const lines = [];
+  const nextIndent = indent + "\t";
 
-	for (const [propName, propSchema] of Object.entries(props)) {
-		const opt = required.has(propName) ? "" : "?";
-		const propType = schemaToType(propSchema, nextIndent, context);
+  for (const [propName, propSchema] of Object.entries(props)) {
+    const opt = required.has(propName) ? "" : "?";
+    const propType = schemaToType(propSchema, nextIndent, context);
 
-		if (propSchema.description) {
-			lines.push(`${indent}/** ${propSchema.description} */`);
-		}
-		lines.push(`${indent}${safePropName(propName)}${opt}: ${propType};`);
-	}
+    if (propSchema.description) {
+      lines.push(`${indent}/** ${propSchema.description} */`);
+    }
+    lines.push(`${indent}${safePropName(propName)}${opt}: ${propType};`);
+  }
 
-	const nullable = schema.nullable ? " | null" : "";
-	return `{\n${lines.join("\n")}\n${indent.slice(0, -1)}}${nullable}`;
+  const nullable = schema.nullable ? " | null" : "";
+  return `{\n${lines.join("\n")}\n${indent.slice(0, -1)}}${nullable}`;
 }
 
 /**
  * Make a property name safe for TypeScript.
  */
 function safePropName(name) {
-	if (/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(name)) return name;
-	return `"${name}"`;
+  if (/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(name)) return name;
+  return `"${name}"`;
 }
 
 /**
@@ -147,105 +145,105 @@ function safePropName(name) {
  * and `type` alias otherwise (e.g. for Record<>, Array<>, unions).
  */
 function emitTypeDecl(name, schema, exported = true) {
-	const typeStr = schemaToType(schema, "\t");
-	const prefix = exported ? "export " : "";
-	if (typeStr.startsWith("{")) {
-		return `${prefix}interface ${name} ${typeStr}`;
-	}
-	return `${prefix}type ${name} = ${typeStr};`;
+  const typeStr = schemaToType(schema, "\t");
+  const prefix = exported ? "export " : "";
+  if (typeStr.startsWith("{")) {
+    return `${prefix}interface ${name} ${typeStr}`;
+  }
+  return `${prefix}type ${name} = ${typeStr};`;
 }
 
 /**
  * Generate type declarations for a group's endpoints.
  */
 function generateGroupTypes(group) {
-	const lines = [];
-	const generatedNames = new Set();
+  const lines = [];
+  const generatedNames = new Set();
 
-	lines.push(`// Auto-generated by ClickUp SDK Generator`);
-	lines.push(`// Group: ${group.tag}`);
-	lines.push(`// Do not edit manually\n`);
+  lines.push(`// Auto-generated by ClickUp SDK Generator`);
+  lines.push(`// Group: ${group.tag}`);
+  lines.push(`// Do not edit manually\n`);
 
-	for (const endpoint of group.endpoints) {
-		const baseName = endpoint.operationIdPascal;
+  for (const endpoint of group.endpoints) {
+    const baseName = endpoint.operationIdPascal;
 
-		// Query params type
-		const queryParams = endpoint.parameters.filter((p) => p.in === "query");
-		if (queryParams.length > 0) {
-			const typeName = `${baseName}Params`;
-			if (!generatedNames.has(typeName)) {
-				generatedNames.add(typeName);
-				lines.push(`export interface ${typeName} {`);
-				for (const param of queryParams) {
-					if (param.description) {
-						lines.push(`\t/** ${param.description} */`);
-					}
-					const opt = param.required ? "" : "?";
-					const paramType = schemaToType(param.schema, "\t\t");
-					lines.push(`\t${safePropName(param.name)}${opt}: ${paramType};`);
-				}
-				lines.push(`}\n`);
-			}
-		}
+    // Query params type
+    const queryParams = endpoint.parameters.filter((p) => p.in === "query");
+    if (queryParams.length > 0) {
+      const typeName = `${baseName}Params`;
+      if (!generatedNames.has(typeName)) {
+        generatedNames.add(typeName);
+        lines.push(`export interface ${typeName} {`);
+        for (const param of queryParams) {
+          if (param.description) {
+            lines.push(`\t/** ${param.description} */`);
+          }
+          const opt = param.required ? "" : "?";
+          const paramType = schemaToType(param.schema, "\t\t");
+          lines.push(`\t${safePropName(param.name)}${opt}: ${paramType};`);
+        }
+        lines.push(`}\n`);
+      }
+    }
 
-		// Request body type
-		if (endpoint.requestBody?.schema) {
-			const typeName = `${baseName}Request`;
-			if (!generatedNames.has(typeName)) {
-				generatedNames.add(typeName);
-				lines.push(`${emitTypeDecl(typeName, endpoint.requestBody.schema)}\n`);
-			}
-		}
+    // Request body type
+    if (endpoint.requestBody?.schema) {
+      const typeName = `${baseName}Request`;
+      if (!generatedNames.has(typeName)) {
+        generatedNames.add(typeName);
+        lines.push(`${emitTypeDecl(typeName, endpoint.requestBody.schema)}\n`);
+      }
+    }
 
-		// Response types (2xx) — unified into a single {OperationId}Response
-		const successEntries = Object.entries(endpoint.responses).filter(([, resp]) => resp.schema);
-		if (successEntries.length > 0) {
-			const typeName = `${baseName}Response`;
-			if (!generatedNames.has(typeName)) {
-				generatedNames.add(typeName);
+    // Response types (2xx) — unified into a single {OperationId}Response
+    const successEntries = Object.entries(endpoint.responses).filter(([, resp]) => resp.schema);
+    if (successEntries.length > 0) {
+      const typeName = `${baseName}Response`;
+      if (!generatedNames.has(typeName)) {
+        generatedNames.add(typeName);
 
-				// Check if all success schemas are identical (by JSON comparison)
-				const schemasJson = successEntries.map(([, resp]) => JSON.stringify(resp.schema));
-				const allIdentical = schemasJson.every((s) => s === schemasJson[0]);
+        // Check if all success schemas are identical (by JSON comparison)
+        const schemasJson = successEntries.map(([, resp]) => JSON.stringify(resp.schema));
+        const allIdentical = schemasJson.every((s) => s === schemasJson[0]);
 
-				if (allIdentical || successEntries.length === 1) {
-					// Single schema or all identical — emit one type
-					lines.push(`${emitTypeDecl(typeName, successEntries[0][1].schema)}\n`);
-				} else {
-					// Multiple distinct schemas — emit each as a private type, then union them
-					const memberNames = [];
-					for (const [code, resp] of successEntries) {
-						const memberName = `${baseName}${code}`;
-						memberNames.push(memberName);
-						if (!generatedNames.has(memberName)) {
-							generatedNames.add(memberName);
-							lines.push(`${emitTypeDecl(memberName, resp.schema, false)}\n`);
-						}
-					}
-					lines.push(`export type ${typeName} = ${memberNames.join(" | ")};\n`);
-				}
-			}
-		}
-	}
+        if (allIdentical || successEntries.length === 1) {
+          // Single schema or all identical — emit one type
+          lines.push(`${emitTypeDecl(typeName, successEntries[0][1].schema)}\n`);
+        } else {
+          // Multiple distinct schemas — emit each as a private type, then union them
+          const memberNames = [];
+          for (const [code, resp] of successEntries) {
+            const memberName = `${baseName}${code}`;
+            memberNames.push(memberName);
+            if (!generatedNames.has(memberName)) {
+              generatedNames.add(memberName);
+              lines.push(`${emitTypeDecl(memberName, resp.schema, false)}\n`);
+            }
+          }
+          lines.push(`export type ${typeName} = ${memberNames.join(" | ")};\n`);
+        }
+      }
+    }
+  }
 
-	return lines.join("\n");
+  return lines.join("\n");
 }
 
 /**
  * Generate TypeScript type files for all groups.
  */
 export function generateTypes(groups) {
-	mkdirSync(OUTPUT_DIR, { recursive: true });
+  mkdirSync(OUTPUT_DIR, { recursive: true });
 
-	let totalTypes = 0;
-	for (const [fileName, group] of Object.entries(groups).sort(([a], [b]) => a.localeCompare(b))) {
-		const content = generateGroupTypes(group);
-		const filePath = join(OUTPUT_DIR, `${fileName}.ts`);
-		writeFileSync(filePath, content);
+  let totalTypes = 0;
+  for (const [fileName, group] of Object.entries(groups).sort(([a], [b]) => a.localeCompare(b))) {
+    const content = generateGroupTypes(group);
+    const filePath = join(OUTPUT_DIR, `${fileName}.ts`);
+    writeFileSync(filePath, content);
 
-		const typeCount = (content.match(/^export (interface|type)/gm) || []).length;
-		totalTypes += typeCount;
-	}
+    const typeCount = (content.match(/^export (interface|type)/gm) || []).length;
+    totalTypes += typeCount;
+  }
 
-	console.log(`  Generated ${totalTypes} types across ${Object.keys(groups).length} files`);
+  console.log(`  Generated ${totalTypes} types across ${Object.keys(groups).length} files`);
 }

@@ -13,56 +13,49 @@ Framework-specific implementations for ClickUp OAuth integration in SvelteKit.
 
 ```typescript
 // routes/api/clickup/callback/+server.ts
-import { handleClickUpCallback } from 'clickup-utils/sveltekit/oauth.service'
-import { ClickUpTokenStorage } from 'clickup-utils/sveltekit/token.service'
-import { redirect } from '@sveltejs/kit'
-import type { RequestHandler } from './$types'
+import { handleClickUpCallback } from "clickup-utils/sveltekit/oauth.service";
+import { ClickUpTokenStorage } from "clickup-utils/sveltekit/token.service";
+import { redirect } from "@sveltejs/kit";
+import type { RequestHandler } from "./$types";
 
 export const GET: RequestHandler = async (event) => {
-  const { locals: { supabase, user } } = event
+  const {
+    locals: { supabase, user },
+  } = event;
 
-  if (!user) throw redirect(303, '/auth')
+  if (!user) throw redirect(303, "/auth");
 
   await handleClickUpCallback(event, {
     clientId: PUBLIC_CLICKUP_CLIENT_ID,
     clientSecret: CLICKUP_CLIENT_SECRET,
     onSuccess: async (token) => {
-      await ClickUpTokenStorage.save(
-        supabase,
-        user.organization_id,
-        token,
-        TokenEncryptionService
-      )
-    }
-  })
+      await ClickUpTokenStorage.save(supabase, user.organization_id, token, TokenEncryptionService);
+    },
+  });
 
-  throw redirect(303, '/dashboard?success=clickup-connected')
-}
+  throw redirect(303, "/dashboard?success=clickup-connected");
+};
 ```
 
 ### Getting OAuth URL
 
 ```typescript
 // +page.svelte or +page.ts
-import { getClickUpAuthUrl } from 'clickup-utils/sveltekit/oauth.service'
+import { getClickUpAuthUrl } from "clickup-utils/sveltekit/oauth.service";
 
 const authUrl = getClickUpAuthUrl(
   PUBLIC_CLICKUP_CLIENT_ID,
   window.location.origin,
-  crypto.randomUUID() // CSRF protection
-)
+  crypto.randomUUID(), // CSRF protection
+);
 ```
 
 ### Retrieving Stored Token
 
 ```typescript
-import { ClickUpTokenStorage } from 'clickup-utils/sveltekit/token.service'
+import { ClickUpTokenStorage } from "clickup-utils/sveltekit/token.service";
 
-const token = await ClickUpTokenStorage.get(
-  supabase,
-  organizationId,
-  TokenEncryptionService
-)
+const token = await ClickUpTokenStorage.get(supabase, organizationId, TokenEncryptionService);
 ```
 
 ## Requirements

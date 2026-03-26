@@ -7,9 +7,9 @@ import type { NextRequest } from "next/server";
 import { buildAuthUrl, exchangeCodeForToken } from "../core/oauth-protocol";
 
 export interface ClickUpOAuthCallbackConfig {
-	clientId: string;
-	clientSecret: string;
-	onSuccess: (token: string) => Promise<void>;
+  clientId: string;
+  clientSecret: string;
+  onSuccess: (token: string) => Promise<void>;
 }
 
 /**
@@ -28,25 +28,25 @@ export interface ClickUpOAuthCallbackConfig {
  * ```
  */
 export async function handleClickUpCallback(
-	request: NextRequest,
-	config: ClickUpOAuthCallbackConfig,
+  request: NextRequest,
+  config: ClickUpOAuthCallbackConfig,
 ): Promise<string> {
-	const url = new URL(request.url);
-	const code = url.searchParams.get("code");
+  const url = new URL(request.url);
+  const code = url.searchParams.get("code");
 
-	if (!code) {
-		throw new Error("Missing authorization code");
-	}
+  if (!code) {
+    throw new Error("Missing authorization code");
+  }
 
-	const token = await exchangeCodeForToken({
-		clientId: config.clientId,
-		clientSecret: config.clientSecret,
-		code,
-	});
+  const token = await exchangeCodeForToken({
+    clientId: config.clientId,
+    clientSecret: config.clientSecret,
+    code,
+  });
 
-	await config.onSuccess(token);
+  await config.onSuccess(token);
 
-	return token;
+  return token;
 }
 
 /**
@@ -61,14 +61,10 @@ export async function handleClickUpCallback(
  * )
  * ```
  */
-export function getClickUpAuthUrl(
-	clientId: string,
-	baseUrl: string,
-	state?: string,
-): string {
-	return buildAuthUrl({
-		clientId,
-		redirectUri: `${baseUrl}/api/clickup/callback`,
-		state,
-	});
+export function getClickUpAuthUrl(clientId: string, baseUrl: string, state?: string): string {
+  return buildAuthUrl({
+    clientId,
+    redirectUri: `${baseUrl}/api/clickup/callback`,
+    state,
+  });
 }

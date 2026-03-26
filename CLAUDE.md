@@ -32,6 +32,7 @@ The codebase follows a layered architecture where each layer depends only on the
 ```
 
 **Key design decisions:**
+
 - **No package.json** — this is not an npm package, it's consumed as a submodule
 - **No build step** — consuming projects import TypeScript directly
 - **`generated/` is gitignored** — re-generate with `node scripts/generate-sdk/index.mjs`
@@ -49,32 +50,33 @@ node scripts/generate-sdk/index.mjs
 
 ## Directory Map
 
-| Directory | Purpose | Edit? |
-|-----------|---------|-------|
-| `types/` | Hand-written ClickUp API types (11 files) | Yes — primary source of truth |
-| `core/` | OAuth protocol (pure functions, zero deps) | Yes |
-| `api/` | Hierarchy fetch functions (workspaces, spaces, folders, lists) | Yes |
-| `transformers/` | API response → StoredWorkspace/List/etc. | Yes |
-| `sveltekit/` | OAuth callback handler + Supabase token storage | Yes |
-| `nextjs/` | OAuth callback handler (token storage TBD) | Yes |
-| `generated/` | Auto-generated from OpenAPI specs | **No** — re-run generator |
-| `scripts/generate-sdk/` | OpenAPI → TypeScript generator pipeline | Yes |
-| `index.ts` | Barrel export (types, core, transformers, API) | Yes |
+| Directory               | Purpose                                                        | Edit?                         |
+| ----------------------- | -------------------------------------------------------------- | ----------------------------- |
+| `types/`                | Hand-written ClickUp API types (11 files)                      | Yes — primary source of truth |
+| `core/`                 | OAuth protocol (pure functions, zero deps)                     | Yes                           |
+| `api/`                  | Hierarchy fetch functions (workspaces, spaces, folders, lists) | Yes                           |
+| `transformers/`         | API response → StoredWorkspace/List/etc.                       | Yes                           |
+| `sveltekit/`            | OAuth callback handler + Supabase token storage                | Yes                           |
+| `nextjs/`               | OAuth callback handler (token storage TBD)                     | Yes                           |
+| `generated/`            | Auto-generated from OpenAPI specs                              | **No** — re-run generator     |
+| `scripts/generate-sdk/` | OpenAPI → TypeScript generator pipeline                        | Yes                           |
+| `index.ts`              | Barrel export (types, core, transformers, API)                 | Yes                           |
 
 ## Type Files Quick Reference
 
-| File | Key Exports |
-|------|-------------|
-| `clickup-api-constants.ts` | `Endpoint` enum, `ClickUpApiVersion`, `HttpMethod`, error type map |
-| `clickup-auth-types.ts` | `ClickUpOAuthConfig`, `ClickUpTokenResponse`, `ClickUpUser` |
-| `clickup-hierarchy-types.ts` | `ClickUpWorkspace`, `ClickUpSpace`, `ClickUpFolder`, `ClickUpList` |
-| `clickup-task-types.ts` | `ClickUpTask`, `ClickUpTasks`, `CreateTaskData`, `UpdateTaskData` |
-| `clickup-field-types.ts` | `ClickUpCustomFieldType` enum, field variant types |
-| `clickup-task-transformers.ts` | `FlattenedTask`, `FlattenedCustomField`, `TaskPriorityLevel` |
+| File                           | Key Exports                                                        |
+| ------------------------------ | ------------------------------------------------------------------ |
+| `clickup-api-constants.ts`     | `Endpoint` enum, `ClickUpApiVersion`, `HttpMethod`, error type map |
+| `clickup-auth-types.ts`        | `ClickUpOAuthConfig`, `ClickUpTokenResponse`, `ClickUpUser`        |
+| `clickup-hierarchy-types.ts`   | `ClickUpWorkspace`, `ClickUpSpace`, `ClickUpFolder`, `ClickUpList` |
+| `clickup-task-types.ts`        | `ClickUpTask`, `ClickUpTasks`, `CreateTaskData`, `UpdateTaskData`  |
+| `clickup-field-types.ts`       | `ClickUpCustomFieldType` enum, field variant types                 |
+| `clickup-task-transformers.ts` | `FlattenedTask`, `FlattenedCustomField`, `TaskPriorityLevel`       |
 
 ## Consuming Projects
 
 This submodule is used in:
+
 - **save-to-clickup** → `src/types/clickup-utils`
 - **clickup-to-blog** → `src/types/clickup-utils`
 - **client-glance** → `src/lib/types/clickup-utils`
@@ -105,6 +107,7 @@ Changes here affect all of them — test accordingly.
 The generator detects dynamic maps, handles circular refs, unifies response types across status codes, and supports multipart uploads.
 
 ## Workflow
+
 - Read `AGENTS.md` first (it links to this file).
 - Keep changes focused and minimal.
 - Run relevant checks before finishing.
@@ -113,5 +116,6 @@ The generator detects dynamic maps, handles circular refs, unifies response type
 ## Bug-Fix Protocol
 
 When a bug is reported, do NOT start by trying to fix it. Instead:
+
 1. First, write a test that reproduces the bug (the test should fail)
 2. Then, use subagents to fix the bug and prove the fix with the now-passing test
