@@ -20,8 +20,8 @@ export type DocParentType = 4 | 5 | 6 | 7 | 12;
 /** Doc parent type string values (used in search params) */
 export type DocParentTypeString = "SPACE" | "FOLDER" | "LIST" | "EVERYTHING" | "WORKSPACE";
 
-/** Doc type: 1=Doc, 2=Wiki */
-export type ClickUpDocType = 1 | 2;
+/** Doc type: 1=Doc, 2=Wiki, 3=Meeting (SyncUp/call notes) */
+export type ClickUpDocType = 1 | 2 | 3;
 
 /** Parent entity reference */
 export interface DocParent {

@@ -12,6 +12,7 @@
 import { readFileSync } from "node:fs";
 import * as client from "../client.js";
 import { requestWithFallback } from "../client.js";
+import type { ClickUpDocPageListing } from "../../../types/clickup-doc-types.js";
 import { getTokens, requireConfigWithTeam } from "../config.js";
 import {
   color,
@@ -47,6 +48,7 @@ function parseDocUrl(urlOrId: string): DocUrlParts | null {
 export async function runDocsListCommand(opts: {
   json?: boolean;
   workspace?: string;
+  type?: string;
 }): Promise<void> {
   const config = requireConfigWithTeam();
   const tokens = getTokens(config);
@@ -54,19 +56,22 @@ export async function runDocsListCommand(opts: {
 
   progress("Fetching docs...");
   const { result: docs, tokenUsed } = await requestWithFallback(tokens, (t) =>
-    client.getDocs(t, workspaceId),
+    client.getAllDocs(t, workspaceId),
   );
 
+  const typeFilter = opts.type ? Number(opts.type) : undefined;
+  const filtered = typeFilter ? docs.filter((d) => d.type === typeFilter) : docs;
+
   if (useJson(opts)) {
-    printJson(docs);
+    printJson(filtered);
     return;
   }
 
-  printTable(docs, [
+  printTable(filtered, [
     { key: "id", label: "ID" },
     { key: "name", label: "Name", maxWidth: 50 },
     {
-      key: (d) => (d.type === 1 ? "Doc" : "Wiki"),
+      key: (d) => (d.type === 1 ? "Doc" : d.type === 2 ? "Wiki" : "Meeting"),
       label: "Type",
     },
     {
@@ -74,7 +79,7 @@ export async function runDocsListCommand(opts: {
       label: "Created",
     },
   ]);
-  progress(`(via ${tokenUsed.name})`);
+  progress(`${filtered.length} docs (via ${tokenUsed.name})`);
 }
 
 // ── docs pages ───────────────────────────────────────
@@ -281,4 +286,119 @@ export async function runDocsCreateCommand(
   printSuccess(`Page created: ${page.name} ${color.dim(`(${page.id})`)}`);
   console.log(`  ${color.dim(`https://app.clickup.com/${workspaceId}/v/dc/${docId}/${page.id}`)}`);
   progress(`(via ${tokenUsed.name})`);
+}
+
+// ── docs scan ───────────────────────────────────────
+
+/** Simple check: does a page/doc name end with MM/DD/YYYY? */
+const DATE_SUFFIX_RE = /(\d{2})\/(\d{2})\/(\d{4})$/;
+function looksLikeCallPage(name: string): boolean {
+  return DATE_SUFFIX_RE.test(name);
+}
+
+function flattenPages(pages: ClickUpDocPageListing[]): ClickUpDocPageListing[] {
+  const result: ClickUpDocPageListing[] = [];
+  for (const page of pages) {
+    result.push(page);
+    if (page.pages?.length) result.push(...flattenPages(page.pages));
+  }
+  return result;
+}
+
+type FoundCallPage = {
+  pageId: string;
+  pageName: string;
+  docId: string;
+  docName: string;
+  docType: number;
+  url: string;
+};
+
+/**
+ * Scan all workspace docs for pages that look like call pages (date-suffixed titles).
+ * Outputs discovered call pages with doc context.
+ */
+export async function runDocsScanCommand(opts: {
+  json?: boolean;
+  workspace?: string;
+}): Promise<void> {
+  const config = requireConfigWithTeam();
+  const tokens = getTokens(config);
+  const workspaceId = opts.workspace || config.teamId;
+
+  progress("Fetching all docs...");
+  const { result: docs, tokenUsed } = await requestWithFallback(tokens, (t) =>
+    client.getAllDocs(t, workspaceId),
+  );
+
+  const activeDocs = docs.filter((d) => !d.deleted);
+  const found: FoundCallPage[] = [];
+
+  // Type 3 docs: the doc name itself is the call page
+  const type3Docs = activeDocs.filter((d) => (d.type as number) === 3);
+  for (const doc of type3Docs) {
+    if (looksLikeCallPage(doc.name)) {
+      found.push({
+        pageId: doc.id,
+        pageName: doc.name,
+        docId: doc.id,
+        docName: doc.name,
+        docType: doc.type as number,
+        url: `https://app.clickup.com/${workspaceId}/docs/${doc.id}/${doc.id}`,
+      });
+    }
+  }
+
+  // Type 1+2 docs: scan page listings in parallel batches
+  const regularDocs = activeDocs.filter((d) => (d.type as number) !== 3);
+  const BATCH_SIZE = 5;
+  for (let i = 0; i < regularDocs.length; i += BATCH_SIZE) {
+    const batch = regularDocs.slice(i, i + BATCH_SIZE);
+    progress(`Scanning docs ${i + 1}-${Math.min(i + BATCH_SIZE, regularDocs.length)} of ${regularDocs.length}...`);
+    const results = await Promise.all(
+      batch.map(async (doc) => {
+        try {
+          const { result: pages } = await requestWithFallback(tokens, (t) =>
+            client.getDocPageListing(t, workspaceId, doc.id),
+          );
+          return flattenPages(pages)
+            .filter((p) => looksLikeCallPage(p.name))
+            .map(
+              (p): FoundCallPage => ({
+                pageId: p.id,
+                pageName: p.name,
+                docId: doc.id,
+                docName: doc.name,
+                docType: doc.type as number,
+                url: `https://app.clickup.com/${workspaceId}/docs/${doc.id}/${p.id}`,
+              }),
+            );
+        } catch {
+          return [];
+        }
+      }),
+    );
+    found.push(...results.flat());
+  }
+
+  if (useJson(opts)) {
+    printJson({ callPages: found, total: found.length });
+    return;
+  }
+
+  if (found.length === 0) {
+    printSuccess("No call pages found outside expected locations.");
+    return;
+  }
+
+  printTable(found, [
+    { key: "pageName", label: "Page", maxWidth: 60 },
+    { key: "docName", label: "Doc", maxWidth: 30 },
+    {
+      key: (f) => (f.docType === 1 ? "Doc" : f.docType === 2 ? "Wiki" : "Meeting"),
+      label: "Type",
+    },
+    { key: "pageId", label: "Page ID" },
+  ]);
+  progress(`${found.length} call pages found (via ${tokenUsed.name})`);
 }

@@ -50,6 +50,7 @@ import {
   runDocsGetCommand,
   runDocsUpdateCommand,
   runDocsCreateCommand,
+  runDocsScanCommand,
 } from "./commands/docs.js";
 
 export const program = new Command();
@@ -228,9 +229,10 @@ const docs = program.command("docs").description("Manage ClickUp Docs and Pages 
 
 docs
   .command("list")
-  .description("List docs in the workspace")
+  .description("List docs in the workspace (includes type 3 meeting notes)")
   .option("--json", "Output as JSON")
   .option("--workspace <id>", "Override workspace ID")
+  .option("--type <type>", "Filter by doc type: 1 (Doc), 2 (Wiki), 3 (Meeting)")
   .action(wrapAction(runDocsListCommand));
 
 docs
@@ -259,6 +261,13 @@ docs
   .option("--name <title>", "Update page title")
   .option("--mode <mode>", "Edit mode: replace (default), append, or prepend", "replace")
   .action(wrapAction(runDocsUpdateCommand));
+
+docs
+  .command("scan")
+  .description("Scan all workspace docs for call pages (date-suffixed titles)")
+  .option("--json", "Output as JSON")
+  .option("--workspace <id>", "Override workspace ID")
+  .action(wrapAction(runDocsScanCommand));
 
 docs
   .command("create <docId>")

@@ -332,11 +332,49 @@ export async function getSpaceTags(
 
 // ── Docs (v3 API) ────────────────────────────────────
 
-export async function getDocs(token: string, workspaceId: string): Promise<ClickUpDoc[]> {
-  const res = await request<ClickUpDocsResponse>(`/workspaces/${workspaceId}/docs`, token, {
+export async function getDocs(
+  token: string,
+  workspaceId: string,
+  params?: { parent_type?: string; cursor?: string },
+): Promise<ClickUpDocsResponse> {
+  const query: Record<string, string | undefined> = {};
+  if (params?.parent_type) query.parent_type = params.parent_type;
+  if (params?.cursor) query.cursor = params.cursor;
+
+  return request<ClickUpDocsResponse>(`/workspaces/${workspaceId}/docs`, token, {
     apiVersion: "v3",
+    query,
   });
-  return res.docs;
+}
+
+/** Fetch all docs (types 1+2 default, plus type 3 via parent_type=12), auto-paginating. */
+export async function getAllDocs(token: string, workspaceId: string): Promise<ClickUpDoc[]> {
+  const allDocs: ClickUpDoc[] = [];
+  const seen = new Set<string>();
+
+  async function paginate(params?: { parent_type?: string }) {
+    let cursor: string | undefined;
+    let prevCursor: string | undefined;
+    do {
+      const res = await getDocs(token, workspaceId, { ...params, cursor });
+      for (const doc of res.docs) {
+        if (!seen.has(doc.id)) {
+          seen.add(doc.id);
+          allDocs.push(doc);
+        }
+      }
+      prevCursor = cursor;
+      cursor = res.next_cursor;
+      // Guard against API returning the same cursor (infinite loop)
+      if (cursor === prevCursor) break;
+    } while (cursor);
+  }
+
+  // Fetch type 1+2 (default) then type 3 (parent_type=12)
+  await paginate();
+  await paginate({ parent_type: "12" });
+
+  return allDocs;
 }
 
 export async function getDocPages(
