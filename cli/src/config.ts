@@ -15,6 +15,8 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
 
+import { getEnvVarOptional } from "@heyramzi/cli";
+
 // ── Types ────────────────────────────────────────────
 
 /** A named API token with optional metadata */
@@ -55,8 +57,8 @@ export function loadConfig(): CliConfig | null {
     }
   }
 
-  const envToken = process.env.CU_API_TOKEN;
-  const teamId = process.env.CU_TEAM_ID || fileConfig.teamId || "";
+  const envToken = getEnvVarOptional("CU_API_TOKEN", "");
+  const teamId = getEnvVarOptional("CU_TEAM_ID", fileConfig.teamId || "");
 
   // Build tokens list from config
   const tokens = fileConfig.tokens ?? [];

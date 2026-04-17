@@ -60,6 +60,26 @@ export interface ClickUpPageCover {
   position?: { x: number; y: number };
 }
 
+/** Page emoji/icon avatar */
+export interface ClickUpPageAvatar {
+  color?: string;
+  value?: string;
+  source?: string;
+}
+
+/** Relationship between a task and a doc/page */
+export interface ClickUpTaskDocRelationship {
+  doc_id: string;
+  page_id?: string;
+  type: "embed" | "mentionedBy" | "mentioning" | "linked" | "attached";
+}
+
+/** Paginated response for task doc relationships */
+export interface ClickUpTaskDocRelationshipsResponse {
+  data: ClickUpTaskDocRelationship[];
+  next_cursor?: string;
+}
+
 //===============================================
 // DOCUMENT TYPES
 //===============================================
@@ -134,7 +154,7 @@ export interface ClickUpPage {
   date_edited?: number;
   edited_by?: number;
   content: string;
-  avatar?: { value: string };
+  avatar?: ClickUpPageAvatar;
   creator_id: number;
   deleted: boolean;
   deleted_by?: number;

@@ -1,6 +1,6 @@
 {
   "name": "@clickup-utils/cli",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "ClickUp CLI — manage workspaces, tasks, and more from the terminal",
   "bin": {
     "clickup": "./bin/clickup.ts",
@@ -11,7 +11,7 @@
     "start": "npx tsx bin/clickup.ts"
   },
   "dependencies": {
-    "@heyramzi/cli": "file:../../../../vibe-kit/CLIs/cli-maker"
+    "@heyramzi/cli": "file:../../vibe-kit/CLIs/climaker"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

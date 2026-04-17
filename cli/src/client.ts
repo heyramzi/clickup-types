@@ -90,13 +90,17 @@ async function request<T>(
 
 // ── Token fallback ───────────────────────────────────
 
-function isAccessError(status: number): boolean {
-  return status === 401 || status === 403;
+function isAccessError(err: unknown): boolean {
+  const status = (err as any).status;
+  if (status === 401 || status === 403) return true;
+  // ClickUp returns 404 with ECODE ACCESS_999 for permission-denied (not truly missing)
+  if (status === 404 && (err as any).message?.includes("ACCESS_999")) return true;
+  return false;
 }
 
 /**
  * Try a request with each token in priority order.
- * On 401/403, falls back to the next token. Other errors throw immediately.
+ * On 401/403/ACCESS_999 404, falls back to the next token. Other errors throw immediately.
  */
 export async function requestWithFallback<T>(
   tokens: NamedToken[],
@@ -110,7 +114,7 @@ export async function requestWithFallback<T>(
       return { result, tokenUsed: namedToken };
     } catch (error) {
       lastError = error as Error;
-      if (isAccessError((error as any).status) && tokens.length > 1) {
+      if (isAccessError(error) && tokens.length > 1) {
         // Access error — try next token
         continue;
       }
