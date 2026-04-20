@@ -767,14 +767,18 @@ createCLI({
         const lines: string[] = [];
         for (const c of comments) {
           const date = new Date(parseInt(c.date, 10)).toLocaleString();
-          lines.push(`${c.user.username}  ${date}`);
+          lines.push(`[${c.id}] ${c.user.username}  ${date}`);
           lines.push(`  ${c.comment_text}`);
           if (c.resolved) lines.push("  [Resolved]");
           lines.push("");
         }
         ctx.raw(lines.join("\n"));
 
-        ctx.next([`comments add ${args.taskId} --text <text>`]);
+        ctx.next([
+          `comments add ${args.taskId} --text <text>`,
+          `comments update <commentId> --text <text>`,
+          `comments delete <commentId>`,
+        ]);
       },
     },
 
@@ -804,6 +808,49 @@ createCLI({
 
         ctx.output({ taskId: args.taskId, status: "comment added" });
         ctx.next([`comments list ${args.taskId}`]);
+      },
+    },
+
+    "comments update": {
+      description: "Update an existing comment",
+      args: {
+        commentId: { position: 0, required: true, description: "Comment ID (see `comments list`)" },
+      },
+      flags: {
+        text: { type: "string", description: "New comment text (required)" },
+        resolved: { type: "boolean", description: "Mark the comment as resolved" },
+      },
+      run: async ({ args, flags, ctx }) => {
+        const text = flags.text as string | undefined;
+        if (!text) {
+          ctx.error("--text is required.");
+          process.exit(1);
+        }
+
+        const config = requireConfig();
+        ctx.status("Updating comment...");
+
+        await client.updateComment(config.apiToken, args.commentId, {
+          comment_text: text,
+          resolved: flags.resolved as boolean | undefined,
+        });
+
+        ctx.output({ commentId: args.commentId, status: "comment updated" });
+      },
+    },
+
+    "comments delete": {
+      description: "Delete a comment",
+      args: {
+        commentId: { position: 0, required: true, description: "Comment ID (see `comments list`)" },
+      },
+      run: async ({ args, ctx }) => {
+        const config = requireConfig();
+        ctx.status("Deleting comment...");
+
+        await client.deleteComment(config.apiToken, args.commentId);
+
+        ctx.output({ commentId: args.commentId, status: "comment deleted" });
       },
     },
 

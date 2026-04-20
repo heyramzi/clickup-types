@@ -2,6 +2,7 @@
 
 ## Technical History
 
+- 2026-04-20: feat(cli): `comments update <commentId> --text <text> [--resolved]` and `comments delete <commentId>`. `comments list` now prints `[commentId]` alongside the author so you can actually feed IDs to update/delete without leaving the CLI. Added because a stale comment I posted could not be retracted from the terminal. v0.4.0 (ramzi).
 - 2026-04-20: feat(cli): `task get --fields` renders custom fields with dropdown option resolution (drop_down, labels, date, users, tasks, JSON fallback). Added to support post-Make-push QC: you need to eyeball a downstream task's custom fields from the terminal before declaring a scenario edit done. v0.3.0 (ramzi).
 - 2026-04-13: feat(cli): migrate from commander to @heyramzi/cli SDK, consolidate 15 command files into single createCLI entry (ramzi)
 - 2026-04-13: feat(cli): add docs scan command for workspace-wide call page discovery (ramzi)

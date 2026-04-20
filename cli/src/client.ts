@@ -302,6 +302,23 @@ export async function addTaskComment(
   });
 }
 
+export async function updateComment(
+  token: string,
+  commentId: string,
+  body: { comment_text: string; assignee?: string; resolved?: boolean },
+): Promise<unknown> {
+  return request(`/comment/${commentId}`, token, {
+    method: "PUT",
+    body,
+  });
+}
+
+export async function deleteComment(token: string, commentId: string): Promise<unknown> {
+  return request(`/comment/${commentId}`, token, {
+    method: "DELETE",
+  });
+}
+
 // ── Time Tracking ────────────────────────────────────
 
 export async function getTimeEntries(

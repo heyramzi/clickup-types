@@ -1,6 +1,6 @@
 {
   "name": "@clickup-utils/cli",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "ClickUp CLI — manage workspaces, tasks, and more from the terminal",
   "bin": {
     "clickup": "./bin/clickup.ts",
