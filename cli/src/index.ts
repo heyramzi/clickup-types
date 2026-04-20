@@ -16,7 +16,14 @@ import * as client from "./client.js";
 import { requestWithFallback } from "./client.js";
 import type { ClickUpDocPageListing } from "../../types/clickup-doc-types.js";
 import type { NamedToken } from "./config.js";
-import { getConfigPath, getTokens, loadConfig, requireConfig, requireConfigWithTeam, saveConfig } from "./config.js";
+import {
+  getConfigPath,
+  getTokens,
+  loadConfig,
+  requireConfig,
+  requireConfigWithTeam,
+  saveConfig,
+} from "./config.js";
 
 // ── Helpers ───────────────────────────────────────────
 
@@ -79,6 +86,41 @@ function formatDuration(ms: string | number): string {
   const hours = Math.floor(totalMs / 3600000);
   const minutes = Math.floor((totalMs % 3600000) / 60000);
   return hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
+}
+
+function renderCustomFieldValue(field: {
+  type: string;
+  value?: unknown;
+  type_config?: { options?: Array<{ id: string; name?: string; label?: string; orderindex?: number }> };
+}): string {
+  const v = field.value;
+  if (v === null || v === undefined || v === "") return "(empty)";
+
+  const options = field.type_config?.options ?? [];
+  const resolveOption = (optId: string | number): string => {
+    const opt = options.find((o) => o.id === optId || o.orderindex === optId);
+    return opt?.name ?? opt?.label ?? String(optId);
+  };
+
+  if (field.type === "drop_down") {
+    return resolveOption(v as string | number);
+  }
+  if (field.type === "labels" && Array.isArray(v)) {
+    return (v as (string | number)[]).map(resolveOption).join(", ");
+  }
+  if (field.type === "date" && typeof v === "string") {
+    return new Date(parseInt(v, 10)).toLocaleDateString();
+  }
+  if (field.type === "users" && Array.isArray(v)) {
+    return (v as Array<{ username?: string; email?: string }>)
+      .map((u) => u.username ?? u.email ?? "?")
+      .join(", ");
+  }
+  if (field.type === "tasks" && Array.isArray(v)) {
+    return (v as Array<{ id: string }>).map((t) => t.id).join(", ");
+  }
+  if (typeof v === "object") return JSON.stringify(v);
+  return String(v);
 }
 
 // ── CLI ───────────────────────────────────────────────
@@ -349,7 +391,9 @@ createCLI({
         const folderId = flags.folder as string | undefined;
 
         if (!spaceId && !folderId) {
-          ctx.error("Provide --space <id> or --folder <id>. Use `clickup spaces` or `clickup folders`.");
+          ctx.error(
+            "Provide --space <id> or --folder <id>. Use `clickup spaces` or `clickup folders`.",
+          );
           process.exit(1);
         }
 
@@ -495,7 +539,10 @@ createCLI({
       args: {
         taskId: { position: 0, required: true, description: "Task ID" },
       },
-      run: async ({ args, ctx }) => {
+      flags: {
+        fields: { type: "boolean", description: "Show custom fields (resolves dropdown option IDs to labels)" },
+      },
+      run: async ({ args, flags, ctx }) => {
         const config = requireConfig();
         ctx.status("Fetching task...");
 
@@ -527,7 +574,30 @@ createCLI({
           ctx.raw(lines.join("\n") + (truncated ? "\n... (truncated)" : ""));
         }
 
-        ctx.next([`task update ${args.taskId}`, `comments list ${args.taskId}`, `open ${args.taskId}`]);
+        if (flags.fields) {
+          const customFields = (task as { custom_fields?: unknown[] }).custom_fields ?? [];
+          if (customFields.length > 0) {
+            ctx.raw("\n\nCustom Fields:\n");
+            for (const rawField of customFields) {
+              const f = rawField as {
+                name: string;
+                type: string;
+                value?: unknown;
+                type_config?: { options?: Array<{ id: string; name?: string; label?: string; orderindex?: number }> };
+              };
+              const rendered = renderCustomFieldValue(f);
+              ctx.raw(`  ${f.name} (${f.type}): ${rendered}\n`);
+            }
+          } else {
+            ctx.raw("\n\nCustom Fields: (none)\n");
+          }
+        }
+
+        ctx.next([
+          `task update ${args.taskId}`,
+          `comments list ${args.taskId}`,
+          `open ${args.taskId}`,
+        ]);
       },
     },
 
@@ -576,7 +646,11 @@ createCLI({
         const tagStr = flags.tag as string | undefined;
         if (tagStr) data.tags = tagStr.split(",");
 
-        const task = await client.createTask(config.apiToken, listId, data as unknown as Parameters<typeof client.createTask>[2]);
+        const task = await client.createTask(
+          config.apiToken,
+          listId,
+          data as unknown as Parameters<typeof client.createTask>[2],
+        );
 
         ctx.output({ id: task.id, name: task.name, url: task.url });
         ctx.next([`task get ${task.id}`, `task update ${task.id}`]);
@@ -594,8 +668,14 @@ createCLI({
         markdown: { type: "boolean", description: "Treat description as markdown" },
         status: { type: "string", description: "New status" },
         priority: { type: "string", description: "New priority: urgent, high, normal, low" },
-        "add-assignee": { type: "string", description: "Add assignees by user ID (comma-separated)" },
-        "remove-assignee": { type: "string", description: "Remove assignees by user ID (comma-separated)" },
+        "add-assignee": {
+          type: "string",
+          description: "Add assignees by user ID (comma-separated)",
+        },
+        "remove-assignee": {
+          type: "string",
+          description: "Remove assignees by user ID (comma-separated)",
+        },
       },
       run: async ({ args, flags, ctx }) => {
         const config = requireConfig();
@@ -628,7 +708,11 @@ createCLI({
           process.exit(1);
         }
 
-        const task = await client.updateTask(config.apiToken, args.taskId, data as unknown as Parameters<typeof client.updateTask>[2]);
+        const task = await client.updateTask(
+          config.apiToken,
+          args.taskId,
+          data as unknown as Parameters<typeof client.updateTask>[2],
+        );
 
         ctx.output({ id: task.id, name: task.name, status: task.status.status });
         ctx.next([`task get ${args.taskId}`]);
@@ -904,7 +988,8 @@ createCLI({
         const tokens = getTokens(config);
 
         const parsed = parseDocUrl(args.urlOrPageId);
-        const workspaceId = parsed?.workspaceId || (flags.workspace as string | undefined) || config.teamId;
+        const workspaceId =
+          parsed?.workspaceId || (flags.workspace as string | undefined) || config.teamId;
         const docId = parsed?.docId || (flags.doc as string | undefined);
         const pageId = parsed?.pageId || args.urlOrPageId;
 
@@ -950,7 +1035,8 @@ createCLI({
         const tokens = getTokens(config);
 
         const parsed = parseDocUrl(args.urlOrPageId);
-        const workspaceId = parsed?.workspaceId || (flags.workspace as string | undefined) || config.teamId;
+        const workspaceId =
+          parsed?.workspaceId || (flags.workspace as string | undefined) || config.teamId;
         const docId = parsed?.docId || (flags.doc as string | undefined);
         const pageId = parsed?.pageId || args.urlOrPageId;
 
@@ -980,7 +1066,10 @@ createCLI({
           process.exit(1);
         }
 
-        const editMode = ((flags.mode as string | undefined) || "replace") as "replace" | "append" | "prepend";
+        const editMode = ((flags.mode as string | undefined) || "replace") as
+          | "replace"
+          | "append"
+          | "prepend";
 
         ctx.status(`Updating page (${editMode})...`);
 
