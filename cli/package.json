@@ -11,7 +11,7 @@
     "start": "npx tsx bin/clickup.ts"
   },
   "dependencies": {
-    "@heyramzi/cli": "file:../../vibe-kit/CLIs/climaker"
+    "@heyramzi/cli": "^0.1.0"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
