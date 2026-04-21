@@ -2,12 +2,12 @@
 
 Terminal interface for managing ClickUp workspaces, tasks, docs, and time tracking.
 
-## Setup
+## Usage
 
-Run the interactive setup wizard to configure API tokens:
+Run the CLI directly from the UpSys workspace root with `tsx`:
 
 ```bash
-clickup init
+pnpm exec tsx packages/clickup-utils/cli/bin/clickup.ts init
 ```
 
 You will be prompted for one or more named API tokens (from [ClickUp Settings > Apps](https://app.clickup.com/settings/apps)) and asked to select a workspace.
@@ -17,12 +17,7 @@ Config is stored at `~/.config/clickup/config.json` with restrictive permissions
 The CLI supports multiple tokens in priority order — if the first token returns 401/403, the next is tried automatically. This is useful for teams where docs are owned by a shared account.
 
 ```bash
-# Direct invocation
-npx tsx bin/clickup.ts <command> [args...]
-
-# After global link
-clickup <command> [args...]
-cu <command> [args...]
+pnpm exec tsx packages/clickup-utils/cli/bin/clickup.ts <command> [args...]
 ```
 
 ## Commands

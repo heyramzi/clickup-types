@@ -112,19 +112,17 @@ Re-generate with: `node scripts/generate-sdk/index.mjs`
 A terminal-first, AI-agent-friendly CLI for ClickUp. See [cli/README.md](./cli/README.md) for full docs.
 
 ```bash
-cd cli && npm install && npm run build
-
-clickup init          # Interactive auth setup
-clickup hierarchy     # Full workspace tree
-clickup tasks --list <id>
-clickup task create --list <id> --name "..."
-clickup task update <id> --status "done"
+pnpm exec tsx packages/clickup-utils/cli/bin/clickup.ts init
+pnpm exec tsx packages/clickup-utils/cli/bin/clickup.ts hierarchy
+pnpm exec tsx packages/clickup-utils/cli/bin/clickup.ts tasks --list <id>
+pnpm exec tsx packages/clickup-utils/cli/bin/clickup.ts task create --list <id> --name "..."
+pnpm exec tsx packages/clickup-utils/cli/bin/clickup.ts task update <id> --status "done"
 ```
 
 **Dual output:** formatted tables in the terminal, JSON when piped or with `--json`.
 
 ```bash
-clickup tasks --list 123 --json | jq '.tasks[].name'
+pnpm exec tsx packages/clickup-utils/cli/bin/clickup.ts tasks --list 123 --json | jq '.tasks[].name'
 ```
 
 | Command group                                               | What it does                    |
