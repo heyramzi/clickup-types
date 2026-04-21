@@ -1,7 +1,7 @@
 {
   "name": "@clickup-utils/cli",
-  "version": "0.6.0",
-  "description": "ClickUp CLI — manage workspaces, tasks, and more from the terminal",
+  "version": "0.7.0",
+  "description": "ClickUp CLI, manage workspaces, tasks, and more from the terminal",
   "bin": {
     "clickup": "./bin/clickup.ts",
     "cu": "./bin/clickup.ts"
@@ -10,9 +10,7 @@
     "typecheck": "tsc --noEmit",
     "start": "npx tsx bin/clickup.ts"
   },
-  "dependencies": {
-    "@heyramzi/cli": "^0.1.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@types/node": "^22.0.0",
     "typescript": "^5.7.0"

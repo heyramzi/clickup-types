@@ -15,7 +15,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
 
-import { getEnvVarOptional } from "@heyramzi/cli";
+import { getEnvVarOptional } from "./scaffold/index.js";
 
 // ── Types ────────────────────────────────────────────
 

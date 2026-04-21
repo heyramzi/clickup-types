@@ -10,7 +10,7 @@ import { readFileSync } from "node:fs";
 import { platform } from "node:os";
 import * as readline from "node:readline";
 
-import { createCLI } from "@heyramzi/cli";
+import { createCLI } from "./scaffold/index.js";
 
 import * as client from "./client.js";
 import { requestWithFallback } from "./client.js";

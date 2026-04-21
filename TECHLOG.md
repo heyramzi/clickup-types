@@ -4,6 +4,14 @@ Changelog-style trail of changes, decisions, and discoveries. Most recent first.
 
 ---
 
+## 2026-04-21
+
+- Shipped CLI v0.7.0. Dropped `@heyramzi/cli` as a dependency and inlined its 10 scaffold files into `cli/src/scaffold/`. clickup-utils is now self-contained, which matters because this repo is consumed as a submodule across six projects and a `file:../../vibe-kit/CLIs/climaker` link in `package-lock.json` only resolves on the author's machine.
+- Fixed `resolveCommand` in the scaffolded router. Previous code was `Math.min(2, tokens.length)`, capping matching at 2-token command names. Every 3-token command (`task field set`, `view create`, `fields list`, `folder create/update/delete`, `list create/update/delete`, `comments list/add/update/delete`, `docs list/pages/get/update/create/scan`, `time …`) was silently unreachable; CLI fell through to the root help with exit 0 while pretending to succeed. New code computes `maxDepth` from `Object.keys(config.commands)` so the router adapts to however many tokens the longest registered command has.
+- Kept `scaffold/` as its own directory to make future re-extraction easy if we ever want to ship the CLI scaffold as a real package again.
+
+---
+
 ## 2026-04-20 (late evening)
 
 - Shipped CLI v0.6.0 adding `views list`, `view create`, `view delete`. Driver: Seraph Immo portfolio list needed 6 views (Portefeuille actif board, Vue dirigeant table, Pipeline commerce board, Chantiers en cours board, Clôtures à finaliser table, Carte map). Creating these by hand 12 times across future clients would be wasted toil, so the CLI gets them.
