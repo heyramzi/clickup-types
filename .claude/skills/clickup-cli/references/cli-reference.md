@@ -48,7 +48,10 @@ commands/*.ts     One file per command group, exports handler functions
      const config = requireConfigWithTeam();
      progress("Loading...");
      const data = await client.someMethod(config.apiToken, config.teamId);
-     if (useJson(opts)) { printJson(data); return; }
+     if (useJson(opts)) {
+       printJson(data);
+       return;
+     }
      printTable(rows, columns);
    }
    ```
@@ -184,43 +187,43 @@ clickup status                              # Show auth status
 
 All methods take `token: string` as first arg.
 
-| Method | Endpoint | HTTP |
-|--------|----------|------|
-| `getWorkspaces(token)` | `/team` | GET |
-| `getTeamMembers(token, teamId)` | `/team/{id}` | GET |
-| `getSpaces(token, teamId)` | `/team/{id}/space` | GET |
-| `getFolders(token, spaceId)` | `/space/{id}/folder` | GET |
-| `getFolderlessLists(token, spaceId)` | `/space/{id}/list` | GET |
-| `getListsInFolder(token, folderId)` | `/folder/{id}/list` | GET |
-| `getList(token, listId)` | `/list/{id}` | GET |
-| `getTasks(token, listId, opts?)` | `/list/{id}/task` | GET |
-| `getFilteredTasks(token, teamId, opts?)` | `/team/{id}/task` | GET |
-| `getTask(token, taskId)` | `/task/{id}` | GET |
-| `createTask(token, listId, data)` | `/list/{id}/task` | POST |
-| `updateTask(token, taskId, data)` | `/task/{id}` | PUT |
-| `getTaskComments(token, taskId)` | `/task/{id}/comment` | GET |
-| `addTaskComment(token, taskId, body)` | `/task/{id}/comment` | POST |
-| `getTimeEntries(token, teamId, opts?)` | `/team/{id}/time_entries` | GET |
-| `getTimeEntry(token, teamId, timerId)` | `/team/{id}/time_entries/{id}` | GET |
-| `createTimeEntry(token, teamId, data)` | `/team/{id}/time_entries` | POST |
-| `updateTimeEntry(token, teamId, timerId, data)` | `/team/{id}/time_entries/{id}` | PUT |
-| `deleteTimeEntry(token, teamId, timerId)` | `/team/{id}/time_entries/{id}` | DELETE |
-| `getSpaceTags(token, spaceId)` | `/space/{id}/tag` | GET |
-| `getDocs(token, workspaceId)` | v3 `/workspaces/{id}/docs` | GET |
-| `getDocPages(token, wid, docId)` | v3 `/workspaces/{id}/docs/{id}/pages` | GET |
-| `getPage(token, wid, docId, pageId)` | v3 `…/pages/{id}` | GET |
-| `createPage(token, wid, docId, page)` | v3 `…/pages` | POST |
-| `updatePage(token, wid, docId, pageId, page)` | v3 `…/pages/{id}` | PUT |
+| Method                                          | Endpoint                              | HTTP   |
+| ----------------------------------------------- | ------------------------------------- | ------ |
+| `getWorkspaces(token)`                          | `/team`                               | GET    |
+| `getTeamMembers(token, teamId)`                 | `/team/{id}`                          | GET    |
+| `getSpaces(token, teamId)`                      | `/team/{id}/space`                    | GET    |
+| `getFolders(token, spaceId)`                    | `/space/{id}/folder`                  | GET    |
+| `getFolderlessLists(token, spaceId)`            | `/space/{id}/list`                    | GET    |
+| `getListsInFolder(token, folderId)`             | `/folder/{id}/list`                   | GET    |
+| `getList(token, listId)`                        | `/list/{id}`                          | GET    |
+| `getTasks(token, listId, opts?)`                | `/list/{id}/task`                     | GET    |
+| `getFilteredTasks(token, teamId, opts?)`        | `/team/{id}/task`                     | GET    |
+| `getTask(token, taskId)`                        | `/task/{id}`                          | GET    |
+| `createTask(token, listId, data)`               | `/list/{id}/task`                     | POST   |
+| `updateTask(token, taskId, data)`               | `/task/{id}`                          | PUT    |
+| `getTaskComments(token, taskId)`                | `/task/{id}/comment`                  | GET    |
+| `addTaskComment(token, taskId, body)`           | `/task/{id}/comment`                  | POST   |
+| `getTimeEntries(token, teamId, opts?)`          | `/team/{id}/time_entries`             | GET    |
+| `getTimeEntry(token, teamId, timerId)`          | `/team/{id}/time_entries/{id}`        | GET    |
+| `createTimeEntry(token, teamId, data)`          | `/team/{id}/time_entries`             | POST   |
+| `updateTimeEntry(token, teamId, timerId, data)` | `/team/{id}/time_entries/{id}`        | PUT    |
+| `deleteTimeEntry(token, teamId, timerId)`       | `/team/{id}/time_entries/{id}`        | DELETE |
+| `getSpaceTags(token, spaceId)`                  | `/space/{id}/tag`                     | GET    |
+| `getDocs(token, workspaceId)`                   | v3 `/workspaces/{id}/docs`            | GET    |
+| `getDocPages(token, wid, docId)`                | v3 `/workspaces/{id}/docs/{id}/pages` | GET    |
+| `getPage(token, wid, docId, pageId)`            | v3 `…/pages/{id}`                     | GET    |
+| `createPage(token, wid, docId, page)`           | v3 `…/pages`                          | POST   |
+| `updatePage(token, wid, docId, pageId, page)`   | v3 `…/pages/{id}`                     | PUT    |
 
 ## Types Location
 
-| File | Types |
-|------|-------|
-| `types/clickup-task-types.ts` | `ClickUpTask`, `CreateTaskData`, `UpdateTaskData` |
+| File                               | Types                                                              |
+| ---------------------------------- | ------------------------------------------------------------------ |
+| `types/clickup-task-types.ts`      | `ClickUpTask`, `CreateTaskData`, `UpdateTaskData`                  |
 | `types/clickup-hierarchy-types.ts` | `ClickUpSpace`, `ClickUpFolder`, `ClickUpList`, `ClickUpWorkspace` |
-| `types/clickup-time-types.ts` | `TimeEntry`, `CreateTimeEntryParams`, `TimeEntriesResponse` |
-| `types/clickup-comment-types.ts` | `ClickUpTaskComment`, `CreateCommentBody` |
-| `types/clickup-doc-types.ts` | `ClickUpDoc`, `ClickUpPage`, `ClickUpCreatePageRequest` |
+| `types/clickup-time-types.ts`      | `TimeEntry`, `CreateTimeEntryParams`, `TimeEntriesResponse`        |
+| `types/clickup-comment-types.ts`   | `ClickUpTaskComment`, `CreateCommentBody`                          |
+| `types/clickup-doc-types.ts`       | `ClickUpDoc`, `ClickUpPage`, `ClickUpCreatePageRequest`            |
 
 ## Common Patterns
 

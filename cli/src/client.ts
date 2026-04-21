@@ -31,9 +31,15 @@ import type {
   ClickUpWorkspace,
 } from "../../types/clickup-hierarchy-types.js";
 import type {
+  AddTaskDependencyData,
+  ClickUpChecklist,
   ClickUpTask,
+  ClickUpTasks,
   ClickUpTasksResponse,
+  CreateChecklistData,
+  CreateChecklistItemData,
   CreateTaskData,
+  SetCustomFieldValueOptions,
   UpdateTaskData,
 } from "../../types/clickup-task-types.js";
 import type { TimeEntry, TimeEntriesResponse } from "../../types/clickup-time-types.js";
@@ -237,6 +243,32 @@ export interface CreateListData {
   status?: string;
 }
 
+export interface CreateCustomFieldOptionInput {
+  name?: string;
+  label?: string;
+  color?: string | null;
+  orderindex?: number;
+}
+
+export interface CreateCustomFieldData {
+  name: string;
+  type: string;
+  type_config?: {
+    sorting?: string;
+    default?: number;
+    placeholder?: string;
+    options?: CreateCustomFieldOptionInput[];
+    [key: string]: unknown;
+  };
+  required?: boolean;
+}
+
+export interface CreateCustomFieldResponse {
+  field: ClickUpCustomField & {
+    required?: boolean;
+  };
+}
+
 export async function createListInSpace(
   token: string,
   spaceId: string,
@@ -284,15 +316,41 @@ export async function getListCustomFields(
   return res.fields;
 }
 
+export async function createListCustomField(
+  token: string,
+  listId: string,
+  data: CreateCustomFieldData,
+): Promise<CreateCustomFieldResponse> {
+  return request<CreateCustomFieldResponse>(`/list/${listId}/field`, token, {
+    method: "POST",
+    body: data,
+  });
+}
+
+export async function createWorkspaceCustomField(
+  token: string,
+  teamId: string,
+  data: CreateCustomFieldData,
+): Promise<CreateCustomFieldResponse> {
+  return request<CreateCustomFieldResponse>(`/team/${teamId}/field`, token, {
+    method: "POST",
+    body: data,
+  });
+}
+
 export async function setTaskCustomFieldValue(
   token: string,
   taskId: string,
   fieldId: string,
   value: unknown,
+  options?: SetCustomFieldValueOptions,
 ): Promise<void> {
   await request<void>(`/task/${taskId}/field/${fieldId}`, token, {
     method: "POST",
-    body: { value },
+    body: {
+      value,
+      value_options: options?.time === undefined ? undefined : { time: options.time },
+    },
   });
 }
 
@@ -358,8 +416,8 @@ export async function getFilteredTasks(
   });
 }
 
-export async function getTask(token: string, taskId: string): Promise<ClickUpTask> {
-  return request<ClickUpTask>(`/task/${taskId}`, token, {
+export async function getTask(token: string, taskId: string): Promise<ClickUpTasks> {
+  return request<ClickUpTasks>(`/task/${taskId}`, token, {
     query: { include_subtasks: "true" },
   });
 }
@@ -382,6 +440,62 @@ export async function updateTask(
 ): Promise<ClickUpTask> {
   return request<ClickUpTask>(`/task/${taskId}`, token, {
     method: "PUT",
+    body: data,
+  });
+}
+
+export async function deleteTask(token: string, taskId: string): Promise<void> {
+  await request<void>(`/task/${taskId}`, token, {
+    method: "DELETE",
+  });
+}
+
+export async function createTaskChecklist(
+  token: string,
+  taskId: string,
+  data: CreateChecklistData,
+): Promise<ClickUpChecklist> {
+  return request<ClickUpChecklist>(`/task/${taskId}/checklist`, token, {
+    method: "POST",
+    body: data,
+  });
+}
+
+export async function createChecklistItem(
+  token: string,
+  checklistId: string,
+  data: CreateChecklistItemData,
+): Promise<unknown> {
+  return request(`/checklist/${checklistId}/checklist_item`, token, {
+    method: "POST",
+    body: data,
+  });
+}
+
+export async function deleteTaskChecklist(token: string, checklistId: string): Promise<unknown> {
+  return request(`/checklist/${checklistId}`, token, {
+    method: "DELETE",
+  });
+}
+
+export async function addTaskDependency(
+  token: string,
+  taskId: string,
+  data: AddTaskDependencyData,
+): Promise<unknown> {
+  return request(`/task/${taskId}/dependency`, token, {
+    method: "POST",
+    body: data,
+  });
+}
+
+export async function removeTaskDependency(
+  token: string,
+  taskId: string,
+  data: AddTaskDependencyData,
+): Promise<unknown> {
+  return request(`/task/${taskId}/dependency`, token, {
+    method: "DELETE",
     body: data,
   });
 }

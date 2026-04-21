@@ -19,6 +19,7 @@ Command-line interface for the ClickUp API. Installed globally as `clickup` (ali
 The CLI must be initialized: `clickup init`. Verify with `clickup status`.
 
 If the CLI is not installed or needs rebuilding:
+
 ```bash
 cd <path-to-clickup-utils>/cli && npm run build && npm install -g .
 ```
@@ -84,6 +85,7 @@ https://app.clickup.com/90132511039/v/dc/180407336/180407337
 ### Source Location
 
 The CLI lives at `clickup-utils/cli/`. Key files:
+
 - `src/index.ts` — Commander program registration
 - `src/client.ts` — API client (add new methods here)
 - `src/commands/*.ts` — Command handlers
@@ -108,6 +110,7 @@ Hand-written types are in `clickup-utils/types/clickup-*-types.ts`. The generate
 ### Bulk Time Logging
 
 To log time across multiple tasks spread over a date range:
+
 ```bash
 clickup time create --task <id1> --duration 3h --start -5d --team <wsId>
 clickup time create --task <id2> --duration 2h --start -3d --team <wsId>

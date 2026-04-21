@@ -218,7 +218,7 @@ export interface CommentResponse {
 
 // Simplified request types for attachments
 export interface CreateAttachmentRequestParams {
-  attachment: File[];
+  attachment: unknown[];
   filename: string;
 }
 
@@ -337,7 +337,9 @@ export interface CreateTaskData {
   status?: string;
   priority?: ClickUpTaskPriority;
   due_date?: number;
+  due_date_time?: boolean;
   start_date?: number;
+  start_date_time?: boolean;
   time_estimate?: number;
   parent?: string;
   custom_item_id?: number | null;
@@ -355,7 +357,9 @@ export interface UpdateTaskData {
   status?: string;
   priority?: ClickUpTaskPriority | null;
   due_date?: number | null;
+  due_date_time?: boolean;
   start_date?: number | null;
+  start_date_time?: boolean;
   time_estimate?: number | null;
   assignees?: {
     add?: number[];
@@ -365,6 +369,46 @@ export interface UpdateTaskData {
     add?: number[];
     rem?: number[];
   };
+}
+
+//===============================================
+// TASK CHECKLIST / DEPENDENCY INTERFACES
+//===============================================
+
+export interface CreateChecklistData {
+  name: string;
+}
+
+export interface ClickUpChecklist {
+  id: string;
+  task_id?: string;
+  name: string;
+  date_created?: string;
+  orderindex?: string | number;
+  creator?: number;
+  resolved?: number;
+  unresolved?: number;
+  items?: Array<{
+    id?: string;
+    name: string;
+    orderindex?: number;
+    resolved?: boolean;
+    parent?: string | null;
+  }>;
+}
+
+export interface CreateChecklistItemData {
+  name: string;
+  assignee?: number | null;
+}
+
+export interface AddTaskDependencyData {
+  depends_on?: string;
+  dependency_of?: string;
+}
+
+export interface SetCustomFieldValueOptions {
+  time?: boolean;
 }
 
 //===============================================

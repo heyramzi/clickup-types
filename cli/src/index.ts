@@ -80,6 +80,66 @@ function formatDate(timestamp: string | null): string {
   return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
+function parseDateInput(value: string): { timestamp: number; hasTime: boolean } | null {
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+
+  if (/^\d+$/.test(trimmed)) {
+    return { timestamp: Number(trimmed), hasTime: true };
+  }
+
+  if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
+    return { timestamp: Date.parse(`${trimmed}T00:00:00Z`), hasTime: false };
+  }
+
+  const parsed = Date.parse(trimmed);
+  if (Number.isNaN(parsed)) return null;
+
+  return {
+    timestamp: parsed,
+    hasTime: /T|\d{1,2}:\d{2}/.test(trimmed),
+  };
+}
+
+function parseBooleanFlag(value: unknown): boolean | undefined {
+  if (value === undefined) return undefined;
+  if (typeof value === "boolean") return value;
+  if (typeof value === "number") return value !== 0;
+  const normalized = String(value).trim().toLowerCase();
+  if (!normalized) return undefined;
+  if (["1", "true", "yes", "y", "on"].includes(normalized)) return true;
+  if (["0", "false", "no", "n", "off"].includes(normalized)) return false;
+  return undefined;
+}
+
+function applyTaskDate(
+  data: Record<string, unknown>,
+  value: string | undefined,
+  dateKey: "start_date" | "due_date",
+  timeKey: "start_date_time" | "due_date_time",
+  timeFlag: unknown,
+): void {
+  if (value === undefined) return;
+
+  if (value === "") {
+    data[dateKey] = null;
+    data[timeKey] = false;
+    return;
+  }
+
+  const parsed = parseDateInput(value);
+  const explicitTime = parseBooleanFlag(timeFlag);
+
+  if (!parsed) {
+    data[dateKey] = value;
+    if (explicitTime !== undefined) data[timeKey] = explicitTime;
+    return;
+  }
+
+  data[dateKey] = parsed.timestamp;
+  data[timeKey] = explicitTime !== undefined ? explicitTime : parsed.hasTime;
+}
+
 function formatDuration(ms: string | number): string {
   const totalMs = typeof ms === "string" ? parseInt(ms, 10) : ms;
   if (totalMs < 0) return "running";
@@ -91,7 +151,9 @@ function formatDuration(ms: string | number): string {
 function renderCustomFieldValue(field: {
   type: string;
   value?: unknown;
-  type_config?: { options?: Array<{ id: string; name?: string; label?: string; orderindex?: number }> };
+  type_config?: {
+    options?: Array<{ id: string; name?: string; label?: string; orderindex?: number }>;
+  };
 }): string {
   const v = field.value;
   if (v === null || v === undefined || v === "") return "(empty)";
@@ -442,7 +504,9 @@ createCLI({
       },
       run: async ({ args, flags, ctx }) => {
         if (!flags.yes) {
-          const answer = await prompt(`Delete folder ${args.folderId} and all its lists? This cannot be undone. (y/N) `);
+          const answer = await prompt(
+            `Delete folder ${args.folderId} and all its lists? This cannot be undone. (y/N) `,
+          );
           if (answer.toLowerCase() !== "y") {
             ctx.raw("Cancelled.\n");
             return;
@@ -537,7 +601,12 @@ createCLI({
         const config = requireConfig();
         ctx.status("Creating list...");
 
-        const priorityMap: Record<string, 1 | 2 | 3 | 4> = { urgent: 1, high: 2, normal: 3, low: 4 };
+        const priorityMap: Record<string, 1 | 2 | 3 | 4> = {
+          urgent: 1,
+          high: 2,
+          normal: 3,
+          low: 4,
+        };
         const data: client.CreateListData = { name };
         if (flags.content) data.content = flags.content as string;
         const priorityStr = flags.priority as string | undefined;
@@ -566,7 +635,12 @@ createCLI({
       },
       run: async ({ args, flags, ctx }) => {
         const config = requireConfig();
-        const priorityMap: Record<string, 1 | 2 | 3 | 4> = { urgent: 1, high: 2, normal: 3, low: 4 };
+        const priorityMap: Record<string, 1 | 2 | 3 | 4> = {
+          urgent: 1,
+          high: 2,
+          normal: 3,
+          low: 4,
+        };
         const data: Partial<client.CreateListData> = {};
 
         if (flags.name) data.name = flags.name as string;
@@ -597,7 +671,9 @@ createCLI({
       },
       run: async ({ args, flags, ctx }) => {
         if (!flags.yes) {
-          const answer = await prompt(`Delete list ${args.listId} and all its tasks? This cannot be undone. (y/N) `);
+          const answer = await prompt(
+            `Delete list ${args.listId} and all its tasks? This cannot be undone. (y/N) `,
+          );
           if (answer.toLowerCase() !== "y") {
             ctx.raw("Cancelled.\n");
             return;
@@ -687,7 +763,9 @@ createCLI({
           process.exit(1);
         }
         if (!type) {
-          ctx.error("--type is required (list, board, table, calendar, gantt, timeline, map, ...).");
+          ctx.error(
+            "--type is required (list, board, table, calendar, gantt, timeline, map, ...).",
+          );
           process.exit(1);
         }
 
@@ -709,7 +787,8 @@ createCLI({
         const groupByField = flags["group-by"] as string | undefined;
         const groupingJson = parseJson<client.CreateViewData["grouping"]>("grouping-json");
         if (groupingJson) data.grouping = groupingJson;
-        else if (groupByField) data.grouping = { field: groupByField, dir: 1, collapsed: [], ignore: false };
+        else if (groupByField)
+          data.grouping = { field: groupByField, dir: 1, collapsed: [], ignore: false };
 
         const filtersJson = parseJson<client.CreateViewData["filters"]>("filters-json");
         if (filtersJson) data.filters = filtersJson;
@@ -728,8 +807,8 @@ createCLI({
         const view = listId
           ? await client.createListView(config.apiToken, listId, data)
           : folderId
-          ? await client.createFolderView(config.apiToken, folderId, data)
-          : await client.createSpaceView(config.apiToken, spaceId!, data);
+            ? await client.createFolderView(config.apiToken, folderId, data)
+            : await client.createSpaceView(config.apiToken, spaceId!, data);
 
         ctx.output({ id: view.id, name: view.name, type: view.type });
       },
@@ -873,7 +952,10 @@ createCLI({
         taskId: { position: 0, required: true, description: "Task ID" },
       },
       flags: {
-        fields: { type: "boolean", description: "Show custom fields (resolves dropdown option IDs to labels)" },
+        fields: {
+          type: "boolean",
+          description: "Show custom fields (resolves dropdown option IDs to labels)",
+        },
       },
       run: async ({ args, flags, ctx }) => {
         const config = requireConfig();
@@ -891,8 +973,8 @@ createCLI({
           creator: task.creator.username,
           created: new Date(parseInt(task.date_created, 10)).toLocaleString(),
           updated: new Date(parseInt(task.date_updated, 10)).toLocaleString(),
-          due: task.due_date ? new Date(parseInt(task.due_date, 10)).toLocaleString() : "",
-          start: task.start_date ? new Date(parseInt(task.start_date, 10)).toLocaleString() : "",
+          due: task.due_date ? formatDate(task.due_date) : "",
+          start: task.start_date ? formatDate(task.start_date) : "",
           timeEstimate: task.time_estimate ? `${Math.round(task.time_estimate / 3600000)}h` : "",
           timeSpent: task.time_spent ? `${Math.round(task.time_spent / 3600000)}h` : "",
           points: task.points !== null ? String(task.points) : "",
@@ -916,7 +998,14 @@ createCLI({
                 name: string;
                 type: string;
                 value?: unknown;
-                type_config?: { options?: Array<{ id: string; name?: string; label?: string; orderindex?: number }> };
+                type_config?: {
+                  options?: Array<{
+                    id: string;
+                    name?: string;
+                    label?: string;
+                    orderindex?: number;
+                  }>;
+                };
               };
               const rendered = renderCustomFieldValue(f);
               ctx.raw(`  ${f.name} (${f.type}): ${rendered}\n`);
@@ -944,10 +1033,20 @@ createCLI({
         markdown: { type: "boolean", description: "Treat description as markdown" },
         status: { type: "string", description: "Task status" },
         priority: { type: "string", description: "Priority: urgent, high, normal, low" },
+        "start-date": { type: "string", description: "Start date (unix ms or YYYY-MM-DD)" },
+        "start-date-time": {
+          type: "string",
+          description: "Set to true/false to force a start time",
+        },
+        "due-date": { type: "string", description: "Due date (unix ms or YYYY-MM-DD)" },
+        "due-date-time": { type: "string", description: "Set to true/false to force a due time" },
         assignee: { type: "string", description: "Assignee user IDs (comma-separated)" },
         tag: { type: "string", description: "Tag names (comma-separated)" },
         parent: { type: "string", description: "Parent task ID (creates a subtask)" },
-        "custom-item": { type: "string", description: "Custom task type ID (0=task, 1=milestone, plural from `custom_item`)" },
+        "custom-item": {
+          type: "string",
+          description: "Custom task type ID (0=task, 1=milestone, plural from `custom_item`)",
+        },
       },
       run: async ({ flags, ctx }) => {
         const listId = flags.list as string | undefined;
@@ -981,6 +1080,20 @@ createCLI({
         if (priorityStr && priorityMap[priorityStr]) {
           data.priority = priorityMap[priorityStr];
         }
+        applyTaskDate(
+          data,
+          flags["start-date"] as string | undefined,
+          "start_date",
+          "start_date_time",
+          flags["start-date-time"],
+        );
+        applyTaskDate(
+          data,
+          flags["due-date"] as string | undefined,
+          "due_date",
+          "due_date_time",
+          flags["due-date-time"],
+        );
         const assigneeStr = flags.assignee as string | undefined;
         if (assigneeStr) data.assignees = assigneeStr.split(",").map(Number);
         const tagStr = flags.tag as string | undefined;
@@ -1011,6 +1124,13 @@ createCLI({
         markdown: { type: "boolean", description: "Treat description as markdown" },
         status: { type: "string", description: "New status" },
         priority: { type: "string", description: "New priority: urgent, high, normal, low" },
+        "start-date": { type: "string", description: "New start date (unix ms or YYYY-MM-DD)" },
+        "start-date-time": {
+          type: "string",
+          description: "Set to true/false to force a start time",
+        },
+        "due-date": { type: "string", description: "New due date (unix ms or YYYY-MM-DD)" },
+        "due-date-time": { type: "string", description: "Set to true/false to force a due time" },
         "add-assignee": {
           type: "string",
           description: "Add assignees by user ID (comma-separated)",
@@ -1037,6 +1157,20 @@ createCLI({
         if (priorityStr) {
           data.priority = priorityMap[priorityStr] ?? null;
         }
+        applyTaskDate(
+          data,
+          flags["start-date"] as string | undefined,
+          "start_date",
+          "start_date_time",
+          flags["start-date-time"],
+        );
+        applyTaskDate(
+          data,
+          flags["due-date"] as string | undefined,
+          "due_date",
+          "due_date_time",
+          flags["due-date-time"],
+        );
         const addStr = flags["add-assignee"] as string | undefined;
         const removeStr = flags["remove-assignee"] as string | undefined;
         if (addStr || removeStr) {
@@ -1059,6 +1193,91 @@ createCLI({
 
         ctx.output({ id: task.id, name: task.name, status: task.status.status });
         ctx.next([`task get ${args.taskId}`]);
+      },
+    },
+
+    "task checklist create": {
+      description: "Create a checklist on a task",
+      args: {
+        taskId: { position: 0, required: true, description: "Task ID" },
+      },
+      flags: {
+        name: { type: "string", description: "Checklist name (required)" },
+        "items-json": {
+          type: "string",
+          description: "Checklist items as JSON array of strings or {name, assignee}",
+        },
+      },
+      run: async ({ args, flags, ctx }) => {
+        const name = flags.name as string | undefined;
+        const itemsRaw = flags["items-json"] as string | undefined;
+        if (!name) {
+          ctx.error("--name is required.");
+          process.exit(1);
+        }
+
+        const config = requireConfig();
+        ctx.status("Creating checklist...");
+
+        const checklist = await client.createTaskChecklist(config.apiToken, args.taskId, { name });
+
+        const items: Array<string | { name: string; assignee?: number | null }> = itemsRaw
+          ? (() => {
+              try {
+                return JSON.parse(itemsRaw) as Array<
+                  string | { name: string; assignee?: number | null }
+                >;
+              } catch (e) {
+                ctx.error(`--items-json parse failed: ${(e as Error).message}`);
+                process.exit(1);
+              }
+            })()
+          : [];
+
+        for (const item of items) {
+          const itemData = typeof item === "string" ? { name: item } : item;
+          await client.createChecklistItem(config.apiToken, checklist.id, itemData);
+        }
+
+        ctx.output({
+          taskId: args.taskId,
+          checklistId: checklist.id,
+          name: checklist.name,
+          items: items.length,
+        });
+      },
+    },
+
+    "task dependency add": {
+      description: "Add a dependency to a task",
+      args: {
+        taskId: { position: 0, required: true, description: "Task ID" },
+      },
+      flags: {
+        "depends-on": { type: "string", description: "Task that must be completed first" },
+        "dependency-of": { type: "string", description: "Task waiting on this task" },
+      },
+      run: async ({ args, flags, ctx }) => {
+        const dependsOn = flags["depends-on"] as string | undefined;
+        const dependencyOf = flags["dependency-of"] as string | undefined;
+        if (!!dependsOn === !!dependencyOf) {
+          ctx.error("Provide exactly one of --depends-on or --dependency-of.");
+          process.exit(1);
+        }
+
+        const config = requireConfig();
+        ctx.status("Adding dependency...");
+
+        await client.addTaskDependency(config.apiToken, args.taskId, {
+          depends_on: dependsOn,
+          dependency_of: dependencyOf,
+        });
+
+        ctx.output({
+          taskId: args.taskId,
+          dependsOn: dependsOn ?? "",
+          dependencyOf: dependencyOf ?? "",
+        });
       },
     },
 
@@ -1109,7 +1328,9 @@ createCLI({
         const fields = await client.getListCustomFields(config.apiToken, listId);
 
         if (fields.length === 0) {
-          ctx.empty("No custom fields on this list. Fields must be created in the ClickUp UI (the API does not support field creation).");
+          ctx.empty(
+            "No custom fields on this list. Use `fields create` or the ClickUp UI to add one.",
+          );
           return;
         }
 
@@ -1120,7 +1341,13 @@ createCLI({
             type: f.type,
             options:
               f.type === "drop_down" || f.type === "labels"
-                ? ((f.type_config as { options?: Array<{ id: string; name?: string; label?: string }> }).options ?? [])
+                ? (
+                    (
+                      f.type_config as {
+                        options?: Array<{ id: string; name?: string; label?: string }>;
+                      }
+                    ).options ?? []
+                  )
                     .map((o) => o.name ?? o.label ?? o.id)
                     .join(" | ")
                 : "",
@@ -1129,8 +1356,112 @@ createCLI({
           { resourceName: "fields" },
         );
 
+        ctx.next([`task field set <taskId> --field <fieldId> --value <value>`]);
+      },
+    },
+
+    "fields create": {
+      description: "Create a custom field on a list or workspace",
+      flags: {
+        list: { type: "string", description: "List ID (create on a list)" },
+        team: { type: "string", description: "Workspace/team ID (create at workspace level)" },
+        name: { type: "string", description: "Field name (required)" },
+        type: {
+          type: "string",
+          description: "Field type (required), e.g. drop_down, labels, text, number, date",
+        },
+        "options-json": {
+          type: "string",
+          description: "JSON array of dropdown/labels options",
+        },
+        sorting: {
+          type: "string",
+          description: "Option sorting: manual, name_asc, or name_desc",
+        },
+        default: {
+          type: "string",
+          description: "Default option index for dropdown fields",
+        },
+        placeholder: {
+          type: "string",
+          description: "Placeholder text for dropdown fields",
+        },
+        required: { type: "boolean", description: "Mark field required" },
+      },
+      run: async ({ flags, ctx }) => {
+        const listId = flags.list as string | undefined;
+        const teamId = flags.team as string | undefined;
+        const name = flags.name as string | undefined;
+        const type = flags.type as string | undefined;
+
+        if (!name) {
+          ctx.error("--name is required.");
+          process.exit(1);
+        }
+        if (!type) {
+          ctx.error("--type is required.");
+          process.exit(1);
+        }
+        if ((!listId && !teamId) || (listId && teamId)) {
+          ctx.error("Provide exactly one of --list <id> or --team <id>.");
+          process.exit(1);
+        }
+
+        const config = requireConfig();
+        const workspaceId = teamId || config.teamId;
+        if (!listId && !workspaceId) {
+          ctx.error("No workspace selected. Run `clickup init` or pass --team <id>.");
+          process.exit(1);
+        }
+        const data: client.CreateCustomFieldData = { name, type };
+        const typeConfig: Record<string, unknown> = {};
+
+        if (flags.sorting) typeConfig.sorting = String(flags.sorting);
+        if (flags.default !== undefined) {
+          const parsedDefault = Number(flags.default);
+          if (!Number.isFinite(parsedDefault)) {
+            ctx.error("--default must be a number.");
+            process.exit(1);
+          }
+          typeConfig.default = parsedDefault;
+        }
+        if (flags.placeholder) typeConfig.placeholder = String(flags.placeholder);
+
+        const optionsRaw = flags["options-json"] as string | undefined;
+        if (optionsRaw) {
+          try {
+            const options = JSON.parse(optionsRaw);
+            if (!Array.isArray(options)) {
+              ctx.error("--options-json must be a JSON array.");
+              process.exit(1);
+            }
+            typeConfig.options = options;
+          } catch (e) {
+            ctx.error(`--options-json parse failed: ${(e as Error).message}`);
+            process.exit(1);
+          }
+        }
+
+        if (Object.keys(typeConfig).length > 0) {
+          data.type_config = typeConfig as client.CreateCustomFieldData["type_config"];
+        }
+        const required = parseBooleanFlag(flags.required);
+        if (required !== undefined) data.required = required;
+
+        ctx.status("Creating custom field...");
+
+        const result = listId
+          ? await client.createListCustomField(config.apiToken, listId, data)
+          : await client.createWorkspaceCustomField(config.apiToken, workspaceId!, data);
+
+        ctx.output({
+          id: result.field.id,
+          name: result.field.name,
+          type: result.field.type,
+        });
         ctx.next([
-          `task field set <taskId> --field <fieldId> --value <value>`,
+          ...(listId ? [`fields list --list ${listId}`] : []),
+          `task field set <taskId> --field ${result.field.id} --value <value>`,
         ]);
       },
     },
@@ -1142,8 +1473,16 @@ createCLI({
       },
       flags: {
         field: { type: "string", description: "Custom field ID (required)" },
-        value: { type: "string", description: "Field value (required). For dropdowns, pass the option ID or index" },
-        "json-value": { type: "boolean", description: "Parse --value as JSON (for complex values)" },
+        value: {
+          type: "string",
+          description: "Field value (required). For dropdowns, pass the option ID or index",
+        },
+        "json-value": {
+          type: "boolean",
+          description: "Parse --value as JSON (for complex values)",
+        },
+        "all-day": { type: "boolean", description: "Treat date custom fields as date-only" },
+        time: { type: "boolean", description: "Force date custom fields to include time" },
       },
       run: async ({ args, flags, ctx }) => {
         const fieldId = flags.field as string | undefined;
@@ -1172,7 +1511,23 @@ createCLI({
         const config = requireConfig();
         ctx.status("Setting custom field value...");
 
-        await client.setTaskCustomFieldValue(config.apiToken, args.taskId, fieldId, value);
+        let timeOption: boolean | undefined;
+        const allDay = parseBooleanFlag(flags["all-day"]);
+        if (allDay) {
+          timeOption = false;
+        } else if (flags.time !== undefined) {
+          timeOption = parseBooleanFlag(flags.time);
+        } else if (typeof raw === "string" && /^\d{4}-\d{2}-\d{2}$/.test(raw)) {
+          timeOption = false;
+        }
+
+        await client.setTaskCustomFieldValue(
+          config.apiToken,
+          args.taskId,
+          fieldId,
+          value,
+          timeOption === undefined ? undefined : { time: timeOption },
+        );
 
         ctx.output({ taskId: args.taskId, fieldId, value });
       },

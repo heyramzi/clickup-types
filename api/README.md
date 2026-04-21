@@ -149,6 +149,8 @@ Complete endpoint documentation for ClickUp API v2 and v3.
 | Method | Endpoint                           | Description               | Docs                                                                      |
 | ------ | ---------------------------------- | ------------------------- | ------------------------------------------------------------------------- |
 | GET    | `/list/{list_id}/field`            | Get list custom fields    | [Link](https://developer.clickup.com/reference/getaccessiblecustomfields) |
+| POST   | `/list/{list_id}/field`            | Create list custom field   | [Link](https://developer.clickup.com/docs/customfields)                  |
+| POST   | `/team/{team_id}/field`            | Create workspace field    | [Link](https://developer.clickup.com/docs/customfields)                  |
 | POST   | `/task/{task_id}/field/{field_id}` | Set custom field value    | [Link](https://developer.clickup.com/reference/setcustomfieldvalue)       |
 | DELETE | `/task/{task_id}/field/{field_id}` | Remove custom field value | [Link](https://developer.clickup.com/reference/removecustomfieldvalue)    |
 
