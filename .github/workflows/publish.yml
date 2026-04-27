@@ -1,0 +1,50 @@
+name: publish
+
+on:
+  push:
+    tags:
+      - "clickup-utils-v*"
+      - "cli-v*"
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish-lib:
+    if: startsWith(github.ref, 'refs/tags/clickup-utils-v')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://npm.pkg.github.com
+          scope: "@heyramzi"
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run build
+      - run: pnpm publish --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  publish-cli:
+    if: startsWith(github.ref, 'refs/tags/cli-v')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://npm.pkg.github.com
+          scope: "@clickup-utils"
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @clickup-utils/cli run build
+      - run: pnpm --filter @clickup-utils/cli publish --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
