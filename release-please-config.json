@@ -10,8 +10,8 @@
       "changelog-path": "CHANGELOG.md"
     },
     "cli": {
-      "package-name": "@clickup-utils/cli",
-      "component": "cli",
+      "package-name": "@heyramzi/clickup-cli",
+      "component": "clickup-cli",
       "changelog-path": "CHANGELOG.md"
     }
   },

@@ -43,7 +43,7 @@
   "scripts": {
     "clean": "rm -rf dist",
     "build": "pnpm run clean && tsc -p tsconfig.build.json",
-    "build:cli": "pnpm --filter @clickup-utils/cli run build",
+    "build:cli": "pnpm --filter @heyramzi/clickup-cli run build",
     "build:all": "pnpm run build && pnpm run build:cli",
     "typecheck": "tsc -p tsconfig.build.json --noEmit",
     "prepublishOnly": "pnpm run build"

@@ -47,7 +47,7 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 
 ## Project Overview
 
-**clickup-utils** is a pure TypeScript library for ClickUp API integration, published to GitHub Packages as `@heyramzi/clickup-utils`. The repo also ships `@clickup-utils/cli` (in `cli/`), a terminal CLI that consumes the library directly.
+**clickup-utils** is a pure TypeScript library for ClickUp API integration, published to GitHub Packages as `@heyramzi/clickup-utils`. The repo also ships `@heyramzi/clickup-cli` (in `cli/`), a terminal CLI that consumes the library directly.
 
 Both packages are released via release-please on push to `main`.
 
@@ -96,7 +96,7 @@ cd cli && pnpm exec tsc --noEmit
 | `core/`         | OAuth protocol (pure functions, zero deps)                    | Yes   |
 | `api/`          | Hierarchy fetch functions (workspaces, spaces, folders, lists)| Yes   |
 | `transformers/` | API response -> StoredWorkspace/List/etc.                     | Yes   |
-| `cli/`          | `@clickup-utils/cli` source. Separate package, separate build | Yes   |
+| `cli/`          | `@heyramzi/clickup-cli` source. Separate package, separate build | Yes   |
 | `index.ts`      | Library barrel export                                         | Yes   |
 | `dist/`         | Build output (gitignored)                                     | No    |
 
@@ -126,7 +126,7 @@ release-please runs on push to `main`:
 
 1. It opens (or updates) a release PR for each package with the next version and changelog.
 2. Merging that PR tags and publishes via the publish workflow.
-3. Both packages release independently. The library is `@heyramzi/clickup-utils`, the CLI is `@clickup-utils/cli`.
+3. Both packages release independently. The library is `@heyramzi/clickup-utils`, the CLI is `@heyramzi/clickup-cli`.
 
 ## Workflow
 

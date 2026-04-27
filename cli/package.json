@@ -1,5 +1,5 @@
 {
-  "name": "@clickup-utils/cli",
+  "name": "@heyramzi/clickup-cli",
   "version": "0.8.0",
   "description": "ClickUp CLI, manage workspaces, tasks, and more from the terminal.",
   "license": "UNLICENSED",

@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: "Tag to publish (e.g. clickup-utils-v1.0.0 or cli-v0.8.0)"
+        description: "Tag to publish (e.g. clickup-utils-v1.0.0 or clickup-cli-v0.8.0)"
         required: true
         type: string
 
@@ -40,8 +40,8 @@ jobs:
 
   publish-cli:
     if: |
-      (github.event_name == 'release' && startsWith(github.event.release.tag_name, 'cli-v')) ||
-      (github.event_name == 'workflow_dispatch' && startsWith(inputs.tag, 'cli-v'))
+      (github.event_name == 'release' && startsWith(github.event.release.tag_name, 'clickup-cli-v')) ||
+      (github.event_name == 'workflow_dispatch' && startsWith(inputs.tag, 'clickup-cli-v'))
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -54,9 +54,9 @@ jobs:
         with:
           node-version: 20
           registry-url: https://npm.pkg.github.com
-          scope: "@clickup-utils"
+          scope: "@heyramzi"
       - run: pnpm install --frozen-lockfile
-      - run: pnpm --filter @clickup-utils/cli run build
-      - run: pnpm --filter @clickup-utils/cli publish --no-git-checks
+      - run: pnpm --filter @heyramzi/clickup-cli run build
+      - run: pnpm --filter @heyramzi/clickup-cli publish --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
