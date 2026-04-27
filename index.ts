@@ -9,17 +9,17 @@
 // TYPES
 //===============================================
 
-export * from "./types/clickup-api-constants";
-export * from "./types/clickup-auth-types";
-export * from "./types/clickup-chat-types";
-export * from "./types/clickup-comment-types";
-export * from "./types/clickup-doc-types";
-export * from "./types/clickup-field-types";
-export * from "./types/clickup-hierarchy-types";
-export * from "./types/clickup-task-transformers";
-export * from "./types/clickup-task-types";
-export * from "./types/clickup-time-types";
-export * from "./types/clickup-view-types";
+export * from "./types/clickup-api-constants.js";
+export * from "./types/clickup-auth-types.js";
+export * from "./types/clickup-chat-types.js";
+export * from "./types/clickup-comment-types.js";
+export * from "./types/clickup-doc-types.js";
+export * from "./types/clickup-field-types.js";
+export * from "./types/clickup-hierarchy-types.js";
+export * from "./types/clickup-task-transformers.js";
+export * from "./types/clickup-task-types.js";
+export * from "./types/clickup-time-types.js";
+export * from "./types/clickup-view-types.js";
 
 //===============================================
 // CORE - Framework-agnostic
@@ -30,7 +30,7 @@ export {
   exchangeCodeForToken,
   type OAuthTokenExchangeParams,
   type OAuthUrlParams,
-} from "./core/oauth-protocol";
+} from "./core/oauth-protocol.js";
 
 //===============================================
 // TRANSFORMERS - Pure transformation functions
@@ -57,7 +57,7 @@ export {
   transformWorkspace,
   // Batch transformers
   transformWorkspaces,
-} from "./transformers/hierarchy-transformers";
+} from "./transformers/hierarchy-transformers.js";
 
 //===============================================
 // API - Pure fetch functions
@@ -83,7 +83,7 @@ export {
   getUser,
   // Workspaces
   getWorkspaces,
-} from "./api/hierarchy-api";
+} from "./api/hierarchy-api.js";
 
 //===============================================
 // Framework-specific services
