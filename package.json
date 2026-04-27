@@ -42,14 +42,21 @@
   },
   "scripts": {
     "clean": "rm -rf dist",
-    "build": "npm run clean && tsc -p tsconfig.build.json",
-    "prepublishOnly": "npm run build",
-    "pack:dry": "npm run build && npm pack --dry-run"
+    "build": "pnpm run clean && tsc -p tsconfig.build.json",
+    "build:cli": "pnpm --filter @clickup-utils/cli run build",
+    "build:all": "pnpm run build && pnpm run build:cli",
+    "typecheck": "tsc -p tsconfig.build.json --noEmit",
+    "prepublishOnly": "pnpm run build"
   },
   "devDependencies": {
     "typescript": "^5.7.0"
   },
   "engines": {
     "node": ">=20"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
   }
 }

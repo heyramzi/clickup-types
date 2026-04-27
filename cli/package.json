@@ -1,18 +1,35 @@
 {
   "name": "@clickup-utils/cli",
   "version": "0.7.1",
-  "description": "ClickUp CLI — manage workspaces, tasks, and more from the terminal",
+  "description": "ClickUp CLI, manage workspaces, tasks, and more from the terminal.",
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/heyramzi/clickup-utils.git",
+    "directory": "cli"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "restricted"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "bin": {
-    "clickup": "./bin/clickup.ts",
-    "cu": "./bin/clickup.ts"
+    "clickup": "./dist/clickup.js",
+    "cu": "./dist/clickup.js"
   },
   "scripts": {
+    "clean": "rm -rf dist",
+    "build": "node build.mjs",
     "typecheck": "tsc --noEmit",
-    "start": "npx tsx bin/clickup.ts"
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {},
   "devDependencies": {
     "@types/node": "^22.0.0",
+    "esbuild": "^0.24.0",
     "typescript": "^5.7.0"
   },
   "engines": {
