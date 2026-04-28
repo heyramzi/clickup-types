@@ -50,6 +50,7 @@ export interface ClickUpView {
   columns?: {
     fields: Array<{
       field: string;
+      idx?: number;
       hidden: boolean;
       width?: number;
     }>;
