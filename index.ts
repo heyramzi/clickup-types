@@ -61,9 +61,7 @@ export {
 
 export {
   type DescriptionLike,
-  isQuillDeltaJson,
   normalizeTaskDescription,
-  quillDeltaToMarkdown,
 } from "./transformers/description-transformers.js";
 
 //===============================================
