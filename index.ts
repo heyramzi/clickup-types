@@ -20,6 +20,7 @@ export * from "./types/clickup-task-transformers.js";
 export * from "./types/clickup-task-types.js";
 export * from "./types/clickup-time-types.js";
 export * from "./types/clickup-view-types.js";
+export * from "./types/clickup-webhook-types.js";
 
 //===============================================
 // CORE - Framework-agnostic
