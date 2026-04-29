@@ -54,6 +54,14 @@ import type { NamedToken } from "./config.js";
 const API_V2 = "https://api.clickup.com/api/v2";
 const API_V3 = "https://api.clickup.com/api/v3";
 
+interface ClickUpApiError extends Error {
+  status: number;
+}
+
+function isClickUpApiError(error: unknown): error is ClickUpApiError {
+  return error instanceof Error && typeof (error as { status?: unknown }).status === "number";
+}
+
 // ── Core request ─────────────────────────────────────
 
 async function request<T>(
@@ -93,9 +101,9 @@ async function request<T>(
 
   if (!response.ok) {
     const errorText = await response.text();
-    const err = new Error(`ClickUp API error (${response.status}): ${errorText}`);
-    (err as any).status = response.status;
-    throw err;
+    throw Object.assign(new Error(`ClickUp API error (${response.status}): ${errorText}`), {
+      status: response.status,
+    }) as ClickUpApiError;
   }
 
   // Handle empty responses (e.g. PUT/DELETE returning 200 with no body)
@@ -107,10 +115,10 @@ async function request<T>(
 // ── Token fallback ───────────────────────────────────
 
 function isAccessError(err: unknown): boolean {
-  const status = (err as any).status;
+  const status = isClickUpApiError(err) ? err.status : undefined;
   if (status === 401 || status === 403) return true;
   // ClickUp returns 404 with ECODE ACCESS_999 for permission-denied (not truly missing)
-  if (status === 404 && (err as any).message?.includes("ACCESS_999")) return true;
+  if (status === 404 && err instanceof Error && err.message.includes("ACCESS_999")) return true;
   return false;
 }
 
