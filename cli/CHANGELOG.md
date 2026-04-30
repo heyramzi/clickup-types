@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/heyramzi/clickup-utils/compare/clickup-cli-v1.0.0...clickup-cli-v1.1.0) (2026-04-30)
+
+
+### Features
+
+* type space feature payloads and add getSpace ([7a30268](https://github.com/heyramzi/clickup-utils/commit/7a30268cb74a894289cc26e87033c6aa273a5503))
+
 ## [1.0.0](https://github.com/heyramzi/clickup-utils/compare/clickup-cli-v0.8.0...clickup-cli-v1.0.0) (2026-04-27)
 
 ### ⚠ BREAKING CHANGES

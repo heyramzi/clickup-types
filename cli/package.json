@@ -1,6 +1,6 @@
 {
   "name": "@heyramzi/clickup-cli",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "ClickUp CLI, manage workspaces, tasks, and more from the terminal.",
   "license": "UNLICENSED",
   "repository": {
