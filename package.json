@@ -1,6 +1,6 @@
 {
   "name": "@heyramzi/clickup-utils",
-  "version": "2.1.1",
+  "version": "3.0.0",
   "description": "Universal TypeScript types and services for ClickUp API integration.",
   "license": "UNLICENSED",
   "repository": {
